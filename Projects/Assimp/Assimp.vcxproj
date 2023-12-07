@@ -73,7 +73,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>../../Output/Debug/</OutDir>
-    <IntDir>../../Output/Debug/NormalMapping/</IntDir>
+    <IntDir>../../Output/Debug/Assimp/</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -153,12 +153,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CameraMove.h" />
+    <ClInclude Include="Converter.h" />
     <ClInclude Include="Demo.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CameraMove.cpp" />
+    <ClCompile Include="Converter.cpp" />
     <ClCompile Include="Demo.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pch.cpp">

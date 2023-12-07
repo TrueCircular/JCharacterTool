@@ -5,8 +5,16 @@
 #ifdef _DEBUG
 //resources
 #define RESOURCES_ADDR_TOP L"../../Resources/"
+#define RESOURCES_ADDR_ASSET L"../../Resources/Assets/"
+#define RESOURCES_ADDR_ASSET_SKELETAL L"../../Resources/Assets/Skeletal/"
+#define RESOURCES_ADDR_ASSET_STATIC L"../../Resources/Assets/Static/"
+#define RESOURCES_ADDR_MESH L"../../Resources/Mesh/"
+#define RESOURCES_ADDR_MESH_SKELETAL L"../../Resources/Mesh/Skeletal/"
+#define RESOURCES_ADDR_MESH_STATIC L"../../Resources/Mesh/Static/"
 #define RESOURCES_ADDR_SHADER L"../../Resources/Shader/"
 #define RESOURCES_ADDR_TEXTURE L"../../Resources/Texture/"
+#define RESOURCES_ADDR_TEXTURE_SKELETAL L"../../Resources/Texture/Skeletal/"
+#define RESOURCES_ADDR_TEXTURE_STATIC L"../../Resources/Texture/Static/"
 #define RESOURCES_ADDR_SPRITE L"../../Resources/Sprite/"
 #define RESOURCES_ADDR_SOUND L"../../Resources/Sound/"
 //data
@@ -15,8 +23,16 @@
 #else
 //resources
 #define RESOURCES_ADDR_TOP L"Resources/"
+#define RESOURCES_ADDR_ASSET L"Resources/Assets/"
+#define RESOURCES_ADDR_ASSET_SKELETAL L"Resources/Assets/Skeletal/"
+#define RESOURCES_ADDR_ASSET_STATIC L"Resources/Assets/Static/"
+#define RESOURCES_ADDR_MESH L"Resources/Mesh/"
+#define RESOURCES_ADDR_MESH_SKELETAL L"Resources/Mesh/Skeletal/"
+#define RESOURCES_ADDR_MESH_STATIC L"Resources/Mesh/Static/"
 #define RESOURCES_ADDR_SHADER L"Resources/Shader/"
 #define RESOURCES_ADDR_TEXTURE L"Resources/Texture/"
+#define RESOURCES_ADDR_TEXTURE_SKELETAL L"Resources/Texture/Skeletal/"
+#define RESOURCES_ADDR_TEXTURE_STATIC L"Resources/Texture/Static/"
 #define RESOURCES_ADDR_SPRITE L"Resources/Sprite/"
 #define RESOURCES_ADDR_SOUND L"Resources/Sound/"
 //data
@@ -64,8 +80,11 @@ using namespace DirectX;
 using namespace Microsoft::WRL;
 
 //Lib Header
-//#include <assimp/Importer.hpp>
-//#include <assimp/Exporter.hpp>
+//assimp
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+//imgui
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_dx11.h>
 #include <imgui/imgui_impl_win32.h>
@@ -93,7 +112,6 @@ using namespace Microsoft::WRL;
 ////Imgui
 #pragma comment(lib, "imgui\\Imgui.lib")
 #endif
-
 
 #define PI			XM_PI
 #define CHECK(p)	assert(SUCCEEDED(p))

@@ -14,23 +14,31 @@ Camera::~Camera()
 {
 }
 
+Matrix& Camera::GetInverseVP()
+{
+	Matrix vp = S_MatView * S_MatProjection;
+	static Matrix _matInvVP = vp.Invert();
+
+	return _matInvVP;
+}
+
 void Camera::UpdateMatrix()
 {
 	Vec3 eye = GetTransform()->GetPosition();
 	Vec3 look = eye + GetTransform()->GetLookVector();
 	Vec3 up = GetTransform()->GetUpVector();
 
-	S_MatView = ::XMMatrixLookAtLH(eye, look, up);
+	S_MatView = _matView = ::XMMatrixLookAtLH(eye, look, up);
 
 	switch (_type)
 	{
 	case ProjectionType::Perspective:
 	{
-		S_MatProjection = ::XMMatrixPerspectiveFovLH(_fov, (_width / _height), _near, _far);
+		S_MatProjection = _matProjection = ::XMMatrixPerspectiveFovLH(_fov, (_width / _height), _near, _far);
 	}break;
 	case ProjectionType::Orthographic:
 	{
-		S_MatProjection = ::XMMatrixOrthographicLH(8, 6, 0.f, 1.f);
+		S_MatProjection = _matProjection = ::XMMatrixOrthographicLH(_width, _height, _near, _far);
 	}break;
 	}
 }

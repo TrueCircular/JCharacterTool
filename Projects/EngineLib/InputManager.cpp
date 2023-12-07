@@ -54,7 +54,32 @@ void InputManager::Update()
 				state = KEY_STATE::NONE;
 		}
 	}
+	//Screen pos
+	{
+		::GetCursorPos(&_mousePos);
+		::ScreenToClient(_hwnd, &_mousePos);
+		_screenMousePos.x = _mousePos.x;
+		_screenMousePos.y = _mousePos.y;
+	}
+	//World Pos
+	{
+		CalculateWorldPos();
+	}
 
-	::GetCursorPos(&_mousePos);
-	::ScreenToClient(_hwnd, &_mousePos);
+}
+
+void InputManager::CalculateWorldPos()
+{
+	float nomalX = 2.0f * _screenMousePos.x / g_gameDesc.width - 1.0f;
+	float nomalY = (2.0f * _screenMousePos.y) / g_gameDesc.height;
+	//float nomalX = _screenMousePos.x - g_gameDesc.width / 2.0f;
+	//float nomalY = g_gameDesc.height / 2.0f - _screenMousePos.y;
+
+	Vec4 nVec(nomalX, nomalY, 0.f, 1.f);
+	Matrix mat = Camera::GetInverseVP();
+	Vec4 last = Vec4::Transform(nVec, mat);
+	last /= last.w;
+	_worldMousePos.x = last.x;
+	_worldMousePos.y = last.y;
+	_worldMousePos.z = last.z;
 }

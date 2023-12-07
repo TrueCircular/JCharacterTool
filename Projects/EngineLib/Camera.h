@@ -39,6 +39,7 @@ public:
 	ProjectionType GetProjectionType() const { return _type; }
 	Matrix& GetViewMatrix() { return _matView; }
 	Matrix& GetProjectionMatrix() { return _matProjection; }
+	static Matrix& GetInverseVP();
 public:
 	void UpdateMatrix();
 public:
