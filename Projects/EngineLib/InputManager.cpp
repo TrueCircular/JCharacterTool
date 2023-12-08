@@ -65,21 +65,29 @@ void InputManager::Update()
 	{
 		CalculateWorldPos();
 	}
-
 }
 
 void InputManager::CalculateWorldPos()
 {
-	float nomalX = 2.0f * _screenMousePos.x / g_gameDesc.width - 1.0f;
-	float nomalY = (2.0f * _screenMousePos.y) / g_gameDesc.height;
-	//float nomalX = _screenMousePos.x - g_gameDesc.width / 2.0f;
-	//float nomalY = g_gameDesc.height / 2.0f - _screenMousePos.y;
+	//float viewX = ((2.0f * _screenMousePos.x) / g_gameDesc.width - 1.0f) / Camera::S_MatProjection._11;
+	//float viewY = -((2.0f * _screenMousePos.y) / g_gameDesc.height - 1.0f) / Camera::S_MatProjection._22;
 
-	Vec4 nVec(nomalX, nomalY, 0.f, 1.f);
-	Matrix mat = Camera::GetInverseVP();
-	Vec4 last = Vec4::Transform(nVec, mat);
-	last /= last.w;
+	//Vec3 nVec(viewX, viewY, 1.0f);
+	//Matrix mat = (Camera::S_MatView * Camera::S_MatProjection).Invert();
+
+	//Vec3 last = Vec3::Transform(nVec, mat);
+	//_worldMousePos.x = last.x;
+	//_worldMousePos.y = last.y;
+	//_worldMousePos.z = last.z;
+	float ndcX = ((2.0f * _screenMousePos.x) / g_gameDesc.width - 1.0f);
+	float ndcY = -((2.0f * _screenMousePos.y) / g_gameDesc.height - 1.0f);
+
+	Vec3 nVec(ndcX, ndcY, 1.0f);
+	Matrix mat = (Camera::S_MatView * Camera::S_MatProjection).Invert();
+	Vec3 last = Vec3::Transform(nVec, mat);
+
 	_worldMousePos.x = last.x;
 	_worldMousePos.y = last.y;
 	_worldMousePos.z = last.z;
+
 }

@@ -3,6 +3,7 @@
 
 void CameraMove::Start()
 {
+	_lastMousePos = MANAGER_INPUT()->GetScreenMousePos();
 }
 
 void CameraMove::Update()
@@ -10,29 +11,69 @@ void CameraMove::Update()
 	_dt = MANAGER_TIME()->GetDeltaTime();
 
 	Vec3 pos = GetTransform()->GetPosition();
-
-	//translate
-	if (MANAGER_INPUT()->GetButton(KEY_TYPE::W))
-	{
-		pos += GetTransform()->GetLookVector() * _speed * _dt;
-	}
-	if (MANAGER_INPUT()->GetButton(KEY_TYPE::S))
-	{
-		pos -= GetTransform()->GetLookVector() * _speed * _dt;
-	}
-
-	GetTransform()->SetPosition(pos);
+	Vec3 rot = GetTransform()->GetLocalRotation();
+	Vec3 currentMousePos = MANAGER_INPUT()->GetScreenMousePos();
 
 	//Camera Rotation
 	{
-		Vec3 mPos = MANAGER_INPUT()->GetWorldMousePos();
-		wstring wx = L"POS.X :";
-		wx += to_wstring(mPos.x);
-		wx += L"\n";
-		wstring wy = L"POS.Y :";
-		wy += to_wstring(mPos.x);
-		wy += L"\n";
-		OutputDebugString(wx.c_str());
-		OutputDebugString(wy.c_str());
+		{
+			if (MANAGER_INPUT()->GetButton(KEY_TYPE::Q))
+			{
+				Vec3 rot = GetTransform()->GetLocalRotation();
+				rot.y -= _dt * 0.5f;
+				GetTransform()->SetLocalRotation(rot);
+			}
+			if (MANAGER_INPUT()->GetButton(KEY_TYPE::E))
+			{
+				Vec3 rot = GetTransform()->GetLocalRotation();
+				rot.y += _dt * 0.5f;
+				GetTransform()->SetLocalRotation(rot);
+			}
+			if (MANAGER_INPUT()->GetButton(KEY_TYPE::Z))
+			{
+				Vec3 rot = GetTransform()->GetLocalRotation();
+				rot.x += _dt * 0.5f;
+				GetTransform()->SetLocalRotation(rot);
+			}
+			if (MANAGER_INPUT()->GetButton(KEY_TYPE::C))
+			{
+				Vec3 rot = GetTransform()->GetLocalRotation();
+				rot.x -= _dt * 0.5f;
+				GetTransform()->SetLocalRotation(rot);
+			}
+		}
+		if (MANAGER_INPUT()->GetButton(KEY_TYPE::LBUTTON))
+		{
+			float deltaX = currentMousePos.x - _lastMousePos.x;
+			float deltaY = currentMousePos.y - _lastMousePos.y;
+
+			rot.y -= deltaX * _dt * 0.075f;
+			rot.x -= deltaY * _dt * 0.075f;
+
+			rot.x = (std::max<float>(std::min(rot.x, 90.0f), -90.0f));
+			GetTransform()->SetLocalRotation(rot);
+		}
 	}
+	//translate
+	{
+		if (MANAGER_INPUT()->GetButton(KEY_TYPE::W))
+		{
+			pos += GetTransform()->GetLookVector() * _speed * _dt;
+		}
+		if (MANAGER_INPUT()->GetButton(KEY_TYPE::S))
+		{
+			pos -= GetTransform()->GetLookVector() * _speed * _dt;
+		}
+		if (MANAGER_INPUT()->GetButton(KEY_TYPE::A))
+		{
+			pos -= GetTransform()->GetRightVector() * _speed * _dt;
+		}
+		if (MANAGER_INPUT()->GetButton(KEY_TYPE::D))
+		{
+			pos += GetTransform()->GetRightVector() * _speed * _dt;
+		}
+	}
+
+	GetTransform()->SetPosition(pos);
+	_lastMousePos = currentMousePos;
 }

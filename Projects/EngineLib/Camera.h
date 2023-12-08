@@ -24,6 +24,10 @@ private:
 	float _fov = XM_PI / 4.f;
 	float _width = 0.f;
 	float _height = 0.f;
+private:
+	Vec3 _right;
+	Vec3 _up;
+	Vec3 _look;
 public:
 	static Matrix S_MatView;
 	static Matrix S_MatProjection;
@@ -39,7 +43,6 @@ public:
 	ProjectionType GetProjectionType() const { return _type; }
 	Matrix& GetViewMatrix() { return _matView; }
 	Matrix& GetProjectionMatrix() { return _matProjection; }
-	static Matrix& GetInverseVP();
 public:
 	void UpdateMatrix();
 public:

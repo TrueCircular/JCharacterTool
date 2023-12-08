@@ -52,7 +52,7 @@ void Demo::Init()
 		_camera->Awake();
 		_camera->AddComponent(make_shared<Camera>());
 		_camera->AddComponent(make_shared<CameraMove>());
-		_camera->GetTransform()->SetPosition(Vec3(0.f, 0.f, -10.f));
+		_camera->GetTransform()->SetPosition(Vec3(0.f, 0.f, 0.f));
 	}
 
 	//Object
@@ -60,6 +60,7 @@ void Demo::Init()
 		//생성 초기화
 		_obj = make_shared<GameObject>();
 		_obj->Awake();
+		_obj->GetTransform()->SetPosition(Vec3(0.0f, 0.f, 5.f));
 		_obj->AddComponent(make_shared<MeshRenderer>());
 		//Mesh Set
 		{
@@ -77,7 +78,7 @@ void Demo::Init()
 	{
 		_obj2 = make_shared<GameObject>();
 		_obj2->Awake();
-		_obj2->GetTransform()->SetPosition(Vec3(2.0f, 0.f, 2.f));
+		_obj2->GetTransform()->SetPosition(Vec3(2.0f, 0.f, 5.f));
 		_obj2->AddComponent(make_shared<MeshRenderer>());
 		//Mesh Set
 		{
@@ -120,14 +121,6 @@ void Demo::Update()
 	}
 	{
 		_obj2->Update();
-
-		//Vec3 pos = _obj2->GetTransform()->GetPosition();
-		//wstring wx = to_wstring(pos.x);
-		//wx += L"\n";
-		//wstring wy = to_wstring(pos.y);
-		//wy += L"\n";
-		//OutputDebugString(wx.c_str());
-		//OutputDebugString(wy.c_str());
 	}
 }
 

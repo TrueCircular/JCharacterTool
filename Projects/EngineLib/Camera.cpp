@@ -14,14 +14,6 @@ Camera::~Camera()
 {
 }
 
-Matrix& Camera::GetInverseVP()
-{
-	Matrix vp = S_MatView * S_MatProjection;
-	static Matrix _matInvVP = vp.Invert();
-
-	return _matInvVP;
-}
-
 void Camera::UpdateMatrix()
 {
 	Vec3 eye = GetTransform()->GetPosition();

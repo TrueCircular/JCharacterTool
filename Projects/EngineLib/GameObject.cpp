@@ -128,11 +128,6 @@ void GameObject::Update()
 	{
 		com->Update();
 	}
-
-	if (GetCamera())
-	{
-		return;
-	}
 }
 
 void GameObject::LateUpdate()

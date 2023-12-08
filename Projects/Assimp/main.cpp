@@ -10,9 +10,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	desc.hInstance = hInstance;
 	desc.vsync = false;
 	desc.hWnd = NULL;
-	desc.width = 1600;
-	desc.height = 900;
-	desc.clearColor = Color(0.f, 0.f, 0.f, 0.f);
+	desc.width = 1280.f;
+	desc.height = 768.f;
+	desc.clearColor = Color(0.5f, 0.5f, 0.5f, 0.f);
 	desc.App = make_shared<Demo>();
 
 	CGame* game = new CGame();
