@@ -21,3 +21,12 @@ using Color = DirectX::XMFLOAT4;
 
 using Matrix = DirectX::SimpleMath::Matrix;
 using Quaternion = DirectX::SimpleMath::Quaternion;
+
+//Model Type
+enum class ModelType
+{
+	None,
+	Skeletal,
+	Static,
+	End
+};

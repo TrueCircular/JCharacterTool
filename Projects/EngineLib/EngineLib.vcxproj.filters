@@ -144,6 +144,9 @@
     <ClInclude Include="Material.h">
       <Filter>00. Engine\Resource</Filter>
     </ClInclude>
+    <ClInclude Include="FileUtils.h">
+      <Filter>100. Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -238,6 +241,9 @@
     </ClCompile>
     <ClCompile Include="Material.cpp">
       <Filter>00. Engine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="FileUtils.cpp">
+      <Filter>100. Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -55,3 +55,4 @@ struct MaterialDesc
 	Color specular = Color(0.f, 0.f, 0.f, 1.f);
 	Color emissive = Color(0.f, 0.f, 0.f, 1.f);
 };
+

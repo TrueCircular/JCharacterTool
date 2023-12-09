@@ -152,6 +152,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AsTypes.h" />
     <ClInclude Include="CameraMove.h" />
     <ClInclude Include="Converter.h" />
     <ClInclude Include="Demo.h" />
@@ -159,6 +160,7 @@
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AsTypes.cpp" />
     <ClCompile Include="CameraMove.cpp" />
     <ClCompile Include="Converter.cpp" />
     <ClCompile Include="Demo.cpp" />
