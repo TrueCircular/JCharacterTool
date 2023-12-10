@@ -147,6 +147,15 @@
     <ClInclude Include="FileUtils.h">
       <Filter>100. Utils</Filter>
     </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>00. Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelMesh.h">
+      <Filter>00. Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelRenderer.h">
+      <Filter>04. Component\Fixed</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -244,6 +253,15 @@
     </ClCompile>
     <ClCompile Include="FileUtils.cpp">
       <Filter>100. Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>00. Engine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelMesh.cpp">
+      <Filter>00. Engine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelRenderer.cpp">
+      <Filter>04. Component\Fixed</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

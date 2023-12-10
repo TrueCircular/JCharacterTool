@@ -5,28 +5,14 @@
 
 void Demo::Init()
 {
-	//Model Read
-	//{
-	//	shared_ptr<Converter> converter = make_shared<Converter>();
-	//	//fbx-> memory
-	//	converter->ReadAssetFile(ModelType::Static, L"House/House.fbx");
-	//	//memory->customData
-	//	converter->ExportMaterialData(L"House/House");
-	//	converter->ExportModelData(L"House/House");
-	//	//customData->memory
-	//}
 	{
 		shared_ptr<Converter> converter = make_shared<Converter>();
 		//fbx-> memory
-		converter->ReadAssetFile(ModelType::Static, L"Tower/Tower.fbx");
+		converter->ReadAssetFile(ModelType::Static, L"Tank/Tank.fbx");
 		//memory->customData
-		converter->ExportMaterialData(L"Tower/Tower");
-		converter->ExportModelData(L"Tower/Tower");
+		converter->ExportMaterialData(L"Tank/Tank");
+		converter->ExportModelData(L"Tank/Tank");
 		//customData->memory
-	}
-	//리소스 매니저 초기화
-	MANAGER_RESOURCES()->Init();
-	{
 	}
 	//Camera
 	{
@@ -41,7 +27,6 @@ void Demo::Init()
 void Demo::Update()
 {
 	_camera->Update();
-	//MANAGER_RENDERER()->Update();
 }
 
 void Demo::Render()

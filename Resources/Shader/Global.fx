@@ -87,12 +87,22 @@ RasterizerState FillModeWireFrame
 };
 
 //Macro//
-#define PASS_VP(name, vs, ps)                           \
-	pass name                                           \
-	{                                                   \
-		SetVertexShader(CompileShader(vs_5_0, vs()));   \
-		SetPixelShader(CompileShader(ps_5_0, ps()));    \
-	}                                                   \
+
+#define PASS_VP(name, vs, ps)						\
+pass name											\
+{													\
+	SetVertexShader(CompileShader(vs_5_0, vs()));	\
+	SetPixelShader(CompileShader(ps_5_0, ps()));	\
+}
+
+#define PASS_RS_VP(name, rs, vs, ps)				\
+pass name											\
+{													\
+    SetRasterizerState(rs);							\
+    SetVertexShader(CompileShader(vs_5_0, vs()));	\
+    SetPixelShader(CompileShader(ps_5_0, ps()));	\
+}                                                  
+
 //Function//
 float3 CameraPosition()
 {

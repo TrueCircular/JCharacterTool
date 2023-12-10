@@ -47,7 +47,7 @@ struct LightDesc
 	Vec3 direction;
 	float padding0 = 0;
 };
-
+//Material
 struct MaterialDesc
 {
 	Color ambient = Color(0.f, 0.f, 0.f, 1.f);
@@ -55,4 +55,9 @@ struct MaterialDesc
 	Color specular = Color(0.f, 0.f, 0.f, 1.f);
 	Color emissive = Color(0.f, 0.f, 0.f, 1.f);
 };
-
+//Bone
+#define MAX_BONE_TRANSFORMS 50
+struct BoneDesc
+{
+	Matrix transforms[MAX_BONE_TRANSFORMS];
+};

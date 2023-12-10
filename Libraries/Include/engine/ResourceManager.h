@@ -31,6 +31,7 @@ public:
 	template<typename T>
 	shared_ptr<T> LoadResource(const wstring& key, const wstring& path);
 public:
+	shared_ptr<Texture> GetOrAddTexture(const wstring& key, const wstring& path);
 	template<typename T>
 	shared_ptr<T> GetResource(const wstring& key);
 	template<typename T>

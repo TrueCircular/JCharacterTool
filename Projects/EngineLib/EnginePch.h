@@ -153,12 +153,14 @@ extern CGameDesc g_gameDesc;
 #include "Transform.h"
 #include "Camera.h"
 #include "MeshRenderer.h"
+#include "ModelRenderer.h"
 
 //Resources
 #include "Texture.h"
 #include "Shader.h"
 #include "Mesh.h"
 #include "Material.h"
+#include "Model.h"
 
 //GameObject
 #include "GameObject.h"

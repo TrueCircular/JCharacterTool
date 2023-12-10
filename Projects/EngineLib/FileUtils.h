@@ -18,7 +18,8 @@ public:
 	void Write(const T& data)
 	{
 		DWORD numOfBytes = 0;
-		assert(::WriteFile(_handle, &data, sizeof(T), (LPDWORD)&numOfBytes, nullptr));
+		BOOL isWrite = ::WriteFile(_handle, &data, sizeof(T), (LPDWORD)&numOfBytes, nullptr);
+		assert(isWrite);
 	}
 
 	template<>
@@ -34,7 +35,8 @@ public:
 	void Read(OUT T& data)
 	{
 		DWORD numOfBytes = 0;
-		assert(::ReadFile(_handle, &data, sizeof(T), (LPDWORD)&numOfBytes, nullptr));
+		BOOL isRead = ::ReadFile(_handle, &data, sizeof(T), (LPDWORD)&numOfBytes, nullptr);
+		assert(isRead);
 	}
 
 	template<typename T>

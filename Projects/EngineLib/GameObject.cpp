@@ -45,6 +45,12 @@ shared_ptr<MeshRenderer> GameObject::GetMeshRenderer()
 
 	return dynamic_pointer_cast<MeshRenderer>(com);
 }
+shared_ptr<ModelRenderer> GameObject::GetModelRenderer()
+{
+	shared_ptr<Component> com = GetFixedComponent(ComponentType::ModelRenderer);
+
+	return dynamic_pointer_cast<ModelRenderer>(com);
+}
 //
 //shared_ptr<Animator> GameObject::GetAnimator()
 //{
