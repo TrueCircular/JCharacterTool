@@ -4,16 +4,16 @@ class CGame
 {
 public:
 	CGame(){}
-	~CGame(){}
-private:
+	virtual ~CGame(){}
+protected:
 	CGameDesc _desc;
-private:
-	void Update();
-private:
+protected:
+	virtual void Update();
+protected:
 	BOOL InitInstance(int cmdShow);
 	ATOM MyRegisterClass();
 	static LRESULT CALLBACK WndProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);
 public:
-	WPARAM Run(CGameDesc& desc);
+	virtual WPARAM Run(CGameDesc& desc);
 };
 

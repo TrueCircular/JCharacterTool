@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Assimp", "Projects\Assimp\A
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StaticMesh", "Projects\StaticMesh\StaticMesh.vcxproj", "{2ED64274-45E9-4871-80E7-D10E89AA08D4}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JCharacterTool", "Projects\JCharacterTool\JCharacterTool.vcxproj", "{9F9A3AC8-A189-4ECF-B7B8-1E15CAC66EF2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -47,6 +49,14 @@ Global
 		{2ED64274-45E9-4871-80E7-D10E89AA08D4}.Release|x64.Build.0 = Release|x64
 		{2ED64274-45E9-4871-80E7-D10E89AA08D4}.Release|x86.ActiveCfg = Release|Win32
 		{2ED64274-45E9-4871-80E7-D10E89AA08D4}.Release|x86.Build.0 = Release|Win32
+		{9F9A3AC8-A189-4ECF-B7B8-1E15CAC66EF2}.Debug|x64.ActiveCfg = Debug|x64
+		{9F9A3AC8-A189-4ECF-B7B8-1E15CAC66EF2}.Debug|x64.Build.0 = Debug|x64
+		{9F9A3AC8-A189-4ECF-B7B8-1E15CAC66EF2}.Debug|x86.ActiveCfg = Debug|Win32
+		{9F9A3AC8-A189-4ECF-B7B8-1E15CAC66EF2}.Debug|x86.Build.0 = Debug|Win32
+		{9F9A3AC8-A189-4ECF-B7B8-1E15CAC66EF2}.Release|x64.ActiveCfg = Release|x64
+		{9F9A3AC8-A189-4ECF-B7B8-1E15CAC66EF2}.Release|x64.Build.0 = Release|x64
+		{9F9A3AC8-A189-4ECF-B7B8-1E15CAC66EF2}.Release|x86.ActiveCfg = Release|Win32
+		{9F9A3AC8-A189-4ECF-B7B8-1E15CAC66EF2}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -55,6 +65,7 @@ Global
 		{BEB44029-16EB-44E8-91B6-AF8B3208E491} = {8E6C0EBA-1991-4217-B82B-AD317212D3DC}
 		{1BDF11BF-48F4-40C0-BBC4-41D6549ADD05} = {0171CE0F-3923-4BC6-A459-AA58799E0EBF}
 		{2ED64274-45E9-4871-80E7-D10E89AA08D4} = {0171CE0F-3923-4BC6-A459-AA58799E0EBF}
+		{9F9A3AC8-A189-4ECF-B7B8-1E15CAC66EF2} = {27D7BB69-5B91-4A5A-ACBB-C95C9F5D2295}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {10B7C681-567E-46F3-98A3-0EA767DA9592}

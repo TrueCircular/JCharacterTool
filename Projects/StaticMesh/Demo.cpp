@@ -79,10 +79,6 @@ void Demo::CreateTank()
 
 	_obj->GetTransform()->SetPosition(Vec3(0, 0, 15));
 	_obj->GetTransform()->SetScale(Vec3(1.0f));
-	//float angle = ::XMConvertToRadians(90.f);
-	//Vec3 rot = _obj->GetTransform()->GetLocalRotation();
-	//rot.x += angle;
-	//_obj->GetTransform()->SetLocalRotation(rot);
 
 	_obj->AddComponent(make_shared<ModelRenderer>(MANAGER_RESOURCES()->GetResource<Shader>(L"Default")));
 	_obj->GetModelRenderer()->SetModel(m1);
