@@ -6,7 +6,7 @@
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
 	CGameDesc desc;
-	desc.AppName = L"TestScene";
+	desc.AppName = L"JCharacterTool";
 	desc.hInstance = hInstance;
 	desc.vsync = false;
 	desc.hWnd = NULL;
