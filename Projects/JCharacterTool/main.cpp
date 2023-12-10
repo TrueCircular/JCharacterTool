@@ -20,6 +20,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	tool->Run(desc);
 	 
 	delete tool;
+	tool = nullptr;
 
 	return 0;
 }
