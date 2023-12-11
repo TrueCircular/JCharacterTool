@@ -42,7 +42,7 @@ void CameraMove::Update()
 				GetTransform()->SetLocalRotation(rot);
 			}
 		}
-		if (MANAGER_INPUT()->GetButton(KEY_TYPE::LBUTTON))
+		if (MANAGER_INPUT()->GetButton(KEY_TYPE::RBUTTON))
 		{
 			float deltaX = currentMousePos.x - _lastMousePos.x;
 			float deltaY = currentMousePos.y - _lastMousePos.y;

@@ -37,6 +37,7 @@ public:
 	ComPtr<ID3D11Device>		GetDevice() { return _device; }
 	ComPtr<ID3D11DeviceContext> GetDeviceContext() { return _deviceContext; }
 	ComPtr<IDXGISwapChain>		GetSwapChain() { return _swapChain; }
+	ComPtr<ID3D11RenderTargetView> GetRenderTargetView() { return _renderTargetView; }
 private:
 	void CreateDeviceAndSwapChain();
 	void CreateRenderTargetView();

@@ -156,6 +156,7 @@
     <ClInclude Include="CameraMove.h" />
     <ClInclude Include="Converter.h" />
     <ClInclude Include="Demo.h" />
+    <ClInclude Include="ImGuiManager.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ToolWindows.h" />
@@ -165,6 +166,7 @@
     <ClCompile Include="CameraMove.cpp" />
     <ClCompile Include="Converter.cpp" />
     <ClCompile Include="Demo.cpp" />
+    <ClCompile Include="ImGuiManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "ToolWindows.h"
 #include "engine/IExecute.h"
+#include "ImGuiManager.h"
+
 
 ToolWindows::ToolWindows()
 {
@@ -16,13 +18,21 @@ void ToolWindows::Update()
 	MANAGER_INPUT()->Update();
 
 	GRAPHICS()->RenderBegin();
+	MANAGER_IMGUI()->Update();
 	_desc.App->Update();
 	_desc.App->Render();
+	MANAGER_IMGUI()->Render();
 	GRAPHICS()->RenderEnd();
+
 }
 
-LRESULT ToolWindows::WndProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam)
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+ 
+LRESULT ToolWindows::CustomWndProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	if (ImGui_ImplWin32_WndProcHandler(handle, message, wParam, lParam))
+		return true;
+
 	switch (message)
 	{
 	case WM_SIZE:
@@ -34,6 +44,27 @@ LRESULT ToolWindows::WndProc(HWND handle, UINT message, WPARAM wParam, LPARAM lP
 	default:
 		return ::DefWindowProc(handle, message, wParam, lParam);
 	}
+}
+
+ATOM ToolWindows::MyRegisterClass()
+{
+	WNDCLASSEXW wcex;
+
+	wcex.cbSize = sizeof(WNDCLASSEX);
+
+	wcex.style = CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc = CustomWndProc;
+	wcex.cbClsExtra = 0;
+	wcex.cbWndExtra = 0;
+	wcex.hInstance = _desc.hInstance;
+	wcex.hIcon = ::LoadIcon(NULL, IDI_WINLOGO);
+	wcex.hCursor = ::LoadCursor(nullptr, IDC_ARROW);
+	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+	wcex.lpszMenuName = NULL;
+	wcex.lpszClassName = _desc.AppName.c_str();
+	wcex.hIconSm = wcex.hIcon;
+
+	return RegisterClassExW(&wcex);
 }
 
 WPARAM ToolWindows::Run(CGameDesc& desc)
@@ -54,6 +85,7 @@ WPARAM ToolWindows::Run(CGameDesc& desc)
 	GRAPHICS()->Init();
 	MANAGER_TIME()->Init();
 	MANAGER_INPUT()->Init();
+	MANAGER_IMGUI()->Init();
 	//Scene Init
 	_desc.App->Init();
 
