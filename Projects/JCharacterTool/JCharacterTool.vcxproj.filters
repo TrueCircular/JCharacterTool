@@ -13,14 +13,14 @@
     <Filter Include="Main">
       <UniqueIdentifier>{9f76e7fd-580b-4b0a-bb5d-465eb85be5e6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scripts\Importer">
-      <UniqueIdentifier>{00bf2971-2d5a-4354-8196-c71dc155ca0e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Scripts\Component">
       <UniqueIdentifier>{a9bcc220-f2c3-429f-ab45-248cc26ddb81}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Manager">
       <UniqueIdentifier>{329fdb32-7b37-4b3e-b9d9-f1b3e24e0d7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Converter">
+      <UniqueIdentifier>{00bf2971-2d5a-4354-8196-c71dc155ca0e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -34,10 +34,10 @@
       <Filter>Main</Filter>
     </ClCompile>
     <ClCompile Include="Converter.cpp">
-      <Filter>Scripts\Importer</Filter>
+      <Filter>Scripts\Converter</Filter>
     </ClCompile>
     <ClCompile Include="AsTypes.cpp">
-      <Filter>Scripts\Importer</Filter>
+      <Filter>Scripts\Converter</Filter>
     </ClCompile>
     <ClCompile Include="CameraMove.cpp">
       <Filter>Scripts\Component</Filter>
@@ -60,10 +60,10 @@
       <Filter>Main</Filter>
     </ClInclude>
     <ClInclude Include="Converter.h">
-      <Filter>Scripts\Importer</Filter>
+      <Filter>Scripts\Converter</Filter>
     </ClInclude>
     <ClInclude Include="AsTypes.h">
-      <Filter>Scripts\Importer</Filter>
+      <Filter>Scripts\Converter</Filter>
     </ClInclude>
     <ClInclude Include="CameraMove.h">
       <Filter>Scripts\Component</Filter>
