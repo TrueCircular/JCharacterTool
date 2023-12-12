@@ -1,12 +1,13 @@
 #include "Global.fx"
 #include "Light.fx"
 
-#define MAX_MODEL_TRANSFORMS 50
+#define MAX_MODEL_TRANSFORMS 255
 
 cbuffer BoneBuffer
 {
     matrix BoneTransform[MAX_MODEL_TRANSFORMS];
 };
+
 uint BoneIndex;
 
 MeshOutput VS(VertexTextureNormalTangent input)

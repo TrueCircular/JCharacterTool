@@ -29,9 +29,9 @@ void Demo::Update()
 	MANAGER_RENDERER()->Update();
 	{
 		LightDesc lightDesc;
-		lightDesc.ambient = Vec4(0.5f);
+		lightDesc.ambient = Vec4(1.f);
 		lightDesc.diffuse = Vec4(1.f);
-		lightDesc.specular = Vec4(0.f);
+		lightDesc.specular = Vec4(1.f);
 		lightDesc.direction = Vec3(1.f, 0.f, 1.f);
 		MANAGER_RENDERER()->PushLightData(lightDesc);
 	}
@@ -55,12 +55,8 @@ void Demo::CreateTower()
 	_obj = make_shared<GameObject>();
 	_obj->Awake();
 
-	_obj->GetTransform()->SetPosition(Vec3(0, 0, 15));
-	_obj->GetTransform()->SetScale(Vec3(1.0f));
-	constexpr float angle = ::XMConvertToRadians(90.f);
-	Vec3 rot = _obj->GetTransform()->GetLocalRotation();
-	rot.x += angle;
-	_obj->GetTransform()->SetLocalRotation(rot);
+	_obj->GetTransform()->SetPosition(Vec3(0, 0, 5));
+	_obj->GetTransform()->SetScale(Vec3(0.01f));
 
 	_obj->AddComponent(make_shared<ModelRenderer>(MANAGER_RESOURCES()->GetResource<Shader>(L"Default")));
 	_obj->GetModelRenderer()->SetModel(m1);
@@ -82,5 +78,5 @@ void Demo::CreateTank()
 
 	_obj->AddComponent(make_shared<ModelRenderer>(MANAGER_RESOURCES()->GetResource<Shader>(L"Default")));
 	_obj->GetModelRenderer()->SetModel(m1);
-	_obj->GetModelRenderer()->SetPass(1);
+	//_obj->GetModelRenderer()->SetPass(1);
 }

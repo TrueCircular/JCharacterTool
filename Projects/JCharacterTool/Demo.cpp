@@ -2,6 +2,7 @@
 #include "Demo.h"
 #include "CameraMove.h"
 #include "Converter.h"
+#include "ImGuiManager.h"
 
 void Demo::Init()
 {
@@ -42,6 +43,7 @@ void Demo::Update()
 
 void Demo::Render()
 {
+
 }
 
 void Demo::CreateTower()
@@ -82,5 +84,5 @@ void Demo::CreateTank()
 
 	_obj->AddComponent(make_shared<ModelRenderer>(MANAGER_RESOURCES()->GetResource<Shader>(L"Default")));
 	_obj->GetModelRenderer()->SetModel(m1);
-	_obj->GetModelRenderer()->SetPass(1);
+	//_obj->GetModelRenderer()->SetPass(1);
 }

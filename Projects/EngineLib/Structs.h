@@ -56,7 +56,7 @@ struct MaterialDesc
 	Color emissive = Color(0.f, 0.f, 0.f, 1.f);
 };
 //Bone
-#define MAX_BONE_TRANSFORMS 50
+#define MAX_BONE_TRANSFORMS 255
 struct BoneDesc
 {
 	Matrix transforms[MAX_BONE_TRANSFORMS];
