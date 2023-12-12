@@ -10,6 +10,8 @@ public:
 private:
 	void CreateTower();
 	void CreateTank();
+	void CreateRagnaros();
+	void CreateMesh();
 private:
 	//obj
 	shared_ptr<GameObject> _obj;

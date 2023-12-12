@@ -10,6 +10,7 @@ private:
 	shared_ptr<Assimp::Importer> _importer;
 	const aiScene*				_scene = nullptr;
 	ModelType					_currentType = ModelType::None;
+	vector<aiNode*>				_nodeList;
 private:
 	vector<shared_ptr<asBone>>		_bones;
 	vector<shared_ptr<asMesh>>		_meshes;

@@ -8,36 +8,41 @@ void Demo::Init()
 {
 	//{
 	//	shared_ptr<Converter> converter = make_shared<Converter>();
-
 	//	converter->ReadAssetFile(ModelType::Skeletal, L"Kachujin/Mesh.fbx");
 	//	converter->ExportMaterialData(L"Kachujin/Kachujin");
 	//	converter->ExportModelData(L"Kachujin/Kachujin");
 	//}
 	{
 		shared_ptr<Converter> converter = make_shared<Converter>();
+		converter->ReadAssetFile(ModelType::Skeletal, L"Ragnaros/Ragnaros.fbx");
+		converter->ExportMaterialData(L"Ragnaros/Ragnaros");
+		converter->ExportModelData(L"Ragnaros/Ragnaros");
+	}
+	//{
+	//	shared_ptr<Converter> converter = make_shared<Converter>();
 
-		converter->ReadAssetFile(ModelType::Skeletal, L"Kachujin/Idle.fbx");
-		converter->ExportAnimationData(L"Kachujin/Idle");
-	}
-	{
-		shared_ptr<Converter> converter = make_shared<Converter>();
+	//	converter->ReadAssetFile(ModelType::Skeletal, L"ragnaros/ragnarosskin.fbx");
+	//	converter->ExportAnimationData(L"ragnaros/Idle");
+	//}
+	//{
+	//	shared_ptr<Converter> converter = make_shared<Converter>();
 
-		converter->ReadAssetFile(ModelType::Skeletal, L"Kachujin/Run.fbx");
-		converter->ExportAnimationData(L"Kachujin/Run");
-	}
-	{
-		shared_ptr<Converter> converter = make_shared<Converter>();
-		converter->ReadAssetFile(ModelType::Skeletal, L"Kachujin/Slash.fbx");
-		converter->ExportAnimationData(L"Kachujin/Slash");
-	}
+	//	converter->ReadAssetFile(ModelType::Skeletal, L"Kachujin/Run.fbx");
+	//	converter->ExportAnimationData(L"Kachujin/Run");
+	//}
+	//{
+	//	shared_ptr<Converter> converter = make_shared<Converter>();
+	//	converter->ReadAssetFile(ModelType::Skeletal, L"Kachujin/Slash.fbx");
+	//	converter->ExportAnimationData(L"Kachujin/Slash");
+	//}
 
 
 	//리소스 매니저 초기화
-	//MANAGER_RESOURCES()->Init();
-	//{
-	//	MANAGER_RESOURCES()->AddResource<Shader>(L"Default", make_shared<Shader>(L"StaticMesh.fx"));
-	//}
-	//MANAGER_RENDERER()->Init(MANAGER_RESOURCES()->GetResource<Shader>(L"Default"));
+	MANAGER_RESOURCES()->Init();
+	{
+		MANAGER_RESOURCES()->AddResource<Shader>(L"Default", make_shared<Shader>(L"StaticMesh.fx"));
+	}
+	MANAGER_RENDERER()->Init(MANAGER_RESOURCES()->GetResource<Shader>(L"Default"));
 	//Camera
 	{
 		_camera = make_shared<GameObject>();
@@ -48,23 +53,25 @@ void Demo::Init()
 	
 	//CreateTower();
 	//CreateTank();
+	//CreateRagnaros();
+	CreateMesh();
 }
 
 void Demo::Update()
 {
 	_camera->Update();
-	//MANAGER_RENDERER()->Update();
-	//{
-	//	LightDesc lightDesc;
-	//	lightDesc.ambient = Vec4(0.5f);
-	//	lightDesc.diffuse = Vec4(1.f);
-	//	lightDesc.specular = Vec4(0.f);
-	//	lightDesc.direction = Vec3(1.f, 0.f, 1.f);
-	//	MANAGER_RENDERER()->PushLightData(lightDesc);
-	//}
-	//{
-	//	_obj->Update();
-	//}
+	MANAGER_RENDERER()->Update();
+	{
+		LightDesc lightDesc;
+		lightDesc.ambient = Vec4(0.5f);
+		lightDesc.diffuse = Vec4(1.f);
+		lightDesc.specular = Vec4(0.f);
+		lightDesc.direction = Vec3(1.f, 0.f, 1.f);
+		MANAGER_RENDERER()->PushLightData(lightDesc);
+	}
+	{
+		_obj->Update();
+	}
 }
 
 void Demo::Render()
@@ -110,5 +117,40 @@ void Demo::CreateTank()
 
 	_obj->AddComponent(make_shared<ModelRenderer>(MANAGER_RESOURCES()->GetResource<Shader>(L"Default")));
 	_obj->GetModelRenderer()->SetModel(m1);
-	//_obj->GetModelRenderer()->SetPass(1);
+}
+
+void Demo::CreateRagnaros()
+{
+	//Model Import
+	shared_ptr<Model> m1 = make_shared<Model>();
+	m1->SetModelType(ModelType::Skeletal);
+	m1->ReadModel(L"Ragnaros/Ragnaros");
+	m1->ReadMaterial(L"Ragnaros/Ragnaros");
+	//GameObejct
+	_obj = make_shared<GameObject>();
+	_obj->Awake();
+
+	_obj->GetTransform()->SetPosition(Vec3(0, 0, 0));
+	_obj->GetTransform()->SetScale(Vec3(1.0f));
+
+	_obj->AddComponent(make_shared<ModelRenderer>(MANAGER_RESOURCES()->GetResource<Shader>(L"Default")));
+	_obj->GetModelRenderer()->SetModel(m1);
+}
+
+void Demo::CreateMesh()
+{
+	//Model Import
+	shared_ptr<Model> m1 = make_shared<Model>();
+	m1->SetModelType(ModelType::Skeletal);
+	m1->ReadModel(L"Kachujin/Kachujin");
+	m1->ReadMaterial(L"Kachujin/Kachujin");
+	//GameObejct
+	_obj = make_shared<GameObject>();
+	_obj->Awake();
+
+	_obj->GetTransform()->SetPosition(Vec3(0, 0, 15));
+	_obj->GetTransform()->SetScale(Vec3(0.01f));
+
+	_obj->AddComponent(make_shared<ModelRenderer>(MANAGER_RESOURCES()->GetResource<Shader>(L"Default")));
+	_obj->GetModelRenderer()->SetModel(m1);
 }

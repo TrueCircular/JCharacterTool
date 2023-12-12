@@ -1,12 +1,13 @@
 #include "Global.fx"
 #include "Light.fx"
 
-#define MAX_MODEL_TRANSFORMS 50
+#define MAX_MODEL_TRANSFORMS 255
 
 cbuffer BoneBuffer
 {
     matrix BoneTransform[MAX_MODEL_TRANSFORMS];
 };
+
 uint BoneIndex;
 
 MeshOutput VS(VertexTextureNormalTangent input)
@@ -25,10 +26,10 @@ MeshOutput VS(VertexTextureNormalTangent input)
 
 float4 PS(MeshOutput input) : SV_TARGET
 {
-    ComputeNormalMapping(input.normal, input.tangent, input.uv);
-    float4 color = ComputeLight(input.normal, input.uv, input.worldPosition);
+    //ComputeNormalMapping(input.normal, input.tangent, input.uv);
+    //float4 color = ComputeLight(input.normal, input.uv, input.worldPosition);
 	
-    //float4 color = DiffuseMap.Sample(LinearSampler, input.uv);
+    float4 color = DiffuseMap.Sample(LinearSampler, input.uv);
 	
 	return color;
 }
