@@ -8,12 +8,6 @@ void Demo::Init()
 {
 	//{
 	//	shared_ptr<Converter> converter = make_shared<Converter>();
-	//	converter->ReadAssetFile(ModelType::Skeletal, L"Kachujin/Mesh.fbx");
-	//	converter->ExportMaterialData(L"Kachujin/Kachujin");
-	//	converter->ExportModelData(L"Kachujin/Kachujin");
-	//}
-	//{
-	//	shared_ptr<Converter> converter = make_shared<Converter>();
 	//	converter->ReadAssetFile(ModelType::Skeletal, L"Ragnaros/Ragnaros.fbx");
 	//	converter->ExportMaterialData(L"Ragnaros/Ragnaros");
 	//	converter->ExportModelData(L"Ragnaros/Ragnaros");
