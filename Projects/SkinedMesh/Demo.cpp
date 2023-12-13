@@ -12,12 +12,12 @@ void Demo::Init()
 	//	converter->ExportMaterialData(L"Kachujin/Kachujin");
 	//	converter->ExportModelData(L"Kachujin/Kachujin");
 	//}
-	{
-		shared_ptr<Converter> converter = make_shared<Converter>();
-		converter->ReadAssetFile(ModelType::Skeletal, L"Ragnaros/Ragnaros.fbx");
-		converter->ExportMaterialData(L"Ragnaros/Ragnaros");
-		converter->ExportModelData(L"Ragnaros/Ragnaros");
-	}
+	//{
+	//	shared_ptr<Converter> converter = make_shared<Converter>();
+	//	converter->ReadAssetFile(ModelType::Skeletal, L"Ragnaros/Ragnaros.fbx");
+	//	converter->ExportMaterialData(L"Ragnaros/Ragnaros");
+	//	converter->ExportModelData(L"Ragnaros/Ragnaros");
+	//}
 	//{
 	//	shared_ptr<Converter> converter = make_shared<Converter>();
 
@@ -130,8 +130,8 @@ void Demo::CreateRagnaros()
 	_obj = make_shared<GameObject>();
 	_obj->Awake();
 
-	_obj->GetTransform()->SetPosition(Vec3(0, 0, 500));
-	_obj->GetTransform()->SetScale(Vec3(0.1f));
+	_obj->GetTransform()->SetPosition(Vec3(0, 0, 10));
+	_obj->GetTransform()->SetScale(Vec3(0.01f));
 	auto rot = _obj->GetTransform()->GetLocalRotation();
 	rot.x += ::XMConvertToRadians(90.f);
 	rot.y += ::XMConvertToRadians(90.f);
@@ -154,8 +154,8 @@ void Demo::CreateCoreHound()
 	_obj = make_shared<GameObject>();
 	_obj->Awake();
 
-	_obj->GetTransform()->SetPosition(Vec3(0, 0, 500));
-	_obj->GetTransform()->SetScale(Vec3(1.f));
+	_obj->GetTransform()->SetPosition(Vec3(0, 0, 10));
+	_obj->GetTransform()->SetScale(Vec3(0.01f));
 	auto rot = _obj->GetTransform()->GetLocalRotation();
 	rot.x += ::XMConvertToRadians(90.f);
 	rot.y += ::XMConvertToRadians(90.f);
