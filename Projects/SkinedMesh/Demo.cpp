@@ -24,17 +24,6 @@ void Demo::Init()
 	//	converter->ReadAssetFile(ModelType::Skeletal, L"Ragnaros/Animations/Stun.fbx");
 	//	converter->ExportAnimationData(L"Ragnaros/Stun");
 	//}
-	//{
-	//	shared_ptr<Converter> converter = make_shared<Converter>();
-
-	//	converter->ReadAssetFile(ModelType::Skeletal, L"Kachujin/Run.fbx");
-	//	converter->ExportAnimationData(L"Kachujin/Run");
-	//}
-	//{
-	//	shared_ptr<Converter> converter = make_shared<Converter>();
-	//	converter->ReadAssetFile(ModelType::Skeletal, L"Kachujin/Slash.fbx");
-	//	converter->ExportAnimationData(L"Kachujin/Slash");
-	//}
 
 	//리소스 매니저 초기화
 	MANAGER_RESOURCES()->Init();
