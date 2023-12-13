@@ -3,8 +3,8 @@
     <Material>
         <Name>creature/ragnaros/ragnaros_0</Name>
         <DiffuseFile>ragnarosskin.png</DiffuseFile>
-        <SpecularFile>ragnarosskin.png</SpecularFile>
-        <NormalFile>ragnarosskin.png</NormalFile>
+        <SpecularFile></SpecularFile>
+        <NormalFile>ragnarosskin_normal.png</NormalFile>
         <Ambient R="0.69999999" G="0.69999999" B="0.69999999" A="1"/>
         <Diffuse R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>
         <Specular R="0.2" G="0.2" B="0.2" A="20"/>
@@ -13,8 +13,8 @@
     <Material>
         <Name>creature/ragnaros/ragnaros_1</Name>
         <DiffuseFile>ragnarosskin.png</DiffuseFile>
-        <SpecularFile>ragnarosskin.png</SpecularFile>
-        <NormalFile>ragnarosskin.png</NormalFile>
+        <SpecularFile></SpecularFile>
+        <NormalFile>ragnarosskin_normal.png</NormalFile>
         <Ambient R="0.69999999" G="0.69999999" B="0.69999999" A="1"/>
         <Diffuse R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>
         <Specular R="0.2" G="0.2" B="0.2" A="20"/>
@@ -23,8 +23,8 @@
     <Material>
         <Name>creature/ragnaros/ragnaros_2</Name>
         <DiffuseFile>ragnaroshammer.png</DiffuseFile>
-        <SpecularFile>ragnaroshammer.png</SpecularFile>
-        <NormalFile>ragnaroshammer.png</NormalFile>
+        <SpecularFile></SpecularFile>
+        <NormalFile>ragnaroshammer_normal.png</NormalFile>
         <Ambient R="0.69999999" G="0.69999999" B="0.69999999" A="1"/>
         <Diffuse R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>
         <Specular R="0.2" G="0.2" B="0.2" A="20"/>

@@ -63,10 +63,10 @@ void Demo::Update()
 	MANAGER_RENDERER()->Update();
 	{
 		LightDesc lightDesc;
-		lightDesc.ambient = Vec4(0.5f);
+		lightDesc.ambient = Vec4(1.f);
 		lightDesc.diffuse = Vec4(1.f);
-		lightDesc.specular = Vec4(0.f);
-		lightDesc.direction = Vec3(1.f, 0.f, 1.f);
+		lightDesc.specular = Vec4(1.f);
+		lightDesc.direction = Vec3(1.f, 1.f, 1.f);
 		MANAGER_RENDERER()->PushLightData(lightDesc);
 	}
 	{
@@ -176,7 +176,7 @@ void Demo::CreateMesh()
 	_obj = make_shared<GameObject>();
 	_obj->Awake();
 
-	_obj->GetTransform()->SetPosition(Vec3(0, 0, 15));
+	_obj->GetTransform()->SetPosition(Vec3(0, 0, 1));
 	_obj->GetTransform()->SetScale(Vec3(0.01f));
 
 
