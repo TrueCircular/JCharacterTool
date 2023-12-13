@@ -21,8 +21,8 @@ void Demo::Init()
 	//{
 	//	shared_ptr<Converter> converter = make_shared<Converter>();
 
-	//	converter->ReadAssetFile(ModelType::Skeletal, L"ragnaros/ragnarosskin.fbx");
-	//	converter->ExportAnimationData(L"ragnaros/Idle");
+	//	converter->ReadAssetFile(ModelType::Skeletal, L"Ragnaros/Animations/Stun.fbx");
+	//	converter->ExportAnimationData(L"Ragnaros/Stun");
 	//}
 	//{
 	//	shared_ptr<Converter> converter = make_shared<Converter>();
@@ -35,7 +35,6 @@ void Demo::Init()
 	//	converter->ReadAssetFile(ModelType::Skeletal, L"Kachujin/Slash.fbx");
 	//	converter->ExportAnimationData(L"Kachujin/Slash");
 	//}
-
 
 	//리소스 매니저 초기화
 	MANAGER_RESOURCES()->Init();
@@ -50,11 +49,12 @@ void Demo::Init()
 		_camera->AddComponent(make_shared<Camera>());
 		_camera->AddComponent(make_shared<CameraMove>());
 	}
-	
+
 	//CreateTower();
 	//CreateTank();
-	//CreateRagnaros();
-	CreateMesh();
+	CreateRagnaros();
+	//CreateMesh();
+	//CreateCoreHound();
 }
 
 void Demo::Update()
@@ -130,8 +130,36 @@ void Demo::CreateRagnaros()
 	_obj = make_shared<GameObject>();
 	_obj->Awake();
 
-	_obj->GetTransform()->SetPosition(Vec3(0, 0, 0));
-	_obj->GetTransform()->SetScale(Vec3(1.0f));
+	_obj->GetTransform()->SetPosition(Vec3(0, 0, 500));
+	_obj->GetTransform()->SetScale(Vec3(0.1f));
+	auto rot = _obj->GetTransform()->GetLocalRotation();
+	rot.x += ::XMConvertToRadians(90.f);
+	rot.y += ::XMConvertToRadians(90.f);
+	_obj->GetTransform()->SetLocalRotation(rot);
+
+	_obj->AddComponent(make_shared<ModelRenderer>(MANAGER_RESOURCES()->GetResource<Shader>(L"Default")));
+	_obj->GetModelRenderer()->SetModel(m1);
+	//_obj->GetModelRenderer()->SetPass(1);
+
+}
+
+void Demo::CreateCoreHound()
+{
+	//Model Import
+	shared_ptr<Model> m1 = make_shared<Model>();
+	m1->SetModelType(ModelType::Skeletal);
+	m1->ReadModel(L"CoreHound/CoreHound");
+	m1->ReadMaterial(L"CoreHound/CoreHound");
+	//GameObejct
+	_obj = make_shared<GameObject>();
+	_obj->Awake();
+
+	_obj->GetTransform()->SetPosition(Vec3(0, 0, 500));
+	_obj->GetTransform()->SetScale(Vec3(1.f));
+	auto rot = _obj->GetTransform()->GetLocalRotation();
+	rot.x += ::XMConvertToRadians(90.f);
+	rot.y += ::XMConvertToRadians(90.f);
+	_obj->GetTransform()->SetLocalRotation(rot);
 
 	_obj->AddComponent(make_shared<ModelRenderer>(MANAGER_RESOURCES()->GetResource<Shader>(L"Default")));
 	_obj->GetModelRenderer()->SetModel(m1);
@@ -150,6 +178,7 @@ void Demo::CreateMesh()
 
 	_obj->GetTransform()->SetPosition(Vec3(0, 0, 15));
 	_obj->GetTransform()->SetScale(Vec3(0.01f));
+
 
 	_obj->AddComponent(make_shared<ModelRenderer>(MANAGER_RESOURCES()->GetResource<Shader>(L"Default")));
 	_obj->GetModelRenderer()->SetModel(m1);

@@ -33,8 +33,6 @@ void Converter::ReadModelData(aiNode* node, int32 index, int32 parent)
 	bone->transform = bone->transform * matParnet;
 	_bones.push_back(bone);
 
-	_nodeList.push_back(node);
-
 	//Mesh
 	ReadMeshData(node, index);
 
@@ -47,15 +45,11 @@ void Converter::ReadModelData(aiNode* node, int32 index, int32 parent)
 
 void Converter::ReadMeshData(aiNode* node, int32 bone)
 {
-	if (node->mNumMeshes < 1)
-		return;
-
-	shared_ptr<asMesh> mesh = make_shared<asMesh>();
-	mesh->name = node->mName.C_Str();
-	mesh->boneIndex = bone;
-
 	for (uint32 i = 0; i < node->mNumMeshes; i++)
 	{
+		shared_ptr<asMesh> mesh = make_shared<asMesh>();
+		mesh->name = node->mName.C_Str();
+		mesh->boneIndex = bone;
 		uint32 index = node->mMeshes[i];
 		const aiMesh* srcMesh = _scene->mMeshes[index];
 
@@ -90,9 +84,8 @@ void Converter::ReadMeshData(aiNode* node, int32 bone)
 			for (uint32 k = 0; k < face.mNumIndices; k++)
 				mesh->indices.push_back(face.mIndices[k] + startVertex);
 		}
+		_meshes.push_back(mesh);
 	}
-
-	_meshes.push_back(mesh);
 }
 
 void Converter::WriteModelFile(wstring finalPath)
@@ -178,7 +171,7 @@ uint32 Converter::GetBoneIndex(const string& name)
 
 void Converter::ReadSkinData()
 {
-	for (uint32 i = 1; i < _meshes.size(); i++)
+	for (uint32 i = 1; i < _scene->mNumMeshes; i++)
 	{
 		aiMesh* srcMesh = _scene->mMeshes[i];
 		if (srcMesh->HasBones() == false)
@@ -603,15 +596,26 @@ void Converter::ReadAssetFile(ModelType type, wstring fileName)
 		//File Read
 		_scene = _importer->ReadFile(
 			Utils::ToString(fileStr),
-			aiProcess_ConvertToLeftHanded |
+			aiProcess_ImproveCacheLocality |
+			aiProcess_RemoveRedundantMaterials |
 			aiProcess_Triangulate |
 			aiProcess_GenUVCoords |
+			aiProcess_TransformUVCoords |
+			aiProcess_FindInstances |
+			aiProcess_LimitBoneWeights |
 			aiProcess_GenNormals |
-			aiProcess_CalcTangentSpace 
+			aiProcess_CalcTangentSpace |
+			aiProcess_MakeLeftHanded |
+			aiProcess_FlipUVs |
+			aiProcess_FlipWindingOrder |
+			aiProcess_SortByPType
 		);
 		//is not Read
 		if (_scene == nullptr)
+		{
+			assert(false);
 			return;
+		}
 	}
 }
 

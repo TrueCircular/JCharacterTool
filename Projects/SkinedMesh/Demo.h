@@ -11,6 +11,7 @@ private:
 	void CreateTower();
 	void CreateTank();
 	void CreateRagnaros();
+	void CreateCoreHound();
 	void CreateMesh();
 private:
 	//obj
