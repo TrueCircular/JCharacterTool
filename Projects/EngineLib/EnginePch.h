@@ -47,7 +47,6 @@
 //STL
 #include <memory>
 #include <iostream>
-#include <array>
 #include <vector>
 #include <list>
 #include <queue>
@@ -154,6 +153,7 @@ extern CGameDesc g_gameDesc;
 #include "Camera.h"
 #include "MeshRenderer.h"
 #include "ModelRenderer.h"
+#include "ModelAnimator.h"
 
 //Resources
 #include "Texture.h"

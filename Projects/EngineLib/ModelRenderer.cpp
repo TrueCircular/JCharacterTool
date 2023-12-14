@@ -21,32 +21,6 @@ void ModelRenderer::SetModel(shared_ptr<Model> model)
 	}
 }
 
-//void ModelRenderer::Update()
-//{
-//	if (_model == nullptr)
-//		return;
-//
-//	auto world = GetTransform()->GetWorldMatrix();
-//	MANAGER_RENDERER()->PushTransformData(TransformDesc{ world });
-//
-//	const auto& meshes = _model->GetMeshes();
-//	for (auto& mesh : meshes)
-//	{
-//		if (mesh->material)
-//			mesh->material->Update();
-//
-//		uint32 stride = mesh->vertexBuffer->GetStride();
-//		uint32 offset = mesh->vertexBuffer->GetOffset();
-//
-//		DC()->IASetVertexBuffers(0, 1, mesh->vertexBuffer->GetBuffer().GetAddressOf(), 
-//			&stride, &offset);
-//		DC()->IASetIndexBuffer(mesh->indexBuffer->GetBuffer().Get(),
-//			DXGI_FORMAT_R32_UINT, 0);
-//
-//		_shader->DrawIndexed(0, _pass, mesh->indexBuffer->GetCount(), 0, 0);
-//	}
-//}
-
 void ModelRenderer::Update()
 {
 	if (_model == nullptr)

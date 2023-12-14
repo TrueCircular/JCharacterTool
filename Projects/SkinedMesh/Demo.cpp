@@ -35,8 +35,8 @@ void Demo::Init()
 
 	//CreateTower();
 	//CreateTank();
-	CreateRagnaros();
-	//CreateMesh();
+	//CreateRagnaros();
+	CreateMesh();
 	//CreateCoreHound();
 }
 

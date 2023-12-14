@@ -19,7 +19,7 @@ public:
 	shared_ptr<Camera>			GetCamera();
 	shared_ptr<MeshRenderer>	GetMeshRenderer();
 	shared_ptr<ModelRenderer>	GetModelRenderer();
-	//shared_ptr<Animator>		GetAnimator();
+	shared_ptr<ModelAnimator>	GetModelAnimator();
 public:
 	void AddComponent(shared_ptr<Component> component);
 public:
