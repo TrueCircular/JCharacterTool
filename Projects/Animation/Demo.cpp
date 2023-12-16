@@ -53,9 +53,9 @@ void Demo::Update()
 	MANAGER_RENDERER()->Update();
 	{
 		LightDesc lightDesc;
-		lightDesc.ambient = Vec4(1.f);
-		lightDesc.diffuse = Vec4(1.f);
-		lightDesc.specular = Vec4(1.f);
+		lightDesc.ambient = Vec4(1.0, 1.f, 1.f, 1.0f);
+		lightDesc.diffuse = Vec4(1.0, 1.f, 1.f, 1.0f);
+		lightDesc.specular = Vec4(1.0, 1.f, 0.f, 1.0f);
 		lightDesc.direction = Vec3(1.f, 1.f, 1.f);
 		MANAGER_RENDERER()->PushLightData(lightDesc);
 	}
@@ -141,7 +141,7 @@ void Demo::CreateRagnaros()
 	_obj = make_shared<GameObject>();
 	_obj->Awake();
 
-	_obj->GetTransform()->SetPosition(Vec3(0, 0, 10));
+	_obj->GetTransform()->SetPosition(Vec3(0, 0, 50));
 	_obj->GetTransform()->SetScale(Vec3(0.01f));
 	auto rot = _obj->GetTransform()->GetLocalRotation();
 	rot.x += ::XMConvertToRadians(90.f);
