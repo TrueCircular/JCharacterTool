@@ -177,7 +177,6 @@
     <ClCompile Include="ToolWindows.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\..\Resources\Shader\16. AnimationDemo.fx" />
     <FxCompile Include="..\..\Resources\Shader\Animation.fx" />
     <FxCompile Include="..\..\Resources\Shader\Global.fx" />
     <FxCompile Include="..\..\Resources\Shader\Light.fx" />

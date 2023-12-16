@@ -11,6 +11,7 @@ private:
 	const aiScene*				_scene = nullptr;
 	ModelType					_currentType = ModelType::None;
 	vector<aiNode*>				_nodeList;
+	vector<aiNodeAnim*>			_animNodeList;
 private:
 	vector<shared_ptr<asBone>>		_bones;
 	vector<shared_ptr<asMesh>>		_meshes;

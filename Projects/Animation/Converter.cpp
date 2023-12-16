@@ -218,19 +218,21 @@ shared_ptr<asAnimation> Converter::ReadAnimationData(aiAnimation* srcAnimation)
 	shared_ptr<asAnimation> animation = make_shared<asAnimation>();
 	animation->name = srcAnimation->mName.C_Str();
 	animation->frameRate = (float)srcAnimation->mTicksPerSecond;
-	animation->frameCount = (uint32)srcAnimation->mDuration + 1;
+	animation->duration = (float)srcAnimation->mDuration;
+	uint32 num = (srcAnimation->mChannels[0]->mNumPositionKeys + srcAnimation->mChannels[0]->mNumRotationKeys + srcAnimation->mChannels[0]->mNumScalingKeys) / 3;
+	animation->frameCount = num;
 
 	map<string, shared_ptr<asAnimationNode>> cacheAnimNodes;
-
 	for (uint32 i = 0; i < srcAnimation->mNumChannels; i++)
 	{
 		aiNodeAnim* srcNode = srcAnimation->mChannels[i];
+		_animNodeList.push_back(srcNode);
 
 		// 애니메이션 노드 데이터 파싱
 		shared_ptr<asAnimationNode> node = ParseAnimationNode(animation, srcNode);
 
 		// 현재 찾은 노드 중에 제일 긴 시간으로 애니메이션 시간 갱신
-		animation->duration = max(animation->duration, node->keyframe.back().time);
+		//animation->duration = max(animation->duration, node->keyframe.back().time);
 
 		cacheAnimNodes[srcNode->mNodeName.C_Str()] = node;
 	}
@@ -303,28 +305,21 @@ shared_ptr<asAnimationNode> Converter::ParseAnimationNode(shared_ptr<asAnimation
 {
 	std::shared_ptr<asAnimationNode> node = make_shared<asAnimationNode>();
 	node->name = srcNode->mNodeName;
-
+	
 	uint32 keyCount = max(max(srcNode->mNumPositionKeys, srcNode->mNumScalingKeys), srcNode->mNumRotationKeys);
 
 	for (uint32 k = 0; k < keyCount; k++)
 	{
 		asKeyframeData frameData;
-
-		bool found = false;
-		uint32 t = node->keyframe.size();
-
 		// Position
-		if (::fabsf((float)srcNode->mPositionKeys[k].mTime - (float)t) <= 0.0001f)
+	
 		{
 			aiVectorKey key = srcNode->mPositionKeys[k];
 			frameData.time = (float)key.mTime;
 			::memcpy_s(&frameData.translation, sizeof(Vec3), &key.mValue, sizeof(aiVector3D));
-
-			found = true;
 		}
 
 		// Rotation
-		if (::fabsf((float)srcNode->mRotationKeys[k].mTime - (float)t) <= 0.0001f)
 		{
 			aiQuatKey key = srcNode->mRotationKeys[k];
 			frameData.time = (float)key.mTime;
@@ -333,22 +328,16 @@ shared_ptr<asAnimationNode> Converter::ParseAnimationNode(shared_ptr<asAnimation
 			frameData.rotation.y = key.mValue.y;
 			frameData.rotation.z = key.mValue.z;
 			frameData.rotation.w = key.mValue.w;
-
-			found = true;
 		}
 
 		// Scale
-		if (::fabsf((float)srcNode->mScalingKeys[k].mTime - (float)t) <= 0.0001f)
 		{
 			aiVectorKey key = srcNode->mScalingKeys[k];
 			frameData.time = (float)key.mTime;
 			::memcpy_s(&frameData.scale, sizeof(Vec3), &key.mValue, sizeof(aiVector3D));
-
-			found = true;
 		}
 
-		if (found == true)
-			node->keyframe.push_back(frameData);
+		node->keyframe.push_back(frameData);
 	}
 
 	// Keyframe 늘려주기
@@ -601,8 +590,7 @@ void Converter::ReadAssetFile(ModelType type, wstring fileName)
 			aiProcess_MakeLeftHanded |
 			aiProcess_FlipUVs |
 			aiProcess_FlipWindingOrder|
-			aiProcess_JoinIdenticalVertices |
-			//aiProcess_ConvertToLeftHanded |
+			//aiProcess_JoinIdenticalVertices |
 			aiProcess_ImproveCacheLocality |
 			aiProcess_RemoveRedundantMaterials |
 			aiProcess_Triangulate |

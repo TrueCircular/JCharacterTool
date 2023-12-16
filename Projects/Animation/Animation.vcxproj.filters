@@ -85,8 +85,5 @@
     <FxCompile Include="..\..\Resources\Shader\Animation.fx">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\Resources\Shader\16. AnimationDemo.fx">
-      <Filter>Shader</Filter>
-    </FxCompile>
   </ItemGroup>
 </Project>

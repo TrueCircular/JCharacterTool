@@ -6,17 +6,17 @@
 
 void Demo::Init()
 {
-	_shader = make_shared<Shader>(L"16. AnimationDemo.fx");
+	_shader = make_shared<Shader>(L"Animation.fx");
+	//{
+	//	shared_ptr<Converter> converter = make_shared<Converter>();
+	//	converter->ReadAssetFile(ModelType::Skeletal, L"Ragnaros/Ragnaros.fbx");
+	//	converter->ExportMaterialData(L"Ragnaros/Ragnaros");
+	//	converter->ExportModelData(L"Ragnaros/Ragnaros");
+	//}
 	{
 		shared_ptr<Converter> converter = make_shared<Converter>();
-		converter->ReadAssetFile(ModelType::Skeletal, L"Ragnaros/Ragnaros.fbx");
-		converter->ExportMaterialData(L"Ragnaros/Ragnaros");
-		converter->ExportModelData(L"Ragnaros/Ragnaros");
-	}
-	{
-		shared_ptr<Converter> converter = make_shared<Converter>();
-		converter->ReadAssetFile(ModelType::Skeletal, L"Ragnaros/Animations/Idle.fbx");
-		converter->ExportAnimationData(L"Ragnaros/Idle");
+		converter->ReadAssetFile(ModelType::Skeletal, L"Ragnaros/Animations/Stun.fbx");
+		converter->ExportAnimationData(L"Ragnaros/Stun");
 	}
 
 	//{
@@ -58,6 +58,14 @@ void Demo::Update()
 		lightDesc.specular = Vec4(1.f);
 		lightDesc.direction = Vec3(1.f, 1.f, 1.f);
 		MANAGER_RENDERER()->PushLightData(lightDesc);
+	}
+	if (MANAGER_INPUT()->GetButtonDown(KEY_TYPE::KEY_1))
+	{
+		_obj->GetModelAnimator()->SetPass(0);
+	}
+	if (MANAGER_INPUT()->GetButtonDown(KEY_TYPE::KEY_2))
+	{
+		_obj->GetModelAnimator()->SetPass(1);
 	}
 	{
 		_obj->Update();
@@ -117,6 +125,17 @@ void Demo::CreateRagnaros()
 	m1->ReadMaterial(L"Ragnaros/Ragnaros");
 
 	m1->ReadAnimation(L"Ragnaros/Idle");
+	m1->ReadAnimation(L"Ragnaros/Roar");
+	m1->ReadAnimation(L"Ragnaros/Stun");
+	m1->ReadAnimation(L"Ragnaros/Death");
+	m1->ReadAnimation(L"Ragnaros/Battle");
+	m1->ReadAnimation(L"Ragnaros/Attack1");
+	m1->ReadAnimation(L"Ragnaros/Attack2");
+	m1->ReadAnimation(L"Ragnaros/Casting");
+	m1->ReadAnimation(L"Ragnaros/Ability");
+	m1->ReadAnimation(L"Ragnaros/Appear");
+	m1->ReadAnimation(L"Ragnaros/DisAppear");
+	m1->ReadAnimation(L"Ragnaros/DisAppeared");
 
 	//GameObejct
 	_obj = make_shared<GameObject>();
