@@ -16,8 +16,8 @@ void Demo::Init()
 	{
 		shared_ptr<Converter> converter = make_shared<Converter>();
 
-		converter->ReadAssetFile(ModelType::Skeletal, L"Ragnaros/Animations/Idle.fbx");
-		converter->ExportAnimationData(L"Ragnaros/Idle");
+		converter->ReadAssetFile(ModelType::Skeletal, L"Ragnaros/Animations/Roar.fbx");
+		converter->ExportAnimationData(L"Ragnaros/Roar");
 	}
 
 	//리소스 매니저 초기화

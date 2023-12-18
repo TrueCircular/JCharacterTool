@@ -224,7 +224,9 @@ shared_ptr<asAnimation> Converter::ReadAnimationData(aiAnimation* srcAnimation)
 	animation->duration = (float)srcAnimation->mDuration;
 	uint32 num = (srcAnimation->mChannels[0]->mNumPositionKeys + srcAnimation->mChannels[0]->mNumRotationKeys + srcAnimation->mChannels[0]->mNumScalingKeys) / 3;
 	animation->frameCount = num;
-	animation->frameRate = (float)(srcAnimation->mDuration / num);
+	//animation->frameRate = (float)(srcAnimation->mDuration / num);
+	animation->frameRate = (float)srcAnimation->mTicksPerSecond;
+
 
 	map<string, shared_ptr<asAnimationNode>> cacheAnimNodes;
 	for (uint32 i = 0; i < srcAnimation->mNumChannels; i++)

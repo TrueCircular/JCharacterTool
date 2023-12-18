@@ -19,6 +19,9 @@ private:
 	vector<AnimTransform> _animTransforms;
 	ComPtr<ID3D11Texture2D> _texture;
 	ComPtr<ID3D11ShaderResourceView> _srv;
+	bool _isLoop = false;
+	float _timePerFrame = 0.f;
+	float _duration = 0.f;
 private:
 	//AnimData
 	KeyframeDesc _desc;

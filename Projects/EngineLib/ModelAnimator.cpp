@@ -148,11 +148,37 @@ void ModelAnimator::Update()
 	if (_texture == nullptr)
 		CreateTexture();
 
+	_desc.sumTime += MANAGER_TIME()->GetDeltaTime();
+
+	shared_ptr<ModelAnimation> current = _model->GetAnimationByIndex(_desc.animIndex);
+	if (current)
+	{
+		_duration = current->frameCount * current->frameRate;
+		_timePerFrame = 1 / (current->frameRate * _desc.speed);
+
+		//if (_desc.sumTime >= _duration)
+		//{
+		//	
+		//}
+
+		if (_desc.sumTime >= _timePerFrame)
+		{
+			_desc.currentFrame = (_desc.currentFrame + 1) % current->frameCount;
+			_desc.nextFrame = (_desc.currentFrame + 1) % current->frameCount;
+			_desc.sumTime = 0.f;
+		}
+
+
+	
+		_desc.ratio = (_desc.sumTime / _timePerFrame);
+	}
+
 	// Anim Update
 	ImGui::InputInt("AnimIndex", &_desc.animIndex);
 	_desc.animIndex %= _model->GetAnimationCount();
-	ImGui::InputInt("CurrFrame", (int*)&_desc.currentFrame);
-	_desc.currentFrame %= _model->GetAnimationByIndex(_desc.animIndex)->frameCount;
+	/*ImGui::InputInt("CurrFrame", (int*)&_desc.currentFrame);
+	_desc.currentFrame %= _model->GetAnimationByIndex(_desc.animIndex)->frameCount;*/
+	ImGui::InputFloat("Speed", &_desc.speed, 0.5f, 4.f);
 
 	// 애니메이션 현재 프레임 정보
 	MANAGER_RENDERER()->PushKeyframeData(_desc);

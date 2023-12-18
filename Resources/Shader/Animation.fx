@@ -36,19 +36,32 @@ matrix GetAnimationMatrix(VertexTextureNormalTangentBlend input)
     int animIndex = Keyframes.animIndex;
     int currFrame = Keyframes.currentFrame;
     int nextFrame = Keyframes.nextFrame;
-
+    float ratio = Keyframes.ratio;
+    
     float4 c0, c1, c2, c3;
+    float4 n0, n1, n2, n3;
+    
     matrix curr = 0;
+    matrix next = 0;
     matrix transform = 0;
+    
     for (int i = 0; i < 4; i++)
     {
         c0 = TransformMap.Load(int4(indices[i] * 4 + 0, currFrame, animIndex, 0));
         c1 = TransformMap.Load(int4(indices[i] * 4 + 1, currFrame, animIndex, 0));
         c2 = TransformMap.Load(int4(indices[i] * 4 + 2, currFrame, animIndex, 0));
         c3 = TransformMap.Load(int4(indices[i] * 4 + 3, currFrame, animIndex, 0));
-        
         curr = matrix(c0, c1, c2, c3);
-        transform += mul(weights[i], curr);
+        
+        n0 = TransformMap.Load(int4(indices[i] * 4 + 0, nextFrame, animIndex, 0));
+        n1 = TransformMap.Load(int4(indices[i] * 4 + 1, nextFrame, animIndex, 0));
+        n2 = TransformMap.Load(int4(indices[i] * 4 + 2, nextFrame, animIndex, 0));
+        n3 = TransformMap.Load(int4(indices[i] * 4 + 3, nextFrame, animIndex, 0));
+        next = matrix(n0, n1, n2, n3);
+        
+        matrix result = lerp(curr, next, ratio);
+        
+        transform += mul(weights[i], result);
     }
     
     return transform;
