@@ -75,6 +75,10 @@ void Converter::ReadMeshData(aiNode* node, int32 bone)
 			if (srcMesh->HasNormals())
 				::memcpy(&vertex.normal, &srcMesh->mNormals[v], sizeof(Vec3));
 
+			// Tangent
+			if (srcMesh->HasTangentsAndBitangents())
+				::memcpy(&vertex.tangent, &srcMesh->mTangents[v], sizeof(Vec3));
+
 			mesh->vertices.push_back(vertex);
 		}
 
@@ -217,10 +221,10 @@ shared_ptr<asAnimation> Converter::ReadAnimationData(aiAnimation* srcAnimation)
 {
 	shared_ptr<asAnimation> animation = make_shared<asAnimation>();
 	animation->name = srcAnimation->mName.C_Str();
-	animation->frameRate = (float)srcAnimation->mTicksPerSecond;
 	animation->duration = (float)srcAnimation->mDuration;
 	uint32 num = (srcAnimation->mChannels[0]->mNumPositionKeys + srcAnimation->mChannels[0]->mNumRotationKeys + srcAnimation->mChannels[0]->mNumScalingKeys) / 3;
 	animation->frameCount = num;
+	animation->frameRate = (float)(srcAnimation->mDuration / num);
 
 	map<string, shared_ptr<asAnimationNode>> cacheAnimNodes;
 	for (uint32 i = 0; i < srcAnimation->mNumChannels; i++)

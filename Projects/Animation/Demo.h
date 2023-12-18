@@ -8,10 +8,10 @@ public:
 	virtual void Update() override;
 	virtual void Render() override;
 private:
-	void CreateTower();
-	void CreateTank();
 	void CreateRagnaros();
 	void CreateCoreHound();
+	void CreateGiant();
+	void CreateBaronGeddon();
 	void CreateMesh();
 private:
 	shared_ptr<Shader> _shader;
