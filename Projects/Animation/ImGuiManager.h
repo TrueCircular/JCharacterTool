@@ -1,7 +1,14 @@
 #pragma once
+#include "GUIInterface.h"
+
+#pragma region Declaration
+class GUIAssetReadWrite;
+class GUIAnimationReadWrite;
+#pragma endregion
 
 class ImGuiManager
 {
+	using GuiList = vector<shared_ptr<GUIInterface>>;
 private:
 	static ImGuiManager* _instance;
 public:
@@ -16,10 +23,14 @@ private:
 	ImGuiManager();
 	~ImGuiManager();
 private:
-	bool show_demo_window = true;
-	bool show_another_window = false;
+	bool _isRunning = false;
+	GuiList _guiList;
 private:
-	void DefaultTest();
+	void GuiCreate();
+	void GuiUpdate();
+	void GuiRender();
+public:
+	void GUIRunning(bool run) { _isRunning = run; }
 public:
 	void Init();
 	void Update();

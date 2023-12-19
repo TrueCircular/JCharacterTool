@@ -156,6 +156,9 @@
     <ClInclude Include="CameraMove.h" />
     <ClInclude Include="Converter.h" />
     <ClInclude Include="Demo.h" />
+    <ClInclude Include="GUIAnimationReadWrite.h" />
+    <ClInclude Include="GUIAssetReadWrite.h" />
+    <ClInclude Include="GUIInterface.h" />
     <ClInclude Include="ImGuiManager.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="pch.h" />
@@ -166,6 +169,9 @@
     <ClCompile Include="CameraMove.cpp" />
     <ClCompile Include="Converter.cpp" />
     <ClCompile Include="Demo.cpp" />
+    <ClCompile Include="GUIAnimationReadWrite.cpp" />
+    <ClCompile Include="GUIAssetReadWrite.cpp" />
+    <ClCompile Include="GUIInterface.cpp" />
     <ClCompile Include="ImGuiManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pch.cpp">

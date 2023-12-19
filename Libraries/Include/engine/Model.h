@@ -16,6 +16,7 @@ private:
 private:
 	ModelType	_modelType = ModelType::None;
 	wstring		_modelPath = RESOURCES_ADDR_MESH;
+	wstring		_animPath = RESOURCES_ADDR_ANIMATION;
 	wstring		_texturePath = RESOURCES_ADDR_TEXTURE;
 private:
 	void BindCacheInfo();

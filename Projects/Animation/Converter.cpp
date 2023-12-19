@@ -224,8 +224,9 @@ shared_ptr<asAnimation> Converter::ReadAnimationData(aiAnimation* srcAnimation)
 	animation->duration = (float)srcAnimation->mDuration;
 	uint32 num = (srcAnimation->mChannels[0]->mNumPositionKeys + srcAnimation->mChannels[0]->mNumRotationKeys + srcAnimation->mChannels[0]->mNumScalingKeys) / 3;
 	animation->frameCount = num;
-	//animation->frameRate = (float)(srcAnimation->mDuration / num);
-	animation->frameRate = (float)srcAnimation->mTicksPerSecond;
+	//animation->frameCount = (uint32)srcAnimation->mDuration + 1;
+	animation->frameRate = (float)(num / 2);
+	//animation->frameRate = (float)srcAnimation->mTicksPerSecond;
 
 
 	map<string, shared_ptr<asAnimationNode>> cacheAnimNodes;
@@ -558,7 +559,7 @@ void Converter::ExportMaterialData(wstring savePath)
 
 void Converter::ExportAnimationData(wstring savePath, uint32 index)
 {
-	wstring finalPath = _modelPath + savePath + L".anim";
+	wstring finalPath = _animPath + savePath + L".anim";
 	assert(index < _scene->mNumAnimations);
 
 	shared_ptr<asAnimation> animation =  ReadAnimationData(_scene->mAnimations[index]);

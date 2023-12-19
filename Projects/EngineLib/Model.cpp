@@ -304,7 +304,7 @@ void Model::ReadModel(wstring fileName)
 
 void Model::ReadAnimation(wstring filename)
 {
-	wstring fullPath = _modelPath + filename + L".anim";
+	wstring fullPath = _animPath + filename + L".anim";
 
 	shared_ptr<FileUtils> file = make_shared<FileUtils>();
 	file->Open(fullPath, FileMode::Read);

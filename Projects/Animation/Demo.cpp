@@ -13,17 +13,17 @@ void Demo::Init()
 	//	converter->ExportMaterialData(L"Ragnaros/Ragnaros");
 	//	converter->ExportModelData(L"Ragnaros/Ragnaros");
 	//}
-	{
-		shared_ptr<Converter> converter = make_shared<Converter>();
+	//{
+	//	shared_ptr<Converter> converter = make_shared<Converter>();
 
-		converter->ReadAssetFile(ModelType::Skeletal, L"Ragnaros/Animations/Roar.fbx");
-		converter->ExportAnimationData(L"Ragnaros/Roar");
-	}
+	//	converter->ReadAssetFile(ModelType::Skeletal, L"Ragnaros/Animations/Casting.fbx");
+	//	converter->ExportAnimationData(L"Ragnaros/Casting");
+	//}
 
 	//리소스 매니저 초기화
 	MANAGER_RESOURCES()->Init();
 	{
-		MANAGER_RESOURCES()->AddResource<Shader>(L"Default", make_shared<Shader>(L"Animation.fx"));
+		MANAGER_RESOURCES()->AddResource<Shader>(L"Default", _shader);
 	}
 	MANAGER_RENDERER()->Init(_shader);
 	//Camera

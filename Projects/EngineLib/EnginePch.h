@@ -11,6 +11,7 @@
 #define RESOURCES_ADDR_MESH L"../../Resources/Mesh/"
 #define RESOURCES_ADDR_MESH_SKELETAL L"../../Resources/Mesh/Skeletal/"
 #define RESOURCES_ADDR_MESH_STATIC L"../../Resources/Mesh/Static/"
+#define RESOURCES_ADDR_ANIMATION L"../../Resources/Animation/"
 #define RESOURCES_ADDR_SHADER L"../../Resources/Shader/"
 #define RESOURCES_ADDR_TEXTURE L"../../Resources/Texture/"
 #define RESOURCES_ADDR_TEXTURE_SKELETAL L"../../Resources/Texture/Skeletal/"
@@ -18,8 +19,9 @@
 #define RESOURCES_ADDR_SPRITE L"../../Resources/Sprite/"
 #define RESOURCES_ADDR_SOUND L"../../Resources/Sound/"
 //data
+#define DATA_ADDR_SAVE L"../../Data/Save/"
+#define DATA_ADDR_LOAD L"../../Data/Load/"
 #define DATA_ADDR_SCREENSHOT L"../../Data/ScreenShot/"
-#define DATA_ADDR_ANIMATION L"../../Data/Resources/Animation/"
 #else
 //resources
 #define RESOURCES_ADDR_TOP L"Resources/"
@@ -29,6 +31,7 @@
 #define RESOURCES_ADDR_MESH L"Resources/Mesh/"
 #define RESOURCES_ADDR_MESH_SKELETAL L"Resources/Mesh/Skeletal/"
 #define RESOURCES_ADDR_MESH_STATIC L"Resources/Mesh/Static/"
+#define RESOURCES_ADDR_ANIMATION L"Resources/Animation/"
 #define RESOURCES_ADDR_SHADER L"Resources/Shader/"
 #define RESOURCES_ADDR_TEXTURE L"Resources/Texture/"
 #define RESOURCES_ADDR_TEXTURE_SKELETAL L"Resources/Texture/Skeletal/"
@@ -36,8 +39,9 @@
 #define RESOURCES_ADDR_SPRITE L"Resources/Sprite/"
 #define RESOURCES_ADDR_SOUND L"Resources/Sound/"
 //data
+#define DATA_ADDR_SAVE L"Data/Save/"
+#define DATA_ADDR_LOAD L"Data/Load/"
 #define DATA_ADDR_SCREENSHOT L"Data/ScreenShot/"
-#define DATA_ADDR_ANIMATION L"Data/Resources/Animation/"
 #endif
 
 //Default

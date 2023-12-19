@@ -153,13 +153,7 @@ void ModelAnimator::Update()
 	shared_ptr<ModelAnimation> current = _model->GetAnimationByIndex(_desc.animIndex);
 	if (current)
 	{
-		_duration = current->frameCount * current->frameRate;
 		_timePerFrame = 1 / (current->frameRate * _desc.speed);
-
-		//if (_desc.sumTime >= _duration)
-		//{
-		//	
-		//}
 
 		if (_desc.sumTime >= _timePerFrame)
 		{
@@ -168,8 +162,6 @@ void ModelAnimator::Update()
 			_desc.sumTime = 0.f;
 		}
 
-
-	
 		_desc.ratio = (_desc.sumTime / _timePerFrame);
 	}
 

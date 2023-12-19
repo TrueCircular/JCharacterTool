@@ -73,10 +73,8 @@ void Utils::ScreenShot(ComPtr<ID3D11DeviceContext> context, const std::wstring& 
 	else
 	{
 		tm lt = MANAGER_TIME()->GetLocalTimeInfo()._tm;
-		std::wstring lstring;
-		lstring += L"£¯";
-		lstring += ::to_wstring(lt.tm_year);
-		lstring += L"£¯";
+		std::wstring lstring = ::to_wstring(lt.tm_year);
+		lstring += L"/";
 		lstring += ::to_wstring(lt.tm_mon);
 		lstring += L"£¯";
 		lstring += ::to_wstring(lt.tm_mday);
@@ -86,7 +84,7 @@ void Utils::ScreenShot(ComPtr<ID3D11DeviceContext> context, const std::wstring& 
 		lstring += ::to_wstring(lt.tm_min);
 		lstring += L"£¯";
 		lstring += ::to_wstring(lt.tm_sec);
-		lstring += L"£¯.png";
+		lstring += L".png";
 
 		path += lstring;
 	}

@@ -22,6 +22,9 @@
     <Filter Include="Scripts\Converter">
       <UniqueIdentifier>{00bf2971-2d5a-4354-8196-c71dc155ca0e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scripts\Manager\Component">
+      <UniqueIdentifier>{8ff8c85b-bf9f-42b0-9dc0-59c195d8b8a0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -48,6 +51,15 @@
     <ClCompile Include="ImGuiManager.cpp">
       <Filter>Scripts\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="GUIInterface.cpp">
+      <Filter>Scripts\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="GUIAnimationReadWrite.cpp">
+      <Filter>Scripts\Manager\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="GUIAssetReadWrite.cpp">
+      <Filter>Scripts\Manager\Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -73,6 +85,15 @@
     </ClInclude>
     <ClInclude Include="ImGuiManager.h">
       <Filter>Scripts\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIInterface.h">
+      <Filter>Scripts\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIAssetReadWrite.h">
+      <Filter>Scripts\Manager\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIAnimationReadWrite.h">
+      <Filter>Scripts\Manager\Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
