@@ -99,7 +99,7 @@ void Demo::CreateRagnaros()
 	_obj = make_shared<GameObject>();
 	_obj->Awake();
 
-	_obj->GetTransform()->SetPosition(Vec3(0, 0, 50));
+	_obj->GetTransform()->SetPosition(Vec3(0, -10, 50));
 	_obj->GetTransform()->SetScale(Vec3(0.01f));
 	auto rot = _obj->GetTransform()->GetLocalRotation();
 	rot.x += ::XMConvertToRadians(90.f);

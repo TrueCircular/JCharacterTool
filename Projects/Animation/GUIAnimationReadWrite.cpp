@@ -16,10 +16,23 @@ void GUIAnimationReadWrite::Update()
 	{
 
 	}
-	if (ImGui::MenuItem("Save Animation File"))
+
+	ImGui::Separator();
+
+	if (ImGui::MenuItem("Save Asset File as Anim File"))
 	{
 
 	}
+
+	ImGui::Separator();
+
+	if (ImGui::MenuItem("Read Anim File and Show Animation"))
+	{
+
+	}
+
+	ImGui::Separator();
+
 }
 
 void GUIAnimationReadWrite::Render()

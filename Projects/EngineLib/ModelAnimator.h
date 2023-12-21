@@ -16,10 +16,10 @@ private:
 	uint8 _pass = 0;
 	shared_ptr<Model> _model;
 private:
-	vector<AnimTransform> _animTransforms;
+	vector<AnimTransform>	_animTransforms;
 	ComPtr<ID3D11Texture2D> _texture;
 	ComPtr<ID3D11ShaderResourceView> _srv;
-	bool _isLoop = false;
+	bool  _isLoop = false;
 	float _timePerFrame = 0.f;
 	float _duration = 0.f;
 private:
