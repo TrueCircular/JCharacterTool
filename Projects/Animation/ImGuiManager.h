@@ -29,6 +29,7 @@ private:
 	void GuiCreate();
 	void GuiUpdate();
 	void GuiRender();
+	const float* ConvertMatrixToFloat(Matrix& mat);
 public:
 	void GUIRunning(bool run) { _isRunning = run; }
 public:

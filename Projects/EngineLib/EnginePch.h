@@ -88,10 +88,17 @@ using namespace Microsoft::WRL;
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 //imgui
+#define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui/imgui.h>
+#include <imgui/imgui_internal.h>
 #include <imgui/imgui_impl_dx11.h>
 #include <imgui/imgui_impl_win32.h>
 #include <imgui/ImGuiFileDialog.h>
+#include <imgui/ImGuizmo.h>
+#include <imgui/ImSequencer.h>
+#include <imgui/ImZoomSlider.h>
+#include <imgui/ImCurveEdit.h>
+#include <imgui/GraphEditor.h>
 
 //Lib
 #pragma comment(lib, "d3d11.lib")

@@ -12,7 +12,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	desc.hWnd = NULL;
 	desc.width = 1600.f;
 	desc.height = 900.f;
-	desc.clearColor = Color(0.5f, 0.5f, 0.5f, 0.f);
+	desc.clearColor = Color(0.f, 0.f, 0.f, 0.f);
 	desc.App = make_shared<Demo>();
 
 	ToolWindows* tool = new ToolWindows();

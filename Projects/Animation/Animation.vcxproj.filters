@@ -25,6 +25,12 @@
     <Filter Include="Scripts\Manager\Component">
       <UniqueIdentifier>{8ff8c85b-bf9f-42b0-9dc0-59c195d8b8a0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Plugin">
+      <UniqueIdentifier>{361563ce-d15b-452f-b92b-52ff0f98b525}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Plugin\ImGuizmo">
+      <UniqueIdentifier>{5e9b4d94-0605-4e35-84a7-c7f4e0e28834}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -60,6 +66,9 @@
     <ClCompile Include="GUIAssetReadWrite.cpp">
       <Filter>Scripts\Manager\Component</Filter>
     </ClCompile>
+    <ClCompile Include="GUIView.cpp">
+      <Filter>Scripts\Manager\Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -93,6 +102,9 @@
       <Filter>Scripts\Manager\Component</Filter>
     </ClInclude>
     <ClInclude Include="GUIAnimationReadWrite.h">
+      <Filter>Scripts\Manager\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIView.h">
       <Filter>Scripts\Manager\Component</Filter>
     </ClInclude>
   </ItemGroup>

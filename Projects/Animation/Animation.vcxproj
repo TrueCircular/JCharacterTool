@@ -159,6 +159,7 @@
     <ClInclude Include="GUIAnimationReadWrite.h" />
     <ClInclude Include="GUIAssetReadWrite.h" />
     <ClInclude Include="GUIInterface.h" />
+    <ClInclude Include="GUIView.h" />
     <ClInclude Include="ImGuiManager.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="pch.h" />
@@ -172,6 +173,7 @@
     <ClCompile Include="GUIAnimationReadWrite.cpp" />
     <ClCompile Include="GUIAssetReadWrite.cpp" />
     <ClCompile Include="GUIInterface.cpp" />
+    <ClCompile Include="GUIView.cpp" />
     <ClCompile Include="ImGuiManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pch.cpp">

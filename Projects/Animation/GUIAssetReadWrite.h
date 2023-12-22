@@ -13,8 +13,10 @@ private:
 	ImVec2 _maxDialogSize;
 	ImVec2 _readsaveDialogPos;
 
-	ImGuiID _popupId;
-	bool _button = false;
+	bool _isSaveMesh = false;
+	bool _isReadMesh = false;
+private:
+	void SavePoPUP();
 public:
 	virtual void Update() override;
 	virtual void Render() override;

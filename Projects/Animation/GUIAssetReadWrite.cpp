@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "GUIAssetReadWrite.h"
-
-extern ImGuiID ImHashStr(const char* data_p, size_t data_size, ImGuiID seed);
-
+#include "engine/Utils.h"
 
 GUIAssetReadWrite::GUIAssetReadWrite() : Super(GUIType::AssetReadWrite)
 {
@@ -13,12 +11,33 @@ GUIAssetReadWrite::GUIAssetReadWrite() : Super(GUIType::AssetReadWrite)
 
 	_readsaveDialogPos.x = 0.f;
 	_readsaveDialogPos.y = 18.f;
-
-	_popupId = ImHashStr("POPUP", sizeof("POPUP"), _popupId);
 }
 
 GUIAssetReadWrite::~GUIAssetReadWrite()
 {
+}
+
+void GUIAssetReadWrite::SavePoPUP()
+{
+	if (_isSaveMesh)
+	{
+		ImGui::OpenPopup("Are you going to save that Mesh?");
+		if (ImGui::BeginPopupModal("Are you going to save that Mesh?", 0, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			if (ImGui::Button("Save", ImVec2(120.f, 20.f)))
+			{
+				_isSaveMesh = false;
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Close", ImVec2(120.f, 20.f)))
+			{
+				_isSaveMesh = false;
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
+	}
 }
 
 void GUIAssetReadWrite::Update()
@@ -30,13 +49,15 @@ void GUIAssetReadWrite::Update()
 	{
 		if (ImGui::MenuItem("Skeletal"))
 		{
+			string adr = Utils::ToString(RESOURCES_ADDR_ASSET_SKELETAL);
 			_dialog.OpenDialog("ReadModelAssets", "File", ".fbx,.obj",
-				"../../Resources/Assets/Skeletal/", 1, nullptr, ImGuiFileDialogFlags_Modal);
+				adr, 1, nullptr, ImGuiFileDialogFlags_Modal);
 		}
 		if (ImGui::MenuItem("Static"))
 		{
+			string adr = Utils::ToString(RESOURCES_ADDR_ASSET_STATIC);
 			_dialog.OpenDialog("ReadModelAssets", "File", ".fbx,.obj",
-				"../../Resources/Assets/Static/", 1, nullptr, ImGuiFileDialogFlags_Modal);
+				adr, 1, nullptr, ImGuiFileDialogFlags_Modal);
 		}
 		ImGui::EndMenu();
 	}
@@ -47,15 +68,29 @@ void GUIAssetReadWrite::Update()
 
 	if (ImGui::MenuItem("Save Asset File as Mesh File"))
 	{
-		_button = true;
+		_isSaveMesh = true;
 	}
 
 	ImGui::Separator();
 
-	if (ImGui::MenuItem("Read Mesh File and Show Model"))
+	if (ImGui::BeginMenu("Read Mesh File and Show Model"))
 	{
+		if (ImGui::MenuItem("Skeletal"))
+		{
+			string adr = Utils::ToString(RESOURCES_ADDR_MESH_SKELETAL);
+			_dialog.OpenDialog("ReadMesh", "File", ".mesh",
+				adr, 1, nullptr, ImGuiFileDialogFlags_Modal);
+		}
+		if (ImGui::MenuItem("Static"))
+		{
+			string adr = Utils::ToString(RESOURCES_ADDR_MESH_STATIC);
+			_dialog.OpenDialog("ReadMesh", "File", ".mesh",
+				adr, 1, nullptr, ImGuiFileDialogFlags_Modal);
+		}
 
+		ImGui::EndMenu();
 	}
+
 	ImGui::Separator();
 
 
@@ -63,25 +98,8 @@ void GUIAssetReadWrite::Update()
 
 void GUIAssetReadWrite::Render()
 {
-	if (_button)
-	{
-		ImGui::OpenPopup("Are you going to save that Mesh?");
-		if (ImGui::BeginPopupModal("Are you going to save that Mesh?", 0, ImGuiWindowFlags_AlwaysAutoResize))
-		{
-			if (ImGui::Button("Save", ImVec2(120.f, 20.f)))
-			{
-				_button = false;
-				ImGui::CloseCurrentPopup();
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Close", ImVec2(120.f, 20.f)))
-			{
-				_button = false;
-				ImGui::CloseCurrentPopup();
-			}
-			ImGui::EndPopup();
-		}
-	}
+	SavePoPUP();
+
 
 	ImGui::SetNextWindowPos(_readsaveDialogPos);
 	if (_dialog.Display("ReadModelAssets", ImGuiWindowFlags_NoCollapse, _minDialogSize, _maxDialogSize))
@@ -90,6 +108,14 @@ void GUIAssetReadWrite::Render()
 		{
 			string filePathName = _dialog.GetFilePathName();
 			string filePath = _dialog.GetCurrentPath();
+		}
+		_dialog.Close();
+	}
+	if (_dialog.Display("ReadMesh", ImGuiWindowFlags_NoCollapse, _minDialogSize, _maxDialogSize))
+	{
+		if (_dialog.IsOk())
+		{
+			string fileName = _dialog.GetCurrentFileName();
 		}
 		_dialog.Close();
 	}

@@ -6,6 +6,7 @@ enum class GUIType
 	AssetReadWrite,
 	AnimationReadWrite,
 	MeshEditing,
+	View,
 	End
 };
 

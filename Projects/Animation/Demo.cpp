@@ -30,7 +30,7 @@ void Demo::Init()
 	{
 		_camera = make_shared<GameObject>();
 		_camera->Awake();
-		_camera->GetTransform()->SetPosition(Vec3(0.f, 0.f, -2.f));
+		_camera->GetTransform()->SetPosition(Vec3(0.f, 10.f, 0.f));
 		_camera->AddComponent(make_shared<Camera>());
 		_camera->AddComponent(make_shared<CameraMove>());
 	}
