@@ -30,7 +30,7 @@ void Demo::Init()
 	{
 		_camera = make_shared<GameObject>();
 		_camera->Awake();
-		_camera->GetTransform()->SetPosition(Vec3(0.f, 10.f, 0.f));
+		_camera->GetTransform()->SetPosition(Vec3(0.f, 8.f, -50.f));
 		_camera->AddComponent(make_shared<Camera>());
 		_camera->AddComponent(make_shared<CameraMove>());
 	}
@@ -41,6 +41,7 @@ void Demo::Init()
 	//CreateGiant();
 	//CreateBaronGeddon();
 
+	//light
 	{
 		LightDesc lightDesc;
 		lightDesc.ambient = Vec4(0.93, 0.91f, 0.67f, 1.0f);
@@ -64,6 +65,7 @@ void Demo::Update()
 	{
 		_obj->GetModelAnimator()->SetPass(1);
 	}
+
 	{
 		_obj->Update();
 	}
@@ -99,7 +101,7 @@ void Demo::CreateRagnaros()
 	_obj = make_shared<GameObject>();
 	_obj->Awake();
 
-	_obj->GetTransform()->SetPosition(Vec3(0, -10, 50));
+	_obj->GetTransform()->SetPosition(Vec3(0, 0, 0));
 	_obj->GetTransform()->SetScale(Vec3(0.01f));
 	auto rot = _obj->GetTransform()->GetLocalRotation();
 	rot.x += ::XMConvertToRadians(90.f);

@@ -41,7 +41,8 @@ public:
 	shared_ptr<ModelAnimation> GetAnimationByIndex(UINT index) { return (index < 0 || index >= _animations.size()) ? nullptr : _animations[index]; }
 	shared_ptr<ModelAnimation> GetAnimationByName(wstring name);
 public:
-	void SetModelType(ModelType type);
+	ModelType GetModelType() { return _modelType; }
+	void	  SetModelType(ModelType type);
 public:
 	void ReadMaterial(wstring fileName);
 	void ReadModel(wstring fileName);

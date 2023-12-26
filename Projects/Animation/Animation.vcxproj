@@ -162,6 +162,7 @@
     <ClInclude Include="GUIView.h" />
     <ClInclude Include="ImGuiManager.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="ModelManager.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ToolWindows.h" />
   </ItemGroup>
@@ -176,6 +177,7 @@
     <ClCompile Include="GUIView.cpp" />
     <ClCompile Include="ImGuiManager.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ModelManager.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -188,6 +190,7 @@
     <FxCompile Include="..\..\Resources\Shader\Animation.fx" />
     <FxCompile Include="..\..\Resources\Shader\Global.fx" />
     <FxCompile Include="..\..\Resources\Shader\Light.fx" />
+    <FxCompile Include="..\..\Resources\Shader\StaticMesh.fx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EngineLib\EngineLib.vcxproj">

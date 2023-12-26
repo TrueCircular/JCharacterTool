@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "GUIAssetReadWrite.h"
 #include "engine/Utils.h"
+#include "ModelManager.h"
 
 GUIAssetReadWrite::GUIAssetReadWrite() : Super(GUIType::AssetReadWrite)
 {
@@ -11,10 +12,22 @@ GUIAssetReadWrite::GUIAssetReadWrite() : Super(GUIType::AssetReadWrite)
 
 	_readsaveDialogPos.x = 0.f;
 	_readsaveDialogPos.y = 18.f;
+
+	_hierarchySize.x = 350;
+	_hierarchySize.y = g_gameDesc.height;
 }
 
 GUIAssetReadWrite::~GUIAssetReadWrite()
 {
+}
+
+wstring GUIAssetReadWrite::SplitFileName(string name)
+{
+	string spName = name;
+	size_t sp = spName.find_last_of(".");
+	wstring rName = Utils::ToWString(spName.substr(0, sp));
+
+	return rName;
 }
 
 void GUIAssetReadWrite::SavePoPUP()
@@ -35,10 +48,52 @@ void GUIAssetReadWrite::SavePoPUP()
 				_isSaveMesh = false;
 				ImGui::CloseCurrentPopup();
 			}
+
 			ImGui::EndPopup();
 		}
 	}
 }
+
+void GUIAssetReadWrite::BoneHierarchy()
+{
+	if (_isReadMesh)
+	{
+		ImGui::SetNextWindowPos(_readsaveDialogPos);
+		ImGui::SetNextWindowSize(_hierarchySize);
+
+		if(ImGui::Begin("Bone Hierarchy"))
+		{
+			if (ImGui::TreeNode("Hierarchy"))
+			{
+				static ImGuiTreeNodeFlags tree_node_flags = ImGuiTreeNodeFlags_SpanAllColumns;
+				ImGui::CheckboxFlags("SpanAllColumns", &tree_node_flags, ImGuiTreeNodeFlags_SpanAllColumns);
+				ImGui::CheckboxFlags("SpanFullWidth", &tree_node_flags, ImGuiTreeNodeFlags_SpanFullWidth);
+				static ImGuiTableFlags flags = ImGuiTableFlags_BordersV | ImGuiTableFlags_BordersOuterH | ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg | ImGuiTableFlags_NoBordersInBody;
+
+				if (ImGui::BeginTable("3ways", 3, flags))
+				{
+					ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_NoHide);
+					ImGui::TableSetupColumn("Size", ImGuiTableColumnFlags_WidthFixed, 100 * 12.0f);
+					ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 100 * 18.0f);
+
+					//ImGui::TreeNodeEx("hsadsadsadddddddddddddddddddddddddddddddddsafzcxzwqwei", tree_node_flags | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_NoTreePushOnOpen);
+
+
+					ImGui::EndTable();
+				}
+
+				ImGui::TreePop();
+			}
+		}
+
+		ImGui::End();
+	}
+}
+
+void GUIAssetReadWrite::MaterialView()
+{
+}
+
 
 void GUIAssetReadWrite::Update()
 {
@@ -72,46 +127,36 @@ void GUIAssetReadWrite::Update()
 	}
 
 	ImGui::Separator();
-
-	if (ImGui::BeginMenu("Read Mesh File and Show Model"))
-	{
-		if (ImGui::MenuItem("Skeletal"))
-		{
-			string adr = Utils::ToString(RESOURCES_ADDR_MESH_SKELETAL);
-			_dialog.OpenDialog("ReadMesh", "File", ".mesh",
-				adr, 1, nullptr, ImGuiFileDialogFlags_Modal);
-		}
-		if (ImGui::MenuItem("Static"))
-		{
-			string adr = Utils::ToString(RESOURCES_ADDR_MESH_STATIC);
-			_dialog.OpenDialog("ReadMesh", "File", ".mesh",
-				adr, 1, nullptr, ImGuiFileDialogFlags_Modal);
-		}
-
-		ImGui::EndMenu();
-	}
-
-	ImGui::Separator();
-
-
 }
 
 void GUIAssetReadWrite::Render()
 {
-	SavePoPUP();
-
+	//PoPUp
+	{
+		SavePoPUP();
+	}
+	//RelativeGUI
+	{
+		BoneHierarchy();
+	}
 
 	ImGui::SetNextWindowPos(_readsaveDialogPos);
 	if (_dialog.Display("ReadModelAssets", ImGuiWindowFlags_NoCollapse, _minDialogSize, _maxDialogSize))
 	{
 		if (_dialog.IsOk())
 		{
-			string filePathName = _dialog.GetFilePathName();
-			string filePath = _dialog.GetCurrentPath();
+			_filePath = Utils::ToWString(_dialog.GetFilePathName());
+			_fileName = SplitFileName(_dialog.GetCurrentFileName());
+
+			MANAGER_MODEL()->Init();
+			if (MANAGER_MODEL()->ReadAssetFile(_filePath))
+			{
+				_isReadMesh = true;
+			}
 		}
 		_dialog.Close();
 	}
-	if (_dialog.Display("ReadMesh", ImGuiWindowFlags_NoCollapse, _minDialogSize, _maxDialogSize))
+	if (_dialog.Display("SaveMesh", ImGuiWindowFlags_NoCollapse, _minDialogSize, _maxDialogSize))
 	{
 		if (_dialog.IsOk())
 		{
@@ -120,3 +165,4 @@ void GUIAssetReadWrite::Render()
 		_dialog.Close();
 	}
 }
+

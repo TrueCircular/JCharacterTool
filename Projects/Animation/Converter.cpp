@@ -148,7 +148,8 @@ void Converter::WriteSkinFile(wstring finalPath)
 		for (shared_ptr<asMesh>& mesh : _meshes)
 		{
 			string name = mesh->name;
-			::printf("%s\n", name.c_str());
+			::fprintf(file, "%s,", name.c_str());
+			::fprintf(file, "\n");
 
 			for (UINT i = 0; i < mesh->vertices.size(); i++)
 			{
@@ -319,7 +320,6 @@ shared_ptr<asAnimationNode> Converter::ParseAnimationNode(shared_ptr<asAnimation
 	{
 		asKeyframeData frameData;
 		// Position
-	
 		{
 			aiVectorKey key = srcNode->mPositionKeys[k];
 			frameData.time = (float)key.mTime;
@@ -566,6 +566,40 @@ void Converter::ExportAnimationData(wstring savePath, uint32 index)
 	WriteAnimationData(animation, finalPath);
 }
 
+void Converter::Init()
+{
+	if (_scene != nullptr)
+	{
+		if (_meshes.size() > 0)
+		{
+			for (auto mesh : _meshes)
+			{
+				mesh = nullptr;
+			}
+			_meshes.clear();
+		}
+		if (_bones.size() > 0)
+		{
+			for (auto bone : _bones)
+			{
+				bone = nullptr;
+			}
+			_bones.clear();
+		}
+		if (_materials.size() > 0)
+		{
+			for (auto material : _materials)
+			{
+				material = nullptr;
+			}
+			_materials.clear();
+		}
+
+		_importer->FreeScene();
+		_scene = nullptr;
+	}
+}
+
 void Converter::ReadAssetFile(ModelType type, wstring fileName)
 {
 	//Type Check
@@ -612,5 +646,37 @@ void Converter::ReadAssetFile(ModelType type, wstring fileName)
 		//is not Read
 		assert(_scene != nullptr);
 	}
+}
+
+bool Converter::ReadAssetFile(wstring filePath)
+{
+	//File path Check
+	auto p = std::filesystem::path(filePath);
+	//is Exists
+	if (std::filesystem::exists(p))
+	{
+		//File Read
+		_scene = _importer->ReadFile(
+			Utils::ToString(filePath),
+			aiProcess_MakeLeftHanded |
+			aiProcess_FlipUVs |
+			aiProcess_FlipWindingOrder |
+			//aiProcess_JoinIdenticalVertices |
+			aiProcess_ImproveCacheLocality |
+			aiProcess_RemoveRedundantMaterials |
+			aiProcess_Triangulate |
+			aiProcess_GenUVCoords |
+			aiProcess_TransformUVCoords |
+			aiProcess_FindInstances |
+			//aiProcess_LimitBoneWeights |
+			aiProcess_GenNormals |
+			aiProcess_CalcTangentSpace |
+			aiProcess_SortByPType
+		);
+		//is not Read
+		if (_scene == nullptr)
+			return false;
+	}
+	return true;
 }
 

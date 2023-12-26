@@ -3,6 +3,7 @@
 
 class Converter
 {
+	friend class ModelManager;
 public:
 	Converter();
 	~Converter();
@@ -45,6 +46,9 @@ public:
 	void ExportMaterialData(wstring savePath);
 	void ExportAnimationData(wstring savePath, uint32 index = 0);
 public: 
+	void Init();
 	void ReadAssetFile(ModelType type, wstring fileName);
+	bool ReadAssetFile(wstring filePath);
+
 };
 

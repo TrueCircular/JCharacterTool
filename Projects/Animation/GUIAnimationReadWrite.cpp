@@ -25,14 +25,6 @@ void GUIAnimationReadWrite::Update()
 	}
 
 	ImGui::Separator();
-
-	if (ImGui::MenuItem("Read Anim File and Show Animation"))
-	{
-
-	}
-
-	ImGui::Separator();
-
 }
 
 void GUIAnimationReadWrite::Render()

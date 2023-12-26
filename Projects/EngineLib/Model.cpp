@@ -254,6 +254,21 @@ void Model::ReadModel(wstring fileName)
 
 			_bones.push_back(bone);
 		}
+
+		for (int i = 1; i < _bones.size(); i++)
+		{
+			if (_bones[i]->parentIndex == -1)
+			{
+				_bones[0]->children.push_back(_bones[i]);
+				_bones[i]->parent = _bones[0];
+			}
+			else if(_bones[i]->parentIndex >= 0)
+			{
+				auto parent = GetBoneByIndex(_bones[i]->parentIndex);
+				parent->children.push_back(_bones[i]);
+				_bones[i]->parent = parent;
+			}
+		}
 	}
 
 	// Mesh
