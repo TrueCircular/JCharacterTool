@@ -61,39 +61,59 @@ void GUIAssetReadWrite::BoneHierarchy()
 		ImGui::SetNextWindowPos(_readsaveDialogPos);
 		ImGui::SetNextWindowSize(_hierarchySize);
 
-		if(ImGui::Begin("Bone Hierarchy"))
+		if (ImGui::Begin("Bone Hierarchy"))
 		{
-			if (ImGui::TreeNode("Hierarchy"))
+			const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("A").x;
+
+			if (ImGui::TreeNode("Bone List"))
 			{
+				static ImGuiTableFlags flags = ImGuiTableFlags_BordersV | ImGuiTableFlags_BordersOuterH | ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg | ImGuiTableFlags_NoBordersInBody;
 				static ImGuiTreeNodeFlags tree_node_flags = ImGuiTreeNodeFlags_SpanAllColumns;
 				ImGui::CheckboxFlags("SpanAllColumns", &tree_node_flags, ImGuiTreeNodeFlags_SpanAllColumns);
 				ImGui::CheckboxFlags("SpanFullWidth", &tree_node_flags, ImGuiTreeNodeFlags_SpanFullWidth);
-				static ImGuiTableFlags flags = ImGuiTableFlags_BordersV | ImGuiTableFlags_BordersOuterH | ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg | ImGuiTableFlags_NoBordersInBody;
 
-				if (ImGui::BeginTable("3ways", 3, flags))
+				if (ImGui::BeginTable("3ways", 2, flags))
 				{
+					ImGui::TableSetupColumn("Number", ImGuiTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 5.f);
 					ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_NoHide);
-					ImGui::TableSetupColumn("Size", ImGuiTableColumnFlags_WidthFixed, 100 * 12.0f);
-					ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 100 * 18.0f);
+					ImGui::TableHeadersRow();
 
-					//ImGui::TreeNodeEx("hsadsadsadddddddddddddddddddddddddddddddddsafzcxzwqwei", tree_node_flags | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_NoTreePushOnOpen);
+					ImGui::TableNextRow();
+					ImGui::TableNextColumn();
+					ImGuiWindowFlags childFlags = ImGuiWindowFlags_AlwaysHorizontalScrollbar |
+						ImGuiWindowFlags_AlwaysVerticalScrollbar;
+					if (ImGui::TreeNodeEx("hi", tree_node_flags))
+					{
+						ImGui::TableNextColumn();
+						ImGui::Selectable("sibal");
+						ImGui::TableNextRow();
+						ImGui::TableNextColumn();
+						ImGui::Selectable("rgasd");
 
+						ImGui::Selectable("sibsdsal");
 
+						//Ex End
+						ImGui::TreePop();
+
+					}
 					ImGui::EndTable();
 				}
-
+				//Hierarchy End
 				ImGui::TreePop();
 			}
-		}
+			if (ImGui::CollapsingHeader("Bone Info"))
+			{
 
-		ImGui::End();
+			}
+			//Bone Hierarchy End
+			ImGui::End();
+		}
 	}
 }
 
 void GUIAssetReadWrite::MaterialView()
 {
 }
-
 
 void GUIAssetReadWrite::Update()
 {
