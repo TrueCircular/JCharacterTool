@@ -10,7 +10,7 @@ cbuffer BoneBuffer
 
 uint BoneIndex;
 
-MeshOutput VS(VertexTextureNormalTangent input)
+MeshOutput VS(VertexTextureNormalTangentBlend input)
 {
 	MeshOutput output;
     output.position = mul(input.position, BoneTransform[BoneIndex]);

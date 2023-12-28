@@ -60,10 +60,7 @@
     <ClCompile Include="ToolWindows.cpp">
       <Filter>Scripts</Filter>
     </ClCompile>
-    <ClCompile Include="GUIAnimationReadWrite.cpp">
-      <Filter>Scripts\Manager\GUI\Component</Filter>
-    </ClCompile>
-    <ClCompile Include="GUIAssetReadWrite.cpp">
+    <ClCompile Include="GUIFile.cpp">
       <Filter>Scripts\Manager\GUI\Component</Filter>
     </ClCompile>
     <ClCompile Include="GUIView.cpp">
@@ -101,10 +98,7 @@
     <ClInclude Include="ToolWindows.h">
       <Filter>Scripts</Filter>
     </ClInclude>
-    <ClInclude Include="GUIAssetReadWrite.h">
-      <Filter>Scripts\Manager\GUI\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="GUIAnimationReadWrite.h">
+    <ClInclude Include="GUIFile.h">
       <Filter>Scripts\Manager\GUI\Component</Filter>
     </ClInclude>
     <ClInclude Include="GUIView.h">

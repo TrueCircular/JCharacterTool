@@ -13,6 +13,7 @@ private:
 	void CreateGiant();
 	void CreateBaronGeddon();
 	void CreateMesh();
+	void CreateTurret();
 private:
 	shared_ptr<Shader> _shader;
 	//obj

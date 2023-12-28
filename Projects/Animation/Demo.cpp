@@ -9,15 +9,15 @@ void Demo::Init()
 	_shader = make_shared<Shader>(L"Animation.fx");
 	//{
 	//	shared_ptr<Converter> converter = make_shared<Converter>();
-	//	converter->ReadAssetFile(ModelType::Skeletal, L"Ragnaros/Ragnaros.fbx");
-	//	converter->ExportMaterialData(L"Ragnaros/Ragnaros");
-	//	converter->ExportModelData(L"Ragnaros/Ragnaros");
+	//	converter->ReadAssetFile(ModelType::Skeletal, L"Turret/Turret_Deploy1.FBX");
+	//	converter->ExportMaterialData(L"Turret/Turret");
+	//	converter->ExportModelData(L"Turret/Turret");
 	//}
 	//{
 	//	shared_ptr<Converter> converter = make_shared<Converter>();
 
-	//	converter->ReadAssetFile(ModelType::Skeletal, L"Ragnaros/Animations/Casting.fbx");
-	//	converter->ExportAnimationData(L"Ragnaros/Casting");
+	//	converter->ReadAssetFile(ModelType::Skeletal, L"Turret/Turret_Deploy1.FBX");
+	//	converter->ExportAnimationData(L"Turret/ani");
 	//}
 
 	//리소스 매니저 초기화
@@ -36,10 +36,11 @@ void Demo::Init()
 	}
 
 
-	CreateRagnaros();
+	//CreateRagnaros();
 	//CreateCoreHound();
 	//CreateGiant();
 	//CreateBaronGeddon();
+	//CreateTurret();
 
 	//light
 	{
@@ -57,14 +58,14 @@ void Demo::Update()
 	_camera->Update();
 	MANAGER_RENDERER()->Update();
 
-	if (MANAGER_INPUT()->GetButtonDown(KEY_TYPE::KEY_1))
-	{
-		_obj->GetModelAnimator()->SetPass(0);
-	}
-	if (MANAGER_INPUT()->GetButtonDown(KEY_TYPE::KEY_2))
-	{
-		_obj->GetModelAnimator()->SetPass(1);
-	}
+	//if (MANAGER_INPUT()->GetButtonDown(KEY_TYPE::KEY_1))
+	//{
+	//	_obj->GetModelAnimator()->SetPass(0);
+	//}
+	//if (MANAGER_INPUT()->GetButtonDown(KEY_TYPE::KEY_2))
+	//{
+	//	_obj->GetModelAnimator()->SetPass(1);
+	//}
 
 	{
 		_obj->Update();
@@ -231,4 +232,30 @@ void Demo::CreateMesh()
 	_obj->AddComponent(make_shared<ModelAnimator>(_shader));
 	_obj->GetModelAnimator()->SetModel(m1);
 	//_obj->GetModelAnimator()->SetPass(1);
+}
+
+void Demo::CreateTurret()
+{
+	//Model Import
+	shared_ptr<Model> m1 = make_shared<Model>();
+	m1->SetModelType(ModelType::Skeletal);
+	m1->ReadModel(L"Turret/Turret");
+	m1->ReadMaterial(L"Turret/Turret");
+
+	m1->ReadAnimation(L"Turret/ani");
+	//m1->ReadAnimation(L"Kachujin/Run");
+	//m1->ReadAnimation(L"Kachujin/Slash");
+
+	//GameObejct
+	_obj = make_shared<GameObject>();
+	_obj->Awake();
+
+	_obj->GetTransform()->SetPosition(Vec3(0, 0, 5));
+	_obj->GetTransform()->SetScale(Vec3(1.0f));
+	Vec3 rot = _obj->GetTransform()->GetLocalRotation();
+	rot.x += ::XMConvertToRadians(90.f);
+	_obj->GetTransform()->SetLocalRotation(rot);
+
+	_obj->AddComponent(make_shared<ModelAnimator>(_shader));
+	_obj->GetModelAnimator()->SetModel(m1);
 }

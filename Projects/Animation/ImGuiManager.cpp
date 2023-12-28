@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "ImGuiManager.h"
-#include "GUIAssetReadWrite.h"
-#include "GUIAnimationReadWrite.h"
+#include "GUIFile.h"
 #include "GUIView.h"
 
 ImGuiManager* ImGuiManager::_instance = nullptr;
@@ -21,8 +20,7 @@ void ImGuiManager::GuiCreate()
 
 	_guiList.reserve(guiSize);
 	//File
-	_guiList.push_back(make_shared<GUIAssetReadWrite>());
-	_guiList.push_back(make_shared<GUIAnimationReadWrite>());
+	_guiList.push_back(make_shared<GUIFile>());
 	//View
 	_guiList.push_back(make_shared<GUIView>());
 	//SceneTest
@@ -36,16 +34,17 @@ void ImGuiManager::GuiUpdate()
 		if (ImGui::BeginMenu("File"))
 		{
 			_guiList[0]->Update();
-			_guiList[1]->Update();
 
 			ImGui::EndMenu();
 		}
 		//View Section
 		if (ImGui::BeginMenu("View"))
 		{
-			_guiList[2]->Update();
+			_guiList[1]->Update();
+
 			ImGui::EndMenu();
 		}
+		//Scene Test Section
 		if (ImGui::BeginMenu("SceneTest"))
 		{
 			ImGui::EndMenu();

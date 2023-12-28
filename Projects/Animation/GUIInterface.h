@@ -3,10 +3,19 @@
 enum class GUIType
 {
 	None,
-	AssetReadWrite,
-	AnimationReadWrite,
-	MeshEditing,
+	File,
 	View,
+	SceneTest,
+	End
+};
+
+enum class AssetType
+{
+	None,
+	Skeletal,
+	Static,
+	Effect,
+	Animation,
 	End
 };
 

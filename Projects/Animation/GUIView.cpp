@@ -29,8 +29,68 @@ void GUIView::DrawGrid()
 
 		//ImGuizmo::Manipulate(cameraView, cameraProj, mCurrentGizmoOperation, mCurrentGizmoMode, ident, NULL, NULL);
 		//ImGuizmo::ViewManipulate(cameraView, camDistance, ImVec2(viewManipulateRight - 128, viewManipulateTop), ImVec2(128, 128), 0x10101010);
-
 	}
+}
+
+void GUIView::BoneHierarchy()
+{
+	if (_isBoneHierarchy)
+	{
+		ImGui::SetNextWindowPos(_boneHierarchyPos);
+		ImGui::SetNextWindowSize(_boneHierarchysize);
+
+		if (ImGui::Begin("Bone Hierarchy"))
+		{
+			const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("A").x;
+
+			if (ImGui::TreeNode("Bone List"))
+			{
+				static ImGuiTableFlags flags = ImGuiTableFlags_BordersV | ImGuiTableFlags_BordersOuterH | ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg | ImGuiTableFlags_NoBordersInBody;
+				static ImGuiTreeNodeFlags tree_node_flags = ImGuiTreeNodeFlags_SpanAllColumns;
+				ImGui::CheckboxFlags("SpanAllColumns", &tree_node_flags, ImGuiTreeNodeFlags_SpanAllColumns);
+				ImGui::CheckboxFlags("SpanFullWidth", &tree_node_flags, ImGuiTreeNodeFlags_SpanFullWidth);
+
+				if (ImGui::BeginTable("3ways", 2, flags))
+				{
+					ImGui::TableSetupColumn("Number", ImGuiTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 5.f);
+					ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_NoHide);
+					ImGui::TableHeadersRow();
+
+					ImGui::TableNextRow();
+					ImGui::TableNextColumn();
+					ImGuiWindowFlags childFlags = ImGuiWindowFlags_AlwaysHorizontalScrollbar |
+						ImGuiWindowFlags_AlwaysVerticalScrollbar;
+					if (ImGui::TreeNodeEx("hi", tree_node_flags))
+					{
+						ImGui::TableNextColumn();
+						ImGui::Selectable("sibal");
+						ImGui::TableNextRow();
+						ImGui::TableNextColumn();
+						ImGui::Selectable("rgasd");
+
+						ImGui::Selectable("sibsdsal");
+
+						//Ex End
+						ImGui::TreePop();
+
+					}
+					ImGui::EndTable();
+				}
+				//Hierarchy End
+				ImGui::TreePop();
+			}
+			if (ImGui::CollapsingHeader("Bone Info"))
+			{
+
+			}
+			//Bone Hierarchy End
+			ImGui::End();
+		}
+	}
+}
+
+void GUIView::LoadedAsset()
+{
 }
 
 const float* GUIView::ConvertMatrixToFloat(Matrix& mat)
@@ -47,14 +107,25 @@ const float* GUIView::ConvertMatrixToFloat(Matrix& mat)
 
 void GUIView::Update()
 {
-	if (ImGui::MenuItem("View Grid"))
+	if (ImGui::BeginMenu("Read Model Asset File"))
 	{
-		_isViewGrid = true;
-	}
+		if (ImGui::MenuItem("BoneHierarchy", NULL, _isBoneHierarchy))
+		{
 
+		}
+		if (ImGui::MenuItem("Loaded AssetList"))
+		{
+
+		}
+
+		ImGui::EndMenu();
+	}
 }
 
 void GUIView::Render()
 {
-	DrawGrid();
+	//BoneHierarchy
+	{
+		BoneHierarchy();
+	}
 }

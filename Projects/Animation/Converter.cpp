@@ -46,6 +46,7 @@ void Converter::ReadModelData(aiNode* node, int32 index, int32 parent)
 
 void Converter::ReadMeshData(aiNode* node, int32 bone)
 {
+
 	for (uint32 i = 0; i < node->mNumMeshes; i++)
 	{
 		shared_ptr<asMesh> mesh = make_shared<asMesh>();
@@ -223,12 +224,11 @@ shared_ptr<asAnimation> Converter::ReadAnimationData(aiAnimation* srcAnimation)
 	shared_ptr<asAnimation> animation = make_shared<asAnimation>();
 	animation->name = srcAnimation->mName.C_Str();
 	animation->duration = (float)srcAnimation->mDuration;
+	//animation->frameCount = (uint32)srcAnimation->mDuration + 1;
+	//animation->frameRate = (float)srcAnimation->mTicksPerSecond;
 	uint32 num = (srcAnimation->mChannels[0]->mNumPositionKeys + srcAnimation->mChannels[0]->mNumRotationKeys + srcAnimation->mChannels[0]->mNumScalingKeys) / 3;
 	animation->frameCount = num;
-	//animation->frameCount = (uint32)srcAnimation->mDuration + 1;
 	animation->frameRate = (float)(num / 2);
-	//animation->frameRate = (float)srcAnimation->mTicksPerSecond;
-
 
 	map<string, shared_ptr<asAnimationNode>> cacheAnimNodes;
 	for (uint32 i = 0; i < srcAnimation->mNumChannels; i++)
@@ -313,7 +313,7 @@ shared_ptr<asAnimationNode> Converter::ParseAnimationNode(shared_ptr<asAnimation
 {
 	std::shared_ptr<asAnimationNode> node = make_shared<asAnimationNode>();
 	node->name = srcNode->mNodeName;
-	
+
 	uint32 keyCount = max(max(srcNode->mNumPositionKeys, srcNode->mNumScalingKeys), srcNode->mNumRotationKeys);
 
 	for (uint32 k = 0; k < keyCount; k++)
@@ -362,23 +362,27 @@ shared_ptr<asAnimationNode> Converter::ParseAnimationNode(shared_ptr<asAnimation
 
 void Converter::ExportModelData(wstring savePath)
 {
-	if (_currentType == ModelType::Skeletal ||
-		_currentType == ModelType::Static)
+
+	wstring finalPath = savePath + L".mesh";
+	wstring finalSkinDataPath = savePath + L".csv";
+
+	ReadModelData(_scene->mRootNode, -1, -1);
+	if (_currentType == ModelType::Skeletal)
 	{
-		wstring finalPath = _modelPath + savePath + L".mesh";
-		wstring finalSkinDataPath = _modelPath + savePath + L".csv";
-		ReadModelData(_scene->mRootNode, -1, -1);
-		if (_currentType == ModelType::Skeletal)
-		{
-			ReadSkinData();
-			WriteSkinFile(finalSkinDataPath);
-		}
-		WriteModelFile(finalPath);
+		ReadSkinData();
+		WriteSkinFile(finalSkinDataPath);
 	}
+	WriteModelFile(finalPath);
+
 }
 
-void Converter::ReadMaterialData()
+bool Converter::ReadMaterialData()
 {
+	if (_scene->mNumMaterials <= 0)
+	{
+		return false;
+	}
+
 	for (uint32 i = 0; i < _scene->mNumMaterials; i++)
 	{
 		//source
@@ -418,6 +422,8 @@ void Converter::ReadMaterialData()
 		//Push Data
 		_materials.push_back(material);
 	}
+
+	return true;
 }
 
 void Converter::WriteMaterialData(wstring finalPath)
@@ -552,17 +558,17 @@ string Converter::WriteTexture(string saveFolder, string file)
 
 void Converter::ExportMaterialData(wstring savePath)
 {
-	wstring finalPath = _texturePath + savePath + L".xml";
+	wstring finalPath = savePath + L".xml";
 	ReadMaterialData();
 	WriteMaterialData(finalPath);
 }
 
 void Converter::ExportAnimationData(wstring savePath, uint32 index)
 {
-	wstring finalPath = _animPath + savePath + L".anim";
+	wstring finalPath = savePath + L".anim";
 	assert(index < _scene->mNumAnimations);
 
-	shared_ptr<asAnimation> animation =  ReadAnimationData(_scene->mAnimations[index]);
+	shared_ptr<asAnimation> animation = ReadAnimationData(_scene->mAnimations[index]);
 	WriteAnimationData(animation, finalPath);
 }
 
@@ -630,7 +636,7 @@ void Converter::ReadAssetFile(ModelType type, wstring fileName)
 			Utils::ToString(fileStr),
 			aiProcess_MakeLeftHanded |
 			aiProcess_FlipUVs |
-			aiProcess_FlipWindingOrder|
+			aiProcess_FlipWindingOrder |
 			//aiProcess_JoinIdenticalVertices |
 			aiProcess_ImproveCacheLocality |
 			aiProcess_RemoveRedundantMaterials |

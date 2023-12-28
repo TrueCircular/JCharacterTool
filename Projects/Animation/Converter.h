@@ -32,7 +32,7 @@ private:
 	uint32 GetBoneIndex(const string& name);
 private:
 	//Material
-	void ReadMaterialData();
+	bool ReadMaterialData();
 	void WriteMaterialData(wstring finalPath);
 	string WriteTexture(string saveFolder, string file);
 private:

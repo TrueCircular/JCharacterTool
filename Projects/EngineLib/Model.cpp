@@ -284,6 +284,7 @@ void Model::ReadModel(wstring fileName)
 
 			// Material
 			mesh->materialName = Utils::ToWString(file->Read<string>());
+			
 
 			//VertexData
 			{

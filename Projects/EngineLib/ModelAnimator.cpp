@@ -145,6 +145,7 @@ void ModelAnimator::Update()
 {
 	if (_model == nullptr)
 		return;
+
 	if (_texture == nullptr)
 		CreateTexture();
 
@@ -165,47 +166,42 @@ void ModelAnimator::Update()
 		_desc.ratio = (_desc.sumTime / _timePerFrame);
 	}
 
-	// Anim Update
-	//ImGui::InputInt("AnimIndex", &_desc.animIndex);
-	//_desc.animIndex %= _model->GetAnimationCount();
-	//ImGui::InputFloat("Speed", &_desc.speed, 0.5f, 4.f);
-
 	// 애니메이션 현재 프레임 정보
 	MANAGER_RENDERER()->PushKeyframeData(_desc);
 
 	// SRV를 통해 정보 전달
 	_shader->GetSRV("TransformMap")->SetResource(_srv.Get());
 
-	// Bones
-	BoneDesc boneDesc;
+	//// Bones
+	//BoneDesc boneDesc;
 
-	const uint32 boneCount = _model->GetBoneCount();
-	for (uint32 i = 0; i < boneCount; i++)
-	{
-		shared_ptr<ModelBone> bone = _model->GetBoneByIndex(i);
-		boneDesc.transforms[i] = bone->transform;
-	}
-	MANAGER_RENDERER()->PushBoneData(boneDesc);
+	//const uint32 boneCount = _model->GetBoneCount();
+	//for (uint32 i = 0; i < boneCount; i++)
+	//{
+	//	shared_ptr<ModelBone> bone = _model->GetBoneByIndex(i);
+	//	boneDesc.transforms[i] = bone->transform;
+	//}
+	//MANAGER_RENDERER()->PushBoneData(boneDesc);
 
-	// Transform
-	auto world = GetTransform()->GetWorldMatrix();
-	MANAGER_RENDERER()->PushTransformData(TransformDesc{world});
+	//// Transform
+	//auto world = GetTransform()->GetWorldMatrix();
+	//MANAGER_RENDERER()->PushTransformData(TransformDesc{world});
 
-	const auto& meshes = _model->GetMeshes();
-	for (auto& mesh : meshes)
-	{
-		if (mesh->material)
-			mesh->material->Update();
+	//const auto& meshes = _model->GetMeshes();
+	//for (auto& mesh : meshes)
+	//{
+	//	if (mesh->material)
+	//		mesh->material->Update();
 
-		// BoneIndex
-		_shader->GetScalar("BoneIndex")->SetInt(mesh->boneIndex);
+	//	// BoneIndex
+	//	_shader->GetScalar("BoneIndex")->SetInt(mesh->boneIndex);
 
-		uint32 stride = mesh->vertexBuffer->GetStride();
-		uint32 offset = mesh->vertexBuffer->GetOffset();
+	//	uint32 stride = mesh->vertexBuffer->GetStride();
+	//	uint32 offset = mesh->vertexBuffer->GetOffset();
 
-		DC()->IASetVertexBuffers(0, 1, mesh->vertexBuffer->GetBuffer().GetAddressOf(), &stride, &offset);
-		DC()->IASetIndexBuffer(mesh->indexBuffer->GetBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
+	//	DC()->IASetVertexBuffers(0, 1, mesh->vertexBuffer->GetBuffer().GetAddressOf(), &stride, &offset);
+	//	DC()->IASetIndexBuffer(mesh->indexBuffer->GetBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
 
-		_shader->DrawIndexed(0, _pass, mesh->indexBuffer->GetCount(), 0, 0);
-	}
+	//	_shader->DrawIndexed(0, _pass, mesh->indexBuffer->GetCount(), 0, 0);
+	//}
 }
