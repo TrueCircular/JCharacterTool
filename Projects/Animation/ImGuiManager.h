@@ -2,8 +2,8 @@
 #include "GUIInterface.h"
 
 #pragma region Declaration
-class GUIAssetReadWrite;
-class GUIAnimationReadWrite;
+class GUIFile;
+class GUIView;
 #pragma endregion
 
 class ImGuiManager
@@ -23,15 +23,14 @@ private:
 	ImGuiManager();
 	~ImGuiManager();
 private:
-	bool _isRunning = false;
 	GuiList _guiList;
 private:
 	void GuiCreate();
 	void GuiUpdate();
 	void GuiRender();
-	const float* ConvertMatrixToFloat(Matrix& mat);
 public:
-	void GUIRunning(bool run) { _isRunning = run; }
+	template<typename T>
+	shared_ptr<T>& GetGui();
 public:
 	void Init();
 	void Update();
@@ -39,3 +38,17 @@ public:
 };
 
 #define MANAGER_IMGUI() ImGuiManager::GetInstance()
+
+template<typename T>
+inline shared_ptr<T>& ImGuiManager::GetGui()
+{
+	for (const auto& gui : _guiList)
+	{
+		auto& result = dynamic_pointer_cast<T>(gui);
+
+		if (result)
+		{
+			return gui;
+		}
+	}
+}

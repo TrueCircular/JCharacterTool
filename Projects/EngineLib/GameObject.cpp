@@ -60,6 +60,16 @@ shared_ptr<ModelAnimator> GameObject::GetModelAnimator()
 	return dynamic_pointer_cast<ModelAnimator>(com);
 }
 
+void GameObject::SetName(wstring& name)
+{
+	_name = name;
+}
+
+wstring GameObject::GetName()
+{
+	return _name;
+}
+
 void GameObject::AddComponent(shared_ptr<Component> component)
 {
 	component->SetGameObject(shared_from_this());

@@ -16,8 +16,6 @@ private:
 	ImVec2 _minDialogSize;
 	ImVec2 _maxDialogSize;
 	ImVec2 _readsaveDialogPos;
-	//BoneHierarchy
-	ImVec2 _hierarchySize;
 	bool _isSaveMesh = false;
 	bool _isReadMesh = false;
 	//AssetType

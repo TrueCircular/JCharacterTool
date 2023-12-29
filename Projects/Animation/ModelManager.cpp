@@ -32,33 +32,41 @@ shared_ptr<Model> ModelManager::GetModelByName(wstring name)
 	return nullptr;
 }
 
-void ModelManager::Init()
+bool ModelManager::ReadAssetFile(AssetPathDesc& desc)
 {
+	//desc init
+	_assetDesc = desc;
+
+	//converter init
 	_converter->Init();
-	ZeroMemory(&_assetDesc, sizeof(_assetDesc));
-	ZeroMemory(&_animDesc, sizeof(_animDesc));
-}
 
-void ModelManager::Update()
-{
-	for (auto& object : _objects)
+	//read asset file
+	if (_converter->ReadAssetFile(_assetDesc.ReadPath))
 	{
-		object->Update();
-	}
-}
-
-void ModelManager::Clear()
-{
-}
-
-bool ModelManager::ReadAssetFile(AssetPathDesc desc)
-{
-	if (_converter->ReadAssetFile(desc.ReadPath))
-	{
-		ExportMaterialData(desc.SaveMaterialPath);
-		ExportModelData(desc.SaveMeshPath);
+		ExportMaterialData(_assetDesc.SaveMaterialPath);
+		ExportModelData(_assetDesc.SaveMeshPath);
 
 		return true;
+	}
+
+	return false;
+}
+
+bool ModelManager::ReadAnimationFile(AnimPathDesc& desc)
+{
+	//desc init
+	_animDesc = desc;
+
+	//converter init
+	_converter->Init();
+
+	//read animation file
+	if (_converter->ReadAssetFile(_animDesc.ReadPath))
+	{
+		if (ExportAnimationData(_animDesc.SavePath))
+		{
+			return true;
+		}
 	}
 
 	return false;
@@ -84,3 +92,34 @@ bool ModelManager::ExportAnimationData(wstring exportPath)
 
 	return true;
 }
+
+bool ModelManager::CreateModel()
+{
+	return false;
+}
+
+bool ModelManager::CreateObject()
+{
+	return false;
+}
+
+void ModelManager::Init()
+{
+	_converter->Init();
+	ZeroMemory(&_assetDesc, sizeof(_assetDesc));
+	ZeroMemory(&_animDesc, sizeof(_animDesc));
+}
+
+void ModelManager::Update()
+{
+	for (auto& object : _objects)
+	{
+		object->Update();
+	}
+}
+
+void ModelManager::Clear()
+{
+}
+
+

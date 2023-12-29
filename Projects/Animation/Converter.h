@@ -10,7 +10,6 @@ public:
 private:
 	shared_ptr<Assimp::Importer> _importer;
 	const aiScene*				_scene = nullptr;
-	ModelType					_currentType = ModelType::None;
 	vector<aiNode*>				_nodeList;
 	vector<aiNodeAnim*>			_animNodeList;
 private:

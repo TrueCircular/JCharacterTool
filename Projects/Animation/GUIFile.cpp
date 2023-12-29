@@ -13,9 +13,6 @@ GUIFile::GUIFile() : Super(GUIType::File)
 	_readsaveDialogPos.x = 0.f;
 	_readsaveDialogPos.y = 18.f;
 
-	_hierarchySize.x = 350;
-	_hierarchySize.y = g_gameDesc.height;
-
 	_type = AssetType::None;
 }
 
@@ -58,57 +55,79 @@ void GUIFile::SavePoPUP()
 
 void GUIFile::Update()
 {
-	//Model
-	ImGui::MenuItem("(Model)", NULL, false, false);
-
-	//Asset Read
-	if (ImGui::BeginMenu("Read Model Asset File"))
+	//Begin MainMenu
+	if (ImGui::BeginMenu("File"))
 	{
-		if (ImGui::MenuItem("Skeletal"))
+		//Model Asset
 		{
-			string adr = Utils::ToString(RESOURCES_ADDR_ASSET_SKELETAL);
-			_dialog.OpenDialog("ReadModelAssets", "File", ".fbx,.obj",
-				adr, 1, nullptr, ImGuiFileDialogFlags_Modal);
-			_type = AssetType::Skeletal;
+			ImGui::MenuItem("(Model)", NULL, false, false);
+
+			//Asset Read
+			if (ImGui::BeginMenu("Read Model Asset File"))
+			{
+				if (ImGui::MenuItem("Skeletal"))
+				{
+					string adr = Utils::ToString(RESOURCES_ADDR_ASSET_SKELETAL);
+					_dialog.OpenDialog("ReadModelAssets", "File", ".fbx,.obj",
+						adr, 1, nullptr, ImGuiFileDialogFlags_Modal);
+					_type = AssetType::Skeletal;
+				}
+				if (ImGui::MenuItem("Static"))
+				{
+					string adr = Utils::ToString(RESOURCES_ADDR_ASSET_STATIC);
+					_dialog.OpenDialog("ReadModelAssets", "File", ".fbx,.obj",
+						adr, 1, nullptr, ImGuiFileDialogFlags_Modal);
+				}
+				ImGui::EndMenu();
+			}
+
+			//----------------------
+			ImGui::Separator();
+			//----------------------
+
+			//Save Mesh File
+			if (ImGui::MenuItem("Save Asset File as Mesh File"))
+			{
+				_isSaveMesh = true;
+			}
 		}
-		if (ImGui::MenuItem("Static"))
+
+		//----------------------
+		ImGui::Separator();
+		//----------------------
+
+		//Animation Asset
 		{
-			string adr = Utils::ToString(RESOURCES_ADDR_ASSET_STATIC);
-			_dialog.OpenDialog("ReadModelAssets", "File", ".fbx,.obj",
-				adr, 1, nullptr, ImGuiFileDialogFlags_Modal);
+			ImGui::MenuItem("(Animation)", NULL, false, false);
+
+			if (ImGui::MenuItem("Read Animation Asset File"))
+			{
+
+			}
+
+			//----------------------
+			ImGui::Separator();
+			//----------------------
+
+			if (ImGui::MenuItem("Save Asset File as Anim File"))
+			{
+
+			}
 		}
+
+		//----------------------
+		ImGui::Separator();
+		//----------------------
+
+		//Effect Asset
+		{
+			ImGui::MenuItem("(Effect)", NULL, false, false);
+
+		}
+
+		//End MainMenu
 		ImGui::EndMenu();
 	}
-
-	ImGui::Separator();
-
-	//Save Mesh File
-	if (ImGui::MenuItem("Save Asset File as Mesh File"))
-	{
-		_isSaveMesh = true;
-	}
-
-	ImGui::Separator();
-
-	//Animation Asset
-	ImGui::MenuItem("(Animation)", NULL, false, false);
-	if (ImGui::MenuItem("Read Animation Asset File"))
-	{
-
-	}
-
-	ImGui::Separator();
-
-	if (ImGui::MenuItem("Save Asset File as Anim File"))
-	{
-
-	}
-
-	ImGui::Separator();
-
-	//Effect Asset
-	ImGui::MenuItem("(Effect)", NULL, false, false);
-
 }
 
 void GUIFile::Render()

@@ -367,13 +367,11 @@ void Converter::ExportModelData(wstring savePath)
 	wstring finalSkinDataPath = savePath + L".csv";
 
 	ReadModelData(_scene->mRootNode, -1, -1);
-	if (_currentType == ModelType::Skeletal)
-	{
-		ReadSkinData();
-		WriteSkinFile(finalSkinDataPath);
-	}
-	WriteModelFile(finalPath);
 
+	ReadSkinData();
+	WriteSkinFile(finalSkinDataPath);
+
+	WriteModelFile(finalPath);
 }
 
 bool Converter::ReadMaterialData()
@@ -612,13 +610,13 @@ void Converter::ReadAssetFile(ModelType type, wstring fileName)
 	switch (type)
 	{
 	case ModelType::Skeletal:
-		_currentType = ModelType::Skeletal;
+		//_currentType = ModelType::Skeletal;
 		_assetPath = RESOURCES_ADDR_ASSET_SKELETAL;
 		_modelPath = RESOURCES_ADDR_MESH_SKELETAL;
 		_texturePath = RESOURCES_ADDR_TEXTURE_SKELETAL;
 		break;
 	case ModelType::Static:
-		_currentType = ModelType::Static;
+		//_currentType = ModelType::Static;
 		_assetPath = RESOURCES_ADDR_ASSET_STATIC;
 		_modelPath = RESOURCES_ADDR_MESH_STATIC;
 		_texturePath = RESOURCES_ADDR_TEXTURE_STATIC;

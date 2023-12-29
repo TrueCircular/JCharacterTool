@@ -16,8 +16,12 @@ private:
 	shared_ptr<Model>	_model;
 	uint8				_pass = 0;
 public:
+	shared_ptr<Model> GetModel() { return _model; }
+	shared_ptr<Shader> GetShader() { return _shader; }
+public:
 	void SetModel(shared_ptr<Model> model);
 	void SetPass(uint8 pass) { _pass = pass; }
+	void SetShader(shared_ptr<Shader> shader) { _shader = shader; }
 public:
 	virtual void Update() override;
 };

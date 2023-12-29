@@ -16,8 +16,8 @@ void Demo::Init()
 	//{
 	//	shared_ptr<Converter> converter = make_shared<Converter>();
 
-	//	converter->ReadAssetFile(ModelType::Skeletal, L"Turret/Turret_Deploy1.FBX");
-	//	converter->ExportAnimationData(L"Turret/ani");
+	//	converter->ReadAssetFile(ModelType::Skeletal, L"Ragnaros/Animations/Idle.fbx");
+	//	converter->ExportAnimationData(L"Ragnaros/Idle");
 	//}
 
 	//리소스 매니저 초기화
@@ -57,19 +57,6 @@ void Demo::Update()
 {
 	_camera->Update();
 	MANAGER_RENDERER()->Update();
-
-	//if (MANAGER_INPUT()->GetButtonDown(KEY_TYPE::KEY_1))
-	//{
-	//	_obj->GetModelAnimator()->SetPass(0);
-	//}
-	//if (MANAGER_INPUT()->GetButtonDown(KEY_TYPE::KEY_2))
-	//{
-	//	_obj->GetModelAnimator()->SetPass(1);
-	//}
-
-	{
-		_obj->Update();
-	}
 }
 
 void Demo::Render()

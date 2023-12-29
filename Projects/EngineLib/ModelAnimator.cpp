@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "ModelAnimator.h"
-#include "ModelAnimation.h"
+
+ModelAnimator::ModelAnimator() : Super(ComponentType::ModelAnimator)
+{
+}
 
 ModelAnimator::ModelAnimator(shared_ptr<Shader> shader) : Super(ComponentType::ModelAnimator), _shader(shader)
 {
@@ -130,15 +133,10 @@ void ModelAnimator::CreateAnimationTransform(uint32 index)
 	}
 }
 
-void ModelAnimator::SetModel(shared_ptr<Model> model)
+void ModelAnimator::Awake()
 {
-	_model = model;
-
-	const auto& materials = _model->GetMaterials();
-	for (auto& material : materials)
-	{
-		material->SetShader(_shader);
-	}
+	_model = GetGameObject()->GetModelRenderer()->GetModel();
+	_shader = GetGameObject()->GetModelRenderer()->GetShader();
 }
 
 void ModelAnimator::Update()
@@ -149,59 +147,30 @@ void ModelAnimator::Update()
 	if (_texture == nullptr)
 		CreateTexture();
 
-	_desc.sumTime += MANAGER_TIME()->GetDeltaTime();
-
-	shared_ptr<ModelAnimation> current = _model->GetAnimationByIndex(_desc.animIndex);
-	if (current)
+	if (_isPlay)
 	{
-		_timePerFrame = 1 / (current->frameRate * _desc.speed);
+		_keyFrameDesc.sumTime += MANAGER_TIME()->GetDeltaTime();
 
-		if (_desc.sumTime >= _timePerFrame)
+		_currentAnim = _model->GetAnimationByIndex(_keyFrameDesc.animIndex);
+
+		if (_currentAnim)
 		{
-			_desc.currentFrame = (_desc.currentFrame + 1) % current->frameCount;
-			_desc.nextFrame = (_desc.currentFrame + 1) % current->frameCount;
-			_desc.sumTime = 0.f;
+			_timePerFrame = 1 / (_currentAnim->frameRate * _keyFrameDesc.speed);
+
+			if (_keyFrameDesc.sumTime >= _timePerFrame)
+			{
+				_keyFrameDesc.currentFrame = (_keyFrameDesc.currentFrame + 1) % _currentAnim->frameCount;
+				_keyFrameDesc.nextFrame = (_keyFrameDesc.currentFrame + 1) % _currentAnim->frameCount;
+				_keyFrameDesc.sumTime = 0.f;
+			}
+
+			_keyFrameDesc.ratio = (_keyFrameDesc.sumTime / _timePerFrame);
 		}
 
-		_desc.ratio = (_desc.sumTime / _timePerFrame);
+		// 애니메이션 현재 프레임 정보
+		MANAGER_RENDERER()->PushKeyframeData(_keyFrameDesc);
+
+		// SRV를 통해 정보 전달
+		_shader->GetSRV("TransformMap")->SetResource(_srv.Get());
 	}
-
-	// 애니메이션 현재 프레임 정보
-	MANAGER_RENDERER()->PushKeyframeData(_desc);
-
-	// SRV를 통해 정보 전달
-	_shader->GetSRV("TransformMap")->SetResource(_srv.Get());
-
-	//// Bones
-	//BoneDesc boneDesc;
-
-	//const uint32 boneCount = _model->GetBoneCount();
-	//for (uint32 i = 0; i < boneCount; i++)
-	//{
-	//	shared_ptr<ModelBone> bone = _model->GetBoneByIndex(i);
-	//	boneDesc.transforms[i] = bone->transform;
-	//}
-	//MANAGER_RENDERER()->PushBoneData(boneDesc);
-
-	//// Transform
-	//auto world = GetTransform()->GetWorldMatrix();
-	//MANAGER_RENDERER()->PushTransformData(TransformDesc{world});
-
-	//const auto& meshes = _model->GetMeshes();
-	//for (auto& mesh : meshes)
-	//{
-	//	if (mesh->material)
-	//		mesh->material->Update();
-
-	//	// BoneIndex
-	//	_shader->GetScalar("BoneIndex")->SetInt(mesh->boneIndex);
-
-	//	uint32 stride = mesh->vertexBuffer->GetStride();
-	//	uint32 offset = mesh->vertexBuffer->GetOffset();
-
-	//	DC()->IASetVertexBuffers(0, 1, mesh->vertexBuffer->GetBuffer().GetAddressOf(), &stride, &offset);
-	//	DC()->IASetIndexBuffer(mesh->indexBuffer->GetBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
-
-	//	_shader->DrawIndexed(0, _pass, mesh->indexBuffer->GetCount(), 0, 0);
-	//}
 }

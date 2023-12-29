@@ -12,14 +12,19 @@ private:
 protected:
 	array<shared_ptr<Component>, FIXED_COMPONENT_COUNT> _components;
 	vector<shared_ptr<MonoBehaviour>> _scripts;
+	wstring _name;
 public:	
-	shared_ptr<Component>		GetFixedComponent(ComponentType type);
+	template<class T>
+	shared_ptr<T>			GetComponent();
+	shared_ptr<Component>	GetFixedComponent(ComponentType type);
 public:
 	shared_ptr<Transform>		GetTransform();
 	shared_ptr<Camera>			GetCamera();
 	shared_ptr<MeshRenderer>	GetMeshRenderer();
 	shared_ptr<ModelRenderer>	GetModelRenderer();
 	shared_ptr<ModelAnimator>	GetModelAnimator();
+	void SetName(wstring& name);
+	wstring GetName();
 public:
 	void AddComponent(shared_ptr<Component> component);
 public:
@@ -29,3 +34,17 @@ public:
 	virtual void Update();
 	virtual void LateUpdate();
 };
+
+template<class T>
+inline shared_ptr<T> GameObject::GetComponent()
+{
+	for (const auto& script : _scripts)
+	{
+		auto castResult = dynamic_pointer_cast<T>(script);
+
+		if (castResult)
+			return castResult;
+	}
+
+	return nullptr;
+}

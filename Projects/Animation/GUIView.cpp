@@ -3,6 +3,13 @@
 
 GUIView::GUIView() : Super(GUIType::View)
 {
+	_loadedAssetPos.x = g_gameDesc.width - 350.f;
+	_loadedAssetPos.y = 18.f;
+
+	_boneHierarchyPos.x = 0.f;
+	_boneHierarchyPos.y = 18.f;
+	_boneHierarchySize.x = 350.f;
+	_boneHierarchySize.y = g_gameDesc.height;
 }
 
 GUIView::~GUIView()
@@ -11,33 +18,18 @@ GUIView::~GUIView()
 
 void GUIView::DrawGrid()
 {
-	if (_isViewGrid)
-	{
-		Matrix tempViewMat = Camera::S_MatView;
-		tempViewMat.Transpose();
-		Matrix tempProjMat = Camera::S_MatProjection;
-		Matrix iden = Matrix::Identity;
-		//iden = iden *tempViewMat * tempProjMat;
-	
-		const float* cameraView = ConvertMatrixToFloat(tempViewMat);
-		const float* cameraProj = ConvertMatrixToFloat(tempProjMat);
-		float* ident = const_cast<float*>(ConvertMatrixToFloat(iden));
+}
 
-		ImGuizmo::SetRect(0, 0, 1600.f, 900.f);
-		ImGuizmo::DrawGrid(cameraView, cameraProj, ident, 1000.f);
-		//ImGuizmo::SetOrthographic(false);
-
-		//ImGuizmo::Manipulate(cameraView, cameraProj, mCurrentGizmoOperation, mCurrentGizmoMode, ident, NULL, NULL);
-		//ImGuizmo::ViewManipulate(cameraView, camDistance, ImVec2(viewManipulateRight - 128, viewManipulateTop), ImVec2(128, 128), 0x10101010);
-	}
+void GUIView::LoadedAsset()
+{
 }
 
 void GUIView::BoneHierarchy()
 {
-	if (_isBoneHierarchy)
+	if (_showBoneHierarchy)
 	{
 		ImGui::SetNextWindowPos(_boneHierarchyPos);
-		ImGui::SetNextWindowSize(_boneHierarchysize);
+		ImGui::SetNextWindowSize(_boneHierarchySize);
 
 		if (ImGui::Begin("Bone Hierarchy"))
 		{
@@ -89,7 +81,19 @@ void GUIView::BoneHierarchy()
 	}
 }
 
-void GUIView::LoadedAsset()
+void GUIView::Transform()
+{
+}
+
+void GUIView::Material()
+{
+}
+
+void GUIView::Animation()
+{
+}
+
+void GUIView::Lighting()
 {
 }
 
@@ -107,23 +111,47 @@ const float* GUIView::ConvertMatrixToFloat(Matrix& mat)
 
 void GUIView::Update()
 {
-	if (ImGui::BeginMenu("Read Model Asset File"))
+	//Begin MainMenu
+	if (ImGui::BeginMenu("View"))
 	{
-		if (ImGui::MenuItem("BoneHierarchy", NULL, _isBoneHierarchy))
+
+		if (ImGui::MenuItem("Loaded AssetList",NULL, _showLoadedAsset))
 		{
-
+			if (_showLoadedAsset)
+			{
+				_showLoadedAsset = false;
+			}
+			else
+			{
+				_showLoadedAsset = true;
+			}
 		}
-		if (ImGui::MenuItem("Loaded AssetList"))
+
+		if (ImGui::MenuItem("BoneHierarchy", NULL, _showBoneHierarchy))
 		{
-
+			if (_showBoneHierarchy)
+			{
+				_showBoneHierarchy = false;
+			}
+			else
+			{
+				_showBoneHierarchy = true;
+			}
 		}
 
+		//End MainMenu
 		ImGui::EndMenu();
 	}
+
 }
 
 void GUIView::Render()
 {
+	//LoadedAsset
+	{
+		LoadedAsset();
+	}
+
 	//BoneHierarchy
 	{
 		BoneHierarchy();
