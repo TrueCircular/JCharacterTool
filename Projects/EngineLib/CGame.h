@@ -7,6 +7,7 @@ public:
 	virtual ~CGame(){}
 protected:
 	CGameDesc _desc;
+	DWORD _dwStyle;
 protected:
 	virtual void Update();
 protected:

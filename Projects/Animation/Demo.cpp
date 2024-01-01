@@ -36,7 +36,7 @@ void Demo::Init()
 	}
 
 
-	//CreateRagnaros();
+	CreateRagnaros();
 	//CreateCoreHound();
 	//CreateGiant();
 	//CreateBaronGeddon();
@@ -57,6 +57,10 @@ void Demo::Update()
 {
 	_camera->Update();
 	MANAGER_RENDERER()->Update();
+
+	{
+		_obj->Update();
+	}
 }
 
 void Demo::Render()
@@ -87,6 +91,10 @@ void Demo::CreateRagnaros()
 
 	//GameObejct
 	_obj = make_shared<GameObject>();
+	_obj->AddComponent(make_shared<ModelRenderer>(_shader));
+	_obj->GetModelRenderer()->SetModel(m1);
+	_obj->AddComponent(make_shared<ModelAnimator>(_shader));
+	_obj->GetModelAnimator()->SetPlay(true);
 	_obj->Awake();
 
 	_obj->GetTransform()->SetPosition(Vec3(0, 0, 0));
@@ -95,9 +103,6 @@ void Demo::CreateRagnaros()
 	rot.x += ::XMConvertToRadians(90.f);
 	rot.y += ::XMConvertToRadians(90.f);
 	_obj->GetTransform()->SetLocalRotation(rot);
-
-	_obj->AddComponent(make_shared<ModelAnimator>(_shader));
-	_obj->GetModelAnimator()->SetModel(m1);
 	//_obj->GetModelAnimator()->SetPass(1);
 }
 

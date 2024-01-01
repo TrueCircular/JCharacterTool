@@ -62,7 +62,6 @@ void ImGuiManager::Init()
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 		// Setup Dear ImGui style
 		ImGui::StyleColorsDark();
 		// Setup Platform/Renderer backends
@@ -83,6 +82,7 @@ void ImGuiManager::Update()
 		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
+		ImGuizmo::SetOrthographic(false);
 		ImGuizmo::BeginFrame();
 
 		//ImGuizmo::Enable(true);
@@ -103,5 +103,6 @@ void ImGuiManager::Render()
 	{
 		ImGui::Render();
 		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	
 	}
 }

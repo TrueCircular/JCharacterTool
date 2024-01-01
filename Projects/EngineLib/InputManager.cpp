@@ -69,21 +69,11 @@ void InputManager::Update()
 
 void InputManager::CalculateWorldPos()
 {
-	//float viewX = ((2.0f * _screenMousePos.x) / g_gameDesc.width - 1.0f) / Camera::S_MatProjection._11;
-	//float viewY = -((2.0f * _screenMousePos.y) / g_gameDesc.height - 1.0f) / Camera::S_MatProjection._22;
-
-	//Vec3 nVec(viewX, viewY, 1.0f);
-	//Matrix mat = (Camera::S_MatView * Camera::S_MatProjection).Invert();
-
-	//Vec3 last = Vec3::Transform(nVec, mat);
-	//_worldMousePos.x = last.x;
-	//_worldMousePos.y = last.y;
-	//_worldMousePos.z = last.z;
 	float ndcX = ((2.0f * _screenMousePos.x) / g_gameDesc.width - 1.0f);
 	float ndcY = -((2.0f * _screenMousePos.y) / g_gameDesc.height - 1.0f);
 
 	Vec3 nVec(ndcX, ndcY, 1.0f);
-	Matrix mat = (Camera::S_MatView * Camera::S_MatProjection).Invert();
+	Matrix mat = (Camera::S_MatView).Invert();
 	Vec3 last = Vec3::Transform(nVec, mat);
 
 	_worldMousePos.x = last.x;

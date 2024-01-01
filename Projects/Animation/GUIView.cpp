@@ -1,15 +1,63 @@
 #include "pch.h"
 #include "GUIView.h"
 
+static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
+
+void GUIView::HelpMarker(const char* desc)
+{
+	ImGui::TextDisabled("(?)");
+	if (ImGui::BeginItemTooltip())
+	{
+		ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+		ImGui::TextUnformatted(desc);
+		ImGui::PopTextWrapPos();
+		ImGui::EndTooltip();
+	}
+}
+
 GUIView::GUIView() : Super(GUIType::View)
 {
-	_loadedAssetPos.x = g_gameDesc.width - 350.f;
-	_loadedAssetPos.y = 18.f;
+	{
+		_loadedAssetPos.x = g_gameDesc.width - 350.f;
+		_loadedAssetPos.y = (g_gameDesc.height - 250.f);
+		_loadedAssetSize.x = 350.f;
+		_loadedAssetSize.y = 250.f;
+	}
 
-	_boneHierarchyPos.x = 0.f;
-	_boneHierarchyPos.y = 18.f;
-	_boneHierarchySize.x = 350.f;
-	_boneHierarchySize.y = g_gameDesc.height;
+	{
+		_boneHierarchyPos.x = 0.f;
+		_boneHierarchyPos.y = 18.f;
+		_boneHierarchySize.x = 350.f;
+		_boneHierarchySize.y = g_gameDesc.height - 18.f;
+	}
+
+	{
+		_inspectorPos.x = g_gameDesc.width - 350.f;
+		_inspectorPos.y = 18.f;
+		_inspectorSize.x = 350.f;
+		_inspectorSize.y = 632.f;
+	}
+
+	{
+		_animationPos.x = 350.f;
+		_animationPos.y = 650.f;
+		_animationSize.x = 900.f;
+		_animationSize.y = 250.f;
+	}
+
+	{
+		_transformPos[0] = 0.f;
+		_transformPos[1] = 0.f;
+		_transformPos[2] = 0.f;
+
+		_transformRot[0] = 0.f;
+		_transformRot[1] = 0.f;
+		_transformRot[2] = 0.f;
+
+		_transformScale[0] = 1.f;
+		_transformScale[1] = 1.f;
+		_transformScale[2] = 1.f;
+	}
 }
 
 GUIView::~GUIView()
@@ -22,6 +70,18 @@ void GUIView::DrawGrid()
 
 void GUIView::LoadedAsset()
 {
+	if (_showLoadedAsset)
+	{
+		ImGui::SetNextWindowPos(_loadedAssetPos);
+		ImGui::SetNextWindowSize(_loadedAssetSize);
+		ImGuiWindowFlags assetFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize;
+
+		if (ImGui::Begin("AssetList",&_showLoadedAsset, assetFlags))
+		{
+
+		}
+		ImGui::End();
+	}
 }
 
 void GUIView::BoneHierarchy()
@@ -31,11 +91,13 @@ void GUIView::BoneHierarchy()
 		ImGui::SetNextWindowPos(_boneHierarchyPos);
 		ImGui::SetNextWindowSize(_boneHierarchySize);
 
-		if (ImGui::Begin("Bone Hierarchy"))
+		ImGuiWindowFlags bhFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize;
+
+		if (ImGui::Begin("Bone Hierarchy", &_showBoneHierarchy, bhFlags))
 		{
 			const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("A").x;
 
-			if (ImGui::TreeNode("Bone List"))
+			if (ImGui::TreeNodeEx("Bone List", ImGuiTreeNodeFlags_DefaultOpen))
 			{
 				static ImGuiTableFlags flags = ImGuiTableFlags_BordersV | ImGuiTableFlags_BordersOuterH | ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg | ImGuiTableFlags_NoBordersInBody;
 				static ImGuiTreeNodeFlags tree_node_flags = ImGuiTreeNodeFlags_SpanAllColumns;
@@ -71,33 +133,155 @@ void GUIView::BoneHierarchy()
 				//Hierarchy End
 				ImGui::TreePop();
 			}
-			if (ImGui::CollapsingHeader("Bone Info"))
+			if (ImGui::CollapsingHeader("Bone Info", ImGuiTreeNodeFlags_DefaultOpen))
 			{
 
 			}
-			//Bone Hierarchy End
-			ImGui::End();
+
 		}
+		//Bone Hierarchy End
+		ImGui::End();
+	}
+}
+
+void GUIView::Inspector()
+{
+	if (_showInspector)
+	{
+		ImGui::SetNextWindowPos(_inspectorPos);
+		ImGui::SetNextWindowSize(_inspectorSize);
+
+		ImGuiWindowFlags insFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize;
+		//Begin Inspector
+		if (ImGui::Begin("Inspector", &_showInspector, insFlags))
+		{		
+			//Transform
+			{
+				this->Transform();
+			}
+			//Mesh
+			{
+				this->Mesh();
+			}
+			//Material
+			{
+				this->Material();
+			}
+		}
+		//End Inspector
+		ImGui::End();
 	}
 }
 
 void GUIView::Transform()
 {
+	if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
+	{	
+		HelpMarker("If you want, you can adjust Transform by default through mouse drag. Alternatively, you can enter the value directly by double-clicking.");
+
+		//Position
+		ImGui::Columns(2);
+		ImGui::Separator();
+		ImGui::SetColumnWidth(ImGui::GetColumnIndex(), 75.f);
+		ImGui::Text("Position");
+		ImGui::NextColumn();
+		ImGui::DragFloat3("##Position", _transformPos, 0.01f);
+		ImGui::SameLine(0.f, 40.f);
+		ImGui::PushID("##PosID");
+		if(ImGui::ButtonEx("Reset"))
+		{
+			_transformPos[0] = 0.f;
+			_transformPos[1] = 0.f;
+			_transformPos[2] = 0.f;
+		}
+		ImGui::PopID();
+		ImGui::Columns();
+
+		//Rotation
+		ImGui::Columns(2);
+		ImGui::Separator();
+		ImGui::SetColumnWidth(ImGui::GetColumnIndex(), 75.f);
+		ImGui::Text("Rotaiotn");
+		ImGui::NextColumn();
+		ImGui::DragFloat3("##Rotation", _transformRot, 0.01f);
+		ImGui::SameLine(0.f, 40.f);
+		ImGui::PushID("##RotID");
+		if (ImGui::ButtonEx("Reset"))
+		{
+			_transformRot[0] = 0.f;
+			_transformRot[1] = 0.f;
+			_transformRot[2] = 0.f;
+		}
+		ImGui::PopID();
+		ImGui::Columns();
+
+		//Scale
+		ImGui::Columns(2);
+		ImGui::Separator();
+		ImGui::SetColumnWidth(ImGui::GetColumnIndex(), 75.f);
+		ImGui::Text("Scale");
+		ImGui::NextColumn();
+		if (ImGui::DragFloat3("##Scale", _transformScale, 0.01f))
+		{
+			if (_scaleCheck)
+			{
+				_transformScale[2] = _transformScale[1] = _transformScale[0];
+			}
+		}
+		ImGui::SameLine(0.f, 10.f);
+		ImGui::Checkbox("##scaleCheck", &_scaleCheck);
+		ImGui::SetItemTooltip("If this CheckBox is checked, All elements of the Scale\nincrease and decrease equally depending on the value of X.");
+		ImGui::SameLine(0.f, 11.f);
+		ImGui::PushID("##ScaleID");
+		if (ImGui::ButtonEx("Reset"))
+		{
+			_transformScale[0] = 1.f;
+			_transformScale[1] = 1.f;
+			_transformScale[2] = 1.f;
+		}
+		ImGui::PopID();
+		ImGui::Columns();
+	}
+}
+
+void GUIView::Mesh()
+{
+	if (ImGui::CollapsingHeader("Mesh", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+
+	}
 }
 
 void GUIView::Material()
 {
+	if (ImGui::CollapsingHeader("Material", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+
+	}
 }
 
 void GUIView::Animation()
 {
+	if (_showAnimation)
+	{
+		ImGui::SetNextWindowPos(_animationPos);
+		ImGui::SetNextWindowSize(_animationSize);
+
+		ImGuiWindowFlags aniFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize;
+		//Begin Inspector
+		if (ImGui::Begin("Animation", &_showAnimation, aniFlags))
+		{
+		}
+		//End Inspector
+		ImGui::End();
+	}
 }
 
 void GUIView::Lighting()
 {
 }
 
-const float* GUIView::ConvertMatrixToFloat(Matrix& mat)
+float* GUIView::ConvertMatrixToFloat(Matrix& mat)
 {
 	float ReturnFloat[16] = { 0, };
 
@@ -127,6 +311,26 @@ void GUIView::Update()
 			}
 		}
 
+		//----------------------
+		ImGui::Separator();
+		//----------------------
+
+		if (ImGui::MenuItem("Inspector", NULL, _showInspector))
+		{
+			if (_showInspector)
+			{
+				_showInspector = false;
+			}
+			else
+			{
+				_showInspector = true;
+			}
+		}
+
+		//----------------------
+		ImGui::Separator();
+		//----------------------
+
 		if (ImGui::MenuItem("BoneHierarchy", NULL, _showBoneHierarchy))
 		{
 			if (_showBoneHierarchy)
@@ -139,6 +343,26 @@ void GUIView::Update()
 			}
 		}
 
+		//----------------------
+		ImGui::Separator();
+		//----------------------
+
+		if (ImGui::MenuItem("Animation", NULL, _showAnimation))
+		{
+			if (_showAnimation)
+			{
+				_showAnimation = false;
+			}
+			else
+			{
+				_showAnimation = true;
+			}
+		}
+
+		//----------------------
+		ImGui::Separator();
+		//----------------------
+
 		//End MainMenu
 		ImGui::EndMenu();
 	}
@@ -147,13 +371,24 @@ void GUIView::Update()
 
 void GUIView::Render()
 {
+
 	//LoadedAsset
 	{
 		LoadedAsset();
 	}
 
+	//Inspector
+	{
+		Inspector();
+	}
+
 	//BoneHierarchy
 	{
 		BoneHierarchy();
+	}
+
+	//Animation
+	{
+		Animation();
 	}
 }
