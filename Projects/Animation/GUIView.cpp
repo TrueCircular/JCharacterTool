@@ -12,6 +12,8 @@ void GUIView::HelpMarker(const char* desc)
 		ImGui::TextUnformatted(desc);
 		ImGui::PopTextWrapPos();
 		ImGui::EndTooltip();
+
+		
 	}
 }
 
@@ -22,6 +24,13 @@ GUIView::GUIView() : Super(GUIType::View)
 		_loadedAssetPos.y = (g_gameDesc.height - 250.f);
 		_loadedAssetSize.x = 350.f;
 		_loadedAssetSize.y = 250.f;
+	}
+
+	{
+		_scenePos.x = 350.f;
+		_scenePos.y = 18.f;
+		_sceneSize.x = g_gameDesc.width - 700.f;
+		_sceneSize.y = 632.f;
 	}
 
 	{
@@ -58,13 +67,14 @@ GUIView::GUIView() : Super(GUIType::View)
 		_transformScale[1] = 1.f;
 		_transformScale[2] = 1.f;
 	}
+
+	wstring texadr = RESOURCES_ADDR_TEXTURE;
+	texadr += L"veigar.jpg";
+	tempTex = make_shared<Texture>();
+	tempTex->CreateTexture(texadr);
 }
 
 GUIView::~GUIView()
-{
-}
-
-void GUIView::DrawGrid()
 {
 }
 
@@ -79,6 +89,51 @@ void GUIView::LoadedAsset()
 		if (ImGui::Begin("AssetList",&_showLoadedAsset, assetFlags))
 		{
 
+		}
+		ImGui::End();
+	}
+}
+
+void GUIView::Scene()
+{
+	if (_showScene)
+	{
+		ImGui::SetNextWindowPos(_scenePos);
+		ImGui::SetNextWindowSize(_sceneSize);
+		ImGuiWindowFlags scFlags = ImGuiWindowFlags_NoMove;
+
+		ImGui::Begin("Scene", &_showScene, scFlags);
+		{
+			{
+				D3D11_TEXTURE2D_DESC texDesc;
+				ZeroMemory(&texDesc, sizeof(texDesc));
+				texDesc.Width = g_gameDesc.width;
+				texDesc.Height = g_gameDesc.height;
+				//texDesc.Width = _sceneSize.x;
+				//texDesc.Height = _sceneSize.y;
+				texDesc.MipLevels = 1;
+				texDesc.ArraySize = 1;
+				texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+				texDesc.SampleDesc.Count = 1;
+				texDesc.Usage = D3D11_USAGE_DEFAULT;
+				texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+
+				DEVICE()->CreateTexture2D(&texDesc, nullptr, pTex.GetAddressOf());
+				DC()->CopyResource(pTex.Get(), GRAPHICS()->GetRenderTexture().Get());
+
+				D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+				srvDesc.Format = texDesc.Format;
+				srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+				srvDesc.Texture2D.MostDetailedMip = 0;
+				srvDesc.Texture2D.MipLevels = 1;
+				DEVICE()->CreateShaderResourceView(pTex.Get(), &srvDesc, pSRV.GetAddressOf());
+			}
+
+			ImGui::GetWindowDrawList()->AddImage(
+				(void*)pSRV.Get(),
+				ImGui::GetCursorScreenPos(),
+				ImVec2(ImGui::GetCursorScreenPos().x + _sceneSize.x, ImGui::GetCursorScreenPos().y + _sceneSize.y)
+			);
 		}
 		ImGui::End();
 	}
@@ -315,6 +370,22 @@ void GUIView::Update()
 		ImGui::Separator();
 		//----------------------
 
+		if (ImGui::MenuItem("Scene", NULL, _showScene))
+		{
+			if (_showScene)
+			{
+				_showScene = false;
+			}
+			else
+			{
+				_showScene = true;
+			}
+		}
+
+		//----------------------
+		ImGui::Separator();
+		//----------------------
+
 		if (ImGui::MenuItem("Inspector", NULL, _showInspector))
 		{
 			if (_showInspector)
@@ -375,6 +446,11 @@ void GUIView::Render()
 	//LoadedAsset
 	{
 		LoadedAsset();
+	}
+
+	//Scene
+	{
+		Scene();
 	}
 
 	//Inspector

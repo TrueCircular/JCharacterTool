@@ -10,6 +10,7 @@ public:
 	virtual ~GUIView();
 private:
 	bool _showLoadedAsset = false;
+	bool _showScene = false;
 	bool _showBoneHierarchy = false;
 	bool _showInspector = false;
 	bool _showAnimation = false;
@@ -18,6 +19,9 @@ private:
 	//Loaded Asset
 	ImVec2 _loadedAssetPos;
 	ImVec2 _loadedAssetSize;
+	//Scene
+	ImVec2 _scenePos;
+	ImVec2 _sceneSize;
 	//BoneHierarchy
 	ImVec2 _boneHierarchyPos;
 	ImVec2 _boneHierarchySize;
@@ -31,13 +35,19 @@ private:
 	//Animation
 	ImVec2 _animationPos;
 	ImVec2 _animationSize;
+
+	shared_ptr<Texture> tempTex;
+
+	ComPtr<ID3D11Texture2D> pTex;
+	ComPtr<ID3D11ShaderResourceView> pSRV;
 private:
 	float* ConvertMatrixToFloat(Matrix& mat);
 	void HelpMarker(const char* desc);
 private:
-	void DrawGrid();
 	//
 	void LoadedAsset();
+	//
+	void Scene();
 	//
 	void BoneHierarchy();
 	//
