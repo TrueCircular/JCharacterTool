@@ -54,22 +54,22 @@ void Graphics::CreateDeviceAndSwapChain()
 void Graphics::CreateRenderTargetView()
 {
 	HRESULT hr;
-	_backBuffer = nullptr;
+
+	_backBuffers.resize(2);
+	_renderTargetViews.resize(2);
 
 	hr = _swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
-		(void**)_backBuffer.GetAddressOf());
+		(void**)_backBuffers[0].GetAddressOf());
+	CHECK(hr);
+	hr = _swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
+		(void**)_backBuffers[1].GetAddressOf());
 	CHECK(hr);
 
-	_renderTargetView[0] = nullptr;
-	_renderTargetView[1] = nullptr;
-
-	hr = _device->CreateRenderTargetView(_backBuffer.Get(), nullptr,
-		_renderTargetView[0].GetAddressOf());
+	hr = _device->CreateRenderTargetView(_backBuffers[0].Get(), nullptr,
+		_renderTargetViews[0].GetAddressOf());
 	CHECK(hr);
-
-	hr = _device->CreateRenderTargetView(_backBuffer.Get(), nullptr,
-		_renderTargetView[1].GetAddressOf());
-
+	hr = _device->CreateRenderTargetView(_backBuffers[1].Get(), nullptr,
+		_renderTargetViews[1].GetAddressOf());
 	CHECK(hr);
 }
 
@@ -138,10 +138,8 @@ void Graphics::Init()
 
 void Graphics::RenderBegin()
 {
-	_deviceContext->OMSetRenderTargets(2, _renderTargetView[0].GetAddressOf(), _depthStancilView.Get());
-	_deviceContext->ClearRenderTargetView(_renderTargetView[0].Get(), _clearColor);
-	_deviceContext->ClearRenderTargetView(_renderTargetView[1].Get(), _clearColor2);
-
+	_deviceContext->OMSetRenderTargets(1, _renderTargetViews[0].GetAddressOf(), _depthStancilView.Get());
+	_deviceContext->ClearRenderTargetView(_renderTargetViews[0].Get(), _clearColor);
 	_deviceContext->ClearDepthStencilView(_depthStancilView.Get(),
 		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
 	_deviceContext->RSSetViewports(1, &_viewPort);

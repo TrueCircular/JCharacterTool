@@ -109,8 +109,6 @@ void GUIView::Scene()
 				ZeroMemory(&texDesc, sizeof(texDesc));
 				texDesc.Width = g_gameDesc.width;
 				texDesc.Height = g_gameDesc.height;
-				//texDesc.Width = _sceneSize.x;
-				//texDesc.Height = _sceneSize.y;
 				texDesc.MipLevels = 1;
 				texDesc.ArraySize = 1;
 				texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -119,7 +117,7 @@ void GUIView::Scene()
 				texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 
 				DEVICE()->CreateTexture2D(&texDesc, nullptr, pTex.GetAddressOf());
-				DC()->CopyResource(pTex.Get(), GRAPHICS()->GetRenderTexture().Get());
+				DC()->CopyResource(pTex.Get(), GRAPHICS()->GetRenderTexture(1).Get());
 
 				D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
 				srvDesc.Format = texDesc.Format;

@@ -26,6 +26,13 @@ void ModelRenderer::Update()
 	if (_model == nullptr)
 		return;
 
+	ComPtr<ID3D11RenderTargetView> view = GRAPHICS()->GetRenderTargetView(1);
+	ComPtr<ID3D11DepthStencilView> dep = GRAPHICS()->GetDepthStencilView();
+
+	DC()->OMSetRenderTargets(1, view.GetAddressOf(), dep.Get());
+	float color[4] = { 0.5f,0.5f,0.5f,1.0f };
+	DC()->ClearRenderTargetView(view.Get(), color);
+
 	//Bone
 	BoneDesc boneDesc;
 
@@ -59,4 +66,7 @@ void ModelRenderer::Update()
 
 		_shader->DrawIndexed(0, _pass, mesh->indexBuffer->GetCount(), 0, 0);
 	}
+
+	view = GRAPHICS()->GetRenderTargetView(0);
+	DC()->OMSetRenderTargets(1, view.GetAddressOf(), dep.Get());
 }

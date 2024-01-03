@@ -61,6 +61,7 @@ void Demo::Update()
 	{
 		_obj->Update();
 	}
+
 }
 
 void Demo::Render()

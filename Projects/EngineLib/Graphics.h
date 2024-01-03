@@ -26,8 +26,8 @@ private:
 	ComPtr<ID3D11DeviceContext>	_deviceContext;
 	ComPtr<IDXGISwapChain>		_swapChain;
 	//RTV
-	ComPtr<ID3D11Texture2D> _backBuffer;
-	ComPtr<ID3D11RenderTargetView>	_renderTargetView[2];
+	vector<ComPtr<ID3D11Texture2D>> _backBuffers;
+	vector<ComPtr<ID3D11RenderTargetView>>	_renderTargetViews;
 	//DSV
 	ComPtr<ID3D11Texture2D> _depthStancilTexture;
 	ComPtr<ID3D11DepthStencilView> _depthStancilView;
@@ -39,8 +39,25 @@ public:
 	ComPtr<ID3D11Device>		GetDevice() { return _device; }
 	ComPtr<ID3D11DeviceContext> GetDeviceContext() { return _deviceContext; }
 	ComPtr<IDXGISwapChain>		GetSwapChain() { return _swapChain; }
-	ComPtr<ID3D11RenderTargetView> GetRenderTargetView(UINT16 num) { if(num < 8) return _renderTargetView[num]; }
-	ComPtr<ID3D11Texture2D> GetRenderTexture() { return _backBuffer; }
+	ComPtr<ID3D11RenderTargetView> GetRenderTargetView(uint16 num)
+	{ 
+		if (num <= 1)
+		{
+			return _renderTargetViews[num];
+		}
+
+		return nullptr;
+	}
+	ComPtr<ID3D11Texture2D> GetRenderTexture(uint16 num) 
+	{ 
+		if (num <= 1)
+		{
+			return _backBuffers[num];
+		}
+		return nullptr;
+	}
+	ComPtr<ID3D11DepthStencilView> GetDepthStencilView() { return _depthStancilView; }
+	D3D11_VIEWPORT& GetViewport() { return _viewPort; }
 private:
 	void CreateDeviceAndSwapChain();
 	void CreateRenderTargetView();
