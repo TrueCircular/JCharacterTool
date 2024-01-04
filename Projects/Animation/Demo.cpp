@@ -6,7 +6,7 @@
 
 void Demo::Init()
 {
-	_shader = make_shared<Shader>(L"Animation.fx");
+	_shader = make_shared<Shader>(L"GameObject.fx");
 	//{
 	//	shared_ptr<Converter> converter = make_shared<Converter>();
 	//	converter->ReadAssetFile(ModelType::Skeletal, L"Turret/Turret_Deploy1.FBX");
@@ -60,6 +60,7 @@ void Demo::Update()
 
 	{
 		_obj->Update();
+		_obj->LateUpdate();
 	}
 
 }
@@ -94,8 +95,8 @@ void Demo::CreateRagnaros()
 	_obj = make_shared<GameObject>();
 	_obj->AddComponent(make_shared<ModelRenderer>(_shader));
 	_obj->GetModelRenderer()->SetModel(m1);
-	_obj->AddComponent(make_shared<ModelAnimator>(_shader));
-	_obj->GetModelAnimator()->SetPlay(true);
+	//_obj->AddComponent(make_shared<ModelAnimator>(_shader));
+	//_obj->GetModelAnimator()->SetPlay(true);
 	_obj->Awake();
 
 	_obj->GetTransform()->SetPosition(Vec3(0, 0, 0));
@@ -104,6 +105,7 @@ void Demo::CreateRagnaros()
 	rot.x += ::XMConvertToRadians(90.f);
 	rot.y += ::XMConvertToRadians(90.f);
 	_obj->GetTransform()->SetLocalRotation(rot);
+	_obj->GetModelRenderer()->SetPass(0);
 	//_obj->GetModelAnimator()->SetPass(1);
 }
 

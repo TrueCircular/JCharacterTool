@@ -9,10 +9,16 @@ public:
 	GUIView();
 	virtual ~GUIView();
 private:
+	bool _showAll = false;
+
+	bool _showAssetSection = false;
 	bool _showLoadedAsset = false;
 	bool _showScene = false;
+
+	bool _showModelSection = false;
 	bool _showBoneHierarchy = false;
 	bool _showInspector = false;
+
 	bool _showAnimation = false;
 	bool _showGrid = false;
 private:
@@ -48,6 +54,7 @@ private:
 	void LoadedAsset();
 	//
 	void Scene();
+	void CreateRenderScene();
 	//
 	void BoneHierarchy();
 	//

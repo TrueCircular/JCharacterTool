@@ -2,12 +2,12 @@
 #include "ImGuiManager.h"
 #include "GUIFile.h"
 #include "GUIView.h"
+#include "AssetManager.h"
 
 ImGuiManager* ImGuiManager::_instance = nullptr;
 
 ImGuiManager::ImGuiManager()
 {
-
 }
 
 ImGuiManager::~ImGuiManager()
@@ -52,6 +52,8 @@ void ImGuiManager::GuiRender()
 
 void ImGuiManager::Init()
 {
+	MANAGER_ASSET()->Init();
+
 	//ImGui Main
 	{
 		// Show the window
@@ -84,8 +86,6 @@ void ImGuiManager::Update()
 		ImGui::NewFrame();
 		ImGuizmo::SetOrthographic(false);
 		ImGuizmo::BeginFrame();
-
-		//ImGuizmo::Enable(true);
 	}
 	//Gui Update
 	{
@@ -103,6 +103,5 @@ void ImGuiManager::Render()
 	{
 		ImGui::Render();
 		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-	
 	}
 }

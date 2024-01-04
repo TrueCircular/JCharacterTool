@@ -22,12 +22,6 @@
     <Filter Include="Scripts\Converter">
       <UniqueIdentifier>{00bf2971-2d5a-4354-8196-c71dc155ca0e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Plugin">
-      <UniqueIdentifier>{361563ce-d15b-452f-b92b-52ff0f98b525}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Plugin\ImGuizmo">
-      <UniqueIdentifier>{5e9b4d94-0605-4e35-84a7-c7f4e0e28834}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Scripts\Manager\GUI">
       <UniqueIdentifier>{c549dbec-5d2c-473d-818b-fe110d5f3c83}</UniqueIdentifier>
     </Filter>
@@ -72,7 +66,7 @@
     <ClCompile Include="ImGuiManager.cpp">
       <Filter>Scripts\Manager\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="ModelManager.cpp">
+    <ClCompile Include="AssetManager.cpp">
       <Filter>Scripts\Manager\Model</Filter>
     </ClCompile>
   </ItemGroup>
@@ -110,7 +104,7 @@
     <ClInclude Include="ImGuiManager.h">
       <Filter>Scripts\Manager\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="ModelManager.h">
+    <ClInclude Include="AssetManager.h">
       <Filter>Scripts\Manager\Model</Filter>
     </ClInclude>
   </ItemGroup>
@@ -121,10 +115,7 @@
     <FxCompile Include="..\..\Resources\Shader\Light.fx">
       <Filter>Shader\Common</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\Resources\Shader\Animation.fx">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\Resources\Shader\StaticMesh.fx">
+    <FxCompile Include="..\..\Resources\Shader\GameObject.fx">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>

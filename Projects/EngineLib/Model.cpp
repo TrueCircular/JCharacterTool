@@ -4,7 +4,7 @@
 #include "FileUtils.h"
 #include <filesystem>
 
-Model::Model()
+Model::Model() : Super(ResourceType::Model)
 {
 }
 
@@ -351,4 +351,8 @@ void Model::ReadAnimation(wstring filename)
 	}
 
 	_animations.push_back(animation);
+}
+
+void Model::Save(const wstring& path)
+{
 }

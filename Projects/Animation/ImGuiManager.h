@@ -30,7 +30,7 @@ private:
 	void GuiRender();
 public:
 	template<typename T>
-	shared_ptr<T>& GetGui();
+	shared_ptr<T> GetGui();
 public:
 	void Init();
 	void Update();
@@ -40,15 +40,15 @@ public:
 #define MANAGER_IMGUI() ImGuiManager::GetInstance()
 
 template<typename T>
-inline shared_ptr<T>& ImGuiManager::GetGui()
+inline shared_ptr<T> ImGuiManager::GetGui()
 {
 	for (const auto& gui : _guiList)
 	{
-		auto& result = dynamic_pointer_cast<T>(gui);
+		auto result = dynamic_pointer_cast<T>(gui);
 
 		if (result)
 		{
-			return gui;
+			return result;
 		}
 	}
 }

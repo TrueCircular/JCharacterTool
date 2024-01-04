@@ -13,7 +13,9 @@ protected:
 	array<shared_ptr<Component>, FIXED_COMPONENT_COUNT> _components;
 	vector<shared_ptr<MonoBehaviour>> _scripts;
 	wstring _name;
+	bool _isActive = true;
 public:	
+	void AddComponent(shared_ptr<Component> component);
 	template<class T>
 	shared_ptr<T>			GetComponent();
 	shared_ptr<Component>	GetFixedComponent(ComponentType type);
@@ -23,10 +25,11 @@ public:
 	shared_ptr<MeshRenderer>	GetMeshRenderer();
 	shared_ptr<ModelRenderer>	GetModelRenderer();
 	shared_ptr<ModelAnimator>	GetModelAnimator();
+public:
+	void SetActive(bool active) { _isActive = active; }
+	bool GetActive() { return _isActive; }
 	void SetName(wstring& name);
 	wstring GetName();
-public:
-	void AddComponent(shared_ptr<Component> component);
 public:
 	virtual void Awake();
 	virtual void Start();

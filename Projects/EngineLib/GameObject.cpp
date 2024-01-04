@@ -107,56 +107,68 @@ void GameObject::Awake()
 
 void GameObject::Start()
 {
-	for (shared_ptr<Component>& com : _components)
+	if (_isActive)
 	{
-		if (com)
-			com->Start();
-	}
+		for (shared_ptr<Component>& com : _components)
+		{
+			if (com)
+				com->Start();
+		}
 
-	for (shared_ptr<MonoBehaviour>& com : _scripts)
-	{
-		com->Start();
+		for (shared_ptr<MonoBehaviour>& com : _scripts)
+		{
+			com->Start();
+		}
 	}
 }
 
 void GameObject::FixedUpdate()
 {
-	for (shared_ptr<Component>& com : _components)
+	if (_isActive)
 	{
-		if (com)
-			com->FixedUpdate();
-	}
+		for (shared_ptr<Component>& com : _components)
+		{
+			if (com)
+				com->FixedUpdate();
+		}
 
-	for (shared_ptr<MonoBehaviour>& com : _scripts)
-	{
-		com->FixedUpdate();
+		for (shared_ptr<MonoBehaviour>& com : _scripts)
+		{
+			com->FixedUpdate();
+		}
 	}
 }
 
 void GameObject::Update()
 {
-	for (shared_ptr<Component>& com : _components)
+	if (_isActive)
 	{
-		if (com)
-			com->Update();
-	}
+		for (shared_ptr<Component>& com : _components)
+		{
+			if (com)
+				com->Update();
+		}
 
-	for (shared_ptr<MonoBehaviour>& com : _scripts)
-	{
-		com->Update();
+		for (shared_ptr<MonoBehaviour>& com : _scripts)
+		{
+			com->Update();
+		}
 	}
 }
 
 void GameObject::LateUpdate()
 {
-	for (shared_ptr<Component>& com : _components)
+	if (_isActive)
 	{
-		if (com)
-			com->LateUpdate();
-	}
+		for (shared_ptr<Component>& com : _components)
+		{
+			if (com)
+				com->LateUpdate();
+		}
 
-	for (shared_ptr<MonoBehaviour>& com : _scripts)
-	{
-		com->LateUpdate();
+		for (shared_ptr<MonoBehaviour>& com : _scripts)
+		{
+			com->LateUpdate();
+		}
 	}
 }

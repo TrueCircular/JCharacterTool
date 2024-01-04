@@ -12,8 +12,6 @@ void GUIView::HelpMarker(const char* desc)
 		ImGui::TextUnformatted(desc);
 		ImGui::PopTextWrapPos();
 		ImGui::EndTooltip();
-
-		
 	}
 }
 
@@ -105,22 +103,10 @@ void GUIView::Scene()
 		ImGui::Begin("Scene", &_showScene, scFlags);
 		{
 			{
-				D3D11_TEXTURE2D_DESC texDesc;
-				ZeroMemory(&texDesc, sizeof(texDesc));
-				texDesc.Width = g_gameDesc.width;
-				texDesc.Height = g_gameDesc.height;
-				texDesc.MipLevels = 1;
-				texDesc.ArraySize = 1;
-				texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-				texDesc.SampleDesc.Count = 1;
-				texDesc.Usage = D3D11_USAGE_DEFAULT;
-				texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-
-				DEVICE()->CreateTexture2D(&texDesc, nullptr, pTex.GetAddressOf());
-				DC()->CopyResource(pTex.Get(), GRAPHICS()->GetRenderTexture(1).Get());
+				pTex = GRAPHICS()->GetRenderTexture(1).Get();
 
 				D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-				srvDesc.Format = texDesc.Format;
+				srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 				srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 				srvDesc.Texture2D.MostDetailedMip = 0;
 				srvDesc.Texture2D.MipLevels = 1;
@@ -130,11 +116,15 @@ void GUIView::Scene()
 			ImGui::GetWindowDrawList()->AddImage(
 				(void*)pSRV.Get(),
 				ImGui::GetCursorScreenPos(),
-				ImVec2(ImGui::GetCursorScreenPos().x + _sceneSize.x, ImGui::GetCursorScreenPos().y + _sceneSize.y)
+				ImVec2(ImGui::GetCursorScreenPos().x + _sceneSize.x-15.f, ImGui::GetCursorScreenPos().y + _sceneSize.y-35.f)
 			);
 		}
 		ImGui::End();
 	}
+}
+
+void GUIView::CreateRenderScene()
+{
 }
 
 void GUIView::BoneHierarchy()
@@ -351,6 +341,58 @@ void GUIView::Update()
 	//Begin MainMenu
 	if (ImGui::BeginMenu("View"))
 	{
+		if (ImGui::MenuItem("Show All", NULL, _showAll))
+		{
+			if (_showAll)
+			{
+				_showAll = false;
+				_showAssetSection = false;
+				_showLoadedAsset = false;
+				_showScene = false;
+				_showModelSection = false;
+				_showInspector = false;
+				_showBoneHierarchy = false;
+				_showAnimation = false;
+			}
+			else
+			{
+				_showAll = true;
+				_showAssetSection = true;
+				_showLoadedAsset = true;
+				_showScene = true;
+				_showModelSection = true;
+				_showInspector = true;
+				_showBoneHierarchy = true;
+				_showAnimation = true;
+			}
+		}
+
+
+		//----------------------
+		ImGui::Separator();
+		//----------------------
+
+		ImGui::MenuItem("(Asset)", NULL, false, false);
+
+		//----------------------
+		ImGui::Separator();
+		//----------------------
+
+		if (ImGui::MenuItem("Section...", NULL, _showAssetSection))
+		{
+			if (_showAssetSection)
+			{
+				_showAssetSection = false;
+				_showLoadedAsset = false;
+				_showScene = false;
+			}
+			else
+			{
+				_showAssetSection = true;
+				_showLoadedAsset = true;
+				_showScene = true;
+			}
+		}
 
 		if (ImGui::MenuItem("Loaded AssetList",NULL, _showLoadedAsset))
 		{
@@ -363,10 +405,6 @@ void GUIView::Update()
 				_showLoadedAsset = true;
 			}
 		}
-
-		//----------------------
-		ImGui::Separator();
-		//----------------------
 
 		if (ImGui::MenuItem("Scene", NULL, _showScene))
 		{
@@ -384,6 +422,28 @@ void GUIView::Update()
 		ImGui::Separator();
 		//----------------------
 
+		ImGui::MenuItem("(Model & Effect)", NULL, false, false);
+
+		//----------------------
+		ImGui::Separator();
+		//----------------------
+
+		if (ImGui::MenuItem("Section...", NULL, _showModelSection))
+		{
+			if (_showModelSection)
+			{
+				_showModelSection = false;
+				_showInspector = false;
+				_showBoneHierarchy = false;
+			}
+			else
+			{
+				_showModelSection = true;
+				_showInspector = true;
+				_showBoneHierarchy = true;
+			}
+		}
+
 		if (ImGui::MenuItem("Inspector", NULL, _showInspector))
 		{
 			if (_showInspector)
@@ -395,10 +455,6 @@ void GUIView::Update()
 				_showInspector = true;
 			}
 		}
-
-		//----------------------
-		ImGui::Separator();
-		//----------------------
 
 		if (ImGui::MenuItem("BoneHierarchy", NULL, _showBoneHierarchy))
 		{
@@ -416,6 +472,12 @@ void GUIView::Update()
 		ImGui::Separator();
 		//----------------------
 
+		ImGui::MenuItem("(Animation)", NULL, false, false);
+
+		//----------------------
+		ImGui::Separator();
+		//----------------------
+
 		if (ImGui::MenuItem("Animation", NULL, _showAnimation))
 		{
 			if (_showAnimation)
@@ -428,10 +490,6 @@ void GUIView::Update()
 			}
 		}
 
-		//----------------------
-		ImGui::Separator();
-		//----------------------
-
 		//End MainMenu
 		ImGui::EndMenu();
 	}
@@ -440,6 +498,7 @@ void GUIView::Update()
 
 void GUIView::Render()
 {
+
 
 	//LoadedAsset
 	{

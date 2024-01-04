@@ -23,15 +23,28 @@ void ModelRenderer::SetModel(shared_ptr<Model> model)
 
 void ModelRenderer::Update()
 {
+
+}
+
+void ModelRenderer::LateUpdate()
+{
 	if (_model == nullptr)
 		return;
 
-	ComPtr<ID3D11RenderTargetView> view = GRAPHICS()->GetRenderTargetView(1);
-	ComPtr<ID3D11DepthStencilView> dep = GRAPHICS()->GetDepthStencilView();
+	if (GetGameObject()->GetModelAnimator() == nullptr)
+	{
+		//TOOL
+		{
+			auto rtv = GRAPHICS()->GetRenderTargetView(1);
+			auto dsv = GRAPHICS()->GetDepthStencilView(1);
 
-	DC()->OMSetRenderTargets(1, view.GetAddressOf(), dep.Get());
-	float color[4] = { 0.5f,0.5f,0.5f,1.0f };
-	DC()->ClearRenderTargetView(view.Get(), color);
+			float clearColor[4] = { 0.f,0.5f,0.f,0.5f };
+			DC()->OMSetRenderTargets(1, rtv.GetAddressOf(), dsv.Get());
+			DC()->ClearRenderTargetView(rtv.Get(), clearColor);
+			DC()->ClearDepthStencilView(dsv.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
+			DC()->RSSetViewports(1, &GRAPHICS()->GetViewport());
+		}
+	}
 
 	//Bone
 	BoneDesc boneDesc;
@@ -67,6 +80,12 @@ void ModelRenderer::Update()
 		_shader->DrawIndexed(0, _pass, mesh->indexBuffer->GetCount(), 0, 0);
 	}
 
-	view = GRAPHICS()->GetRenderTargetView(0);
-	DC()->OMSetRenderTargets(1, view.GetAddressOf(), dep.Get());
+	//Tool
+	{
+		const auto& rtv = GRAPHICS()->GetRenderTargetView(0);
+		const auto& dsv = GRAPHICS()->GetDepthStencilView(0);
+
+		DC()->OMSetRenderTargets(1, rtv.GetAddressOf(), dsv.Get());
+		DC()->RSSetViewports(1, &GRAPHICS()->GetViewport());
+	}
 }

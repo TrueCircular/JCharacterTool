@@ -1,4 +1,6 @@
 #pragma once
+#define MAX_SIZE_RTV_DSV 2;
+
 class Graphics
 {
 private:
@@ -26,11 +28,11 @@ private:
 	ComPtr<ID3D11DeviceContext>	_deviceContext;
 	ComPtr<IDXGISwapChain>		_swapChain;
 	//RTV
-	vector<ComPtr<ID3D11Texture2D>> _backBuffers;
+	vector<ComPtr<ID3D11Texture2D>>			_backBuffers;
 	vector<ComPtr<ID3D11RenderTargetView>>	_renderTargetViews;
 	//DSV
-	ComPtr<ID3D11Texture2D> _depthStancilTexture;
-	ComPtr<ID3D11DepthStencilView> _depthStancilView;
+	vector<ComPtr<ID3D11Texture2D>>			_depthStancilTextures;
+	vector<ComPtr<ID3D11DepthStencilView>>	_depthStancilViews;
 	//Misc
 	D3D11_VIEWPORT				_viewPort = { 0, };
 	float						_clearColor[4] = { 0.f,0.f,0.f,0.f };
@@ -41,28 +43,35 @@ public:
 	ComPtr<IDXGISwapChain>		GetSwapChain() { return _swapChain; }
 	ComPtr<ID3D11RenderTargetView> GetRenderTargetView(uint16 num)
 	{ 
-		if (num <= 1)
+		if (num < _renderTargetViews.size())
 		{
 			return _renderTargetViews[num];
 		}
-
 		return nullptr;
 	}
 	ComPtr<ID3D11Texture2D> GetRenderTexture(uint16 num) 
 	{ 
-		if (num <= 1)
+		if (num < _backBuffers.size())
 		{
 			return _backBuffers[num];
 		}
 		return nullptr;
 	}
-	ComPtr<ID3D11DepthStencilView> GetDepthStencilView() { return _depthStancilView; }
+	ComPtr<ID3D11DepthStencilView> GetDepthStencilView(uint16 num) 
+	{ 
+		if (num < _depthStancilViews.size())
+		{
+			return _depthStancilViews[num];
+		}
+		return nullptr;
+	}
 	D3D11_VIEWPORT& GetViewport() { return _viewPort; }
 private:
 	void CreateDeviceAndSwapChain();
 	void CreateRenderTargetView();
 	void CreateDepthStencilView();
 	void SetViewPort();
+	void CreateRenderTexture(UINT width, UINT height, ComPtr<ID3D11Texture2D>& texture);
 public:
 	void Init();
 	void RenderBegin();

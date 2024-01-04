@@ -24,5 +24,6 @@ public:
 	void SetShader(shared_ptr<Shader> shader) { _shader = shader; }
 public:
 	virtual void Update() override;
+	virtual void LateUpdate() override;
 };
 
