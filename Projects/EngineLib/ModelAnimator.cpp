@@ -136,12 +136,14 @@ void ModelAnimator::CreateAnimationTransform(uint32 index)
 void ModelAnimator::Awake()
 {
 	_model = GetGameObject()->GetModelRenderer()->GetModel();
+	assert(_model != nullptr);
 	_shader = GetGameObject()->GetModelRenderer()->GetShader();
+	assert(_shader != nullptr);
 }
 
 void ModelAnimator::Update()
 {
-	if (_model == nullptr)
+	if (_model == nullptr || _shader == nullptr)
 		return;
 
 	if (_isPlay)

@@ -8,9 +8,14 @@ public:
 	virtual void Update() override;
 	virtual void Render() override;
 private:
-	void CreateTower();
-	void CreateTank();
+	void CreateRagnaros();
+	void CreateCoreHound();
+	void CreateGiant();
+	void CreateBaronGeddon();
+	void CreateMesh();
+	void CreateTurret();
 private:
+	shared_ptr<Shader> _shader;
 	//obj
 	shared_ptr<GameObject> _obj;
 	//Camera

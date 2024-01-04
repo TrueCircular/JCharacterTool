@@ -26,7 +26,7 @@ public:
 	shared_ptr<ModelRenderer>	GetModelRenderer();
 	shared_ptr<ModelAnimator>	GetModelAnimator();
 public:
-	void SetActive(bool active) { _isActive = active; }
+	void SetActive(bool active);
 	bool GetActive() { return _isActive; }
 	void SetName(wstring& name);
 	wstring GetName();

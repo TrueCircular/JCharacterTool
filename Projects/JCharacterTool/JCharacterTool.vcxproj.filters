@@ -22,6 +22,15 @@
     <Filter Include="Scripts\Converter">
       <UniqueIdentifier>{00bf2971-2d5a-4354-8196-c71dc155ca0e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scripts\Manager\GUI">
+      <UniqueIdentifier>{c549dbec-5d2c-473d-818b-fe110d5f3c83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Manager\GUI\Component">
+      <UniqueIdentifier>{8ff8c85b-bf9f-42b0-9dc0-59c195d8b8a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Manager\Model">
+      <UniqueIdentifier>{04aea38a-89f5-4f51-bb9d-dce086fec5c9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -45,8 +54,20 @@
     <ClCompile Include="ToolWindows.cpp">
       <Filter>Scripts</Filter>
     </ClCompile>
+    <ClCompile Include="GUIFile.cpp">
+      <Filter>Scripts\Manager\GUI\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="GUIView.cpp">
+      <Filter>Scripts\Manager\GUI\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="GUIInterface.cpp">
+      <Filter>Scripts\Manager\GUI</Filter>
+    </ClCompile>
     <ClCompile Include="ImGuiManager.cpp">
-      <Filter>Scripts\Manager</Filter>
+      <Filter>Scripts\Manager\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="AssetManager.cpp">
+      <Filter>Scripts\Manager\Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -71,8 +92,20 @@
     <ClInclude Include="ToolWindows.h">
       <Filter>Scripts</Filter>
     </ClInclude>
+    <ClInclude Include="GUIFile.h">
+      <Filter>Scripts\Manager\GUI\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIView.h">
+      <Filter>Scripts\Manager\GUI\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIInterface.h">
+      <Filter>Scripts\Manager\GUI</Filter>
+    </ClInclude>
     <ClInclude Include="ImGuiManager.h">
-      <Filter>Scripts\Manager</Filter>
+      <Filter>Scripts\Manager\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetManager.h">
+      <Filter>Scripts\Manager\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -82,7 +115,7 @@
     <FxCompile Include="..\..\Resources\Shader\Light.fx">
       <Filter>Shader\Common</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\Resources\Shader\StaticMesh.fx">
+    <FxCompile Include="..\..\Resources\Shader\GameObject.fx">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>

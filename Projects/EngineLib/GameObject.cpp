@@ -60,6 +60,19 @@ shared_ptr<ModelAnimator> GameObject::GetModelAnimator()
 	return dynamic_pointer_cast<ModelAnimator>(com);
 }
 
+void GameObject::SetActive(bool active)
+{
+	if (_isActive == false )
+	{
+		if (active)
+		{
+			Start();
+		}
+	}
+
+	_isActive = active;
+}
+
 void GameObject::SetName(wstring& name)
 {
 	_name = name;

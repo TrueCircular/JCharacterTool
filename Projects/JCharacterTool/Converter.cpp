@@ -15,6 +15,8 @@ Converter::~Converter()
 
 void Converter::ReadModelData(aiNode* node, int32 index, int32 parent)
 {
+	//if (node == nullptr) return;
+
 	shared_ptr<asBone> bone = make_shared<asBone>();
 	bone->index = index;
 	bone->parent = parent;
@@ -22,6 +24,7 @@ void Converter::ReadModelData(aiNode* node, int32 index, int32 parent)
 	//Relative Transform
 	Matrix transform(node->mTransformation[0]);
 	bone->transform = transform.Transpose();
+
 	Matrix matParnet = Matrix::Identity;
 	if (parent >= 0)
 	{
@@ -43,54 +46,53 @@ void Converter::ReadModelData(aiNode* node, int32 index, int32 parent)
 
 void Converter::ReadMeshData(aiNode* node, int32 bone)
 {
-	if (node->mNumMeshes < 1)
-	{
-		return;
-	}
-
-	shared_ptr<asMesh> mesh = make_shared<asMesh>();
-	mesh->name = node->mName.C_Str();
-	mesh->boneIndex = bone;
 
 	for (uint32 i = 0; i < node->mNumMeshes; i++)
 	{
+		shared_ptr<asMesh> mesh = make_shared<asMesh>();
+		mesh->name = node->mName.C_Str();
+		mesh->boneIndex = bone;
+
 		uint32 index = node->mMeshes[i];
 		const aiMesh* srcMesh = _scene->mMeshes[index];
 
-		//Material Name
+		// Material Name
 		const aiMaterial* material = _scene->mMaterials[srcMesh->mMaterialIndex];
 		mesh->materialName = material->GetName().C_Str();
 
 		const uint32 startVertex = mesh->vertices.size();
 
-		//Mesh Vertex
 		for (uint32 v = 0; v < srcMesh->mNumVertices; v++)
 		{
-			//Vertex
+			// Vertex
 			VertexType vertex;
 			::memcpy(&vertex.position, &srcMesh->mVertices[v], sizeof(Vec3));
-			//UV
+
+			// UV
 			if (srcMesh->HasTextureCoords(0))
 				::memcpy(&vertex.uv, &srcMesh->mTextureCoords[0][v], sizeof(Vec2));
-			//Normal
+
+			// Normal
 			if (srcMesh->HasNormals())
 				::memcpy(&vertex.normal, &srcMesh->mNormals[v], sizeof(Vec3));
 
+			// Tangent
+			if (srcMesh->HasTangentsAndBitangents())
+				::memcpy(&vertex.tangent, &srcMesh->mTangents[v], sizeof(Vec3));
+
 			mesh->vertices.push_back(vertex);
 		}
-		//Mesh Index
+
+		// Index
 		for (uint32 f = 0; f < srcMesh->mNumFaces; f++)
 		{
 			aiFace& face = srcMesh->mFaces[f];
 
 			for (uint32 k = 0; k < face.mNumIndices; k++)
-			{
 				mesh->indices.push_back(face.mIndices[k] + startVertex);
-			}
 		}
+		_meshes.push_back(mesh);
 	}
-
-	_meshes.push_back(mesh);
 }
 
 void Converter::WriteModelFile(wstring finalPath)
@@ -126,15 +128,259 @@ void Converter::WriteModelFile(wstring finalPath)
 	}
 }
 
+void Converter::WriteSkinFile(wstring finalPath)
+{
+	auto path = filesystem::path(finalPath);
+	filesystem::create_directory(path.parent_path());
+
+	//Write CSV File
+	{
+		FILE* file;
+		::fopen_s(&file, Utils::ToString(finalPath).c_str(), "w");
+
+		for (shared_ptr<asBone>& bone : _bones)
+		{
+			string name = bone->name;
+			::fprintf(file, "%d,%s\n", bone->index, bone->name.c_str());
+		}
+
+		::fprintf(file, "\n");
+
+		for (shared_ptr<asMesh>& mesh : _meshes)
+		{
+			string name = mesh->name;
+			::fprintf(file, "%s,", name.c_str());
+			::fprintf(file, "\n");
+
+			for (UINT i = 0; i < mesh->vertices.size(); i++)
+			{
+				Vec3 p = mesh->vertices[i].position;
+				Vec4 indices = mesh->vertices[i].blendIndices;
+				Vec4 weights = mesh->vertices[i].blendWeights;
+
+				::fprintf(file, "%f,%f,%f,", p.x, p.y, p.z);
+				::fprintf(file, "%f,%f,%f,%f,", indices.x, indices.y, indices.z, indices.w);
+				::fprintf(file, "%f,%f,%f,%f\n", weights.x, weights.y, weights.z, weights.w);
+			}
+		}
+
+		::fclose(file);
+	}
+}
+
+uint32 Converter::GetBoneIndex(const string& name)
+{
+	for (auto& bone : _bones)
+	{
+		if (bone->name == name)
+			return bone->index;
+	}
+
+	assert(false);
+	return 0;
+}
+
+void Converter::ReadSkinData()
+{
+	for (uint32 i = 0; i < _scene->mNumMeshes; i++)
+	{
+		aiMesh* srcMesh = _scene->mMeshes[i];
+		if (srcMesh->HasBones() == false)
+			continue;
+
+		shared_ptr<asMesh> mesh = _meshes[i];
+
+		vector<asBoneWeights> tempVertexBoneWeights;
+		tempVertexBoneWeights.resize(mesh->vertices.size());
+
+		// Bone을 순회하면서 연관된 VertexId, Weight를 구해서 기록한다.
+		for (uint32 b = 0; b < srcMesh->mNumBones; b++)
+		{
+			aiBone* srcMeshBone = srcMesh->mBones[b];
+			uint32 boneIndex = GetBoneIndex(srcMeshBone->mName.C_Str());
+
+			for (uint32 w = 0; w < srcMeshBone->mNumWeights; w++)
+			{
+				uint32 index = srcMeshBone->mWeights[w].mVertexId;
+				float weight = srcMeshBone->mWeights[w].mWeight;
+				tempVertexBoneWeights[index].AddWeights(boneIndex, weight);
+			}
+		}
+
+		// 최종 결과 계산
+		for (uint32 v = 0; v < tempVertexBoneWeights.size(); v++)
+		{
+			tempVertexBoneWeights[v].Normalize();
+
+			asBlendWeight blendWeight = tempVertexBoneWeights[v].GetBlendWeights();
+			mesh->vertices[v].blendIndices = blendWeight.indices;
+			mesh->vertices[v].blendWeights = blendWeight.weights;
+		}
+	}
+}
+
+shared_ptr<asAnimation> Converter::ReadAnimationData(aiAnimation* srcAnimation)
+{
+	shared_ptr<asAnimation> animation = make_shared<asAnimation>();
+	animation->name = srcAnimation->mName.C_Str();
+	animation->duration = (float)srcAnimation->mDuration;
+	//animation->frameCount = (uint32)srcAnimation->mDuration + 1;
+	//animation->frameRate = (float)srcAnimation->mTicksPerSecond;
+	uint32 num = (srcAnimation->mChannels[0]->mNumPositionKeys + srcAnimation->mChannels[0]->mNumRotationKeys + srcAnimation->mChannels[0]->mNumScalingKeys) / 3;
+	animation->frameCount = num;
+	animation->frameRate = (float)(num / 2);
+
+	map<string, shared_ptr<asAnimationNode>> cacheAnimNodes;
+	for (uint32 i = 0; i < srcAnimation->mNumChannels; i++)
+	{
+		aiNodeAnim* srcNode = srcAnimation->mChannels[i];
+		_animNodeList.push_back(srcNode);
+
+		// 애니메이션 노드 데이터 파싱
+		shared_ptr<asAnimationNode> node = ParseAnimationNode(animation, srcNode);
+
+		// 현재 찾은 노드 중에 제일 긴 시간으로 애니메이션 시간 갱신
+		//animation->duration = max(animation->duration, node->keyframe.back().time);
+
+		cacheAnimNodes[srcNode->mNodeName.C_Str()] = node;
+	}
+
+	ReadKeyframeData(animation, _scene->mRootNode, cacheAnimNodes);
+
+	return animation;
+}
+
+void Converter::ReadKeyframeData(shared_ptr<asAnimation> animation, aiNode* srcNode, map<string, shared_ptr<asAnimationNode>>& cache)
+{
+	shared_ptr<asKeyframe> keyframe = make_shared<asKeyframe>();
+	keyframe->boneName = srcNode->mName.C_Str();
+
+	shared_ptr<asAnimationNode> findNode = cache[srcNode->mName.C_Str()];
+
+	for (uint32 i = 0; i < animation->frameCount; i++)
+	{
+		asKeyframeData frameData;
+
+		if (findNode == nullptr)
+		{
+			Matrix transform(srcNode->mTransformation[0]);
+			transform = transform.Transpose();
+			frameData.time = (float)i;
+			transform.Decompose(OUT frameData.scale, OUT frameData.rotation, OUT frameData.translation);
+		}
+		else
+		{
+			frameData = findNode->keyframe[i];
+		}
+
+		keyframe->transforms.push_back(frameData);
+	}
+
+	// 애니메이션 키프레임 채우기
+	animation->keyframes.push_back(keyframe);
+
+	for (uint32 i = 0; i < srcNode->mNumChildren; i++)
+		ReadKeyframeData(animation, srcNode->mChildren[i], cache);
+}
+
+void Converter::WriteAnimationData(shared_ptr<asAnimation> animation, wstring finalPath)
+{
+	auto path = filesystem::path(finalPath);
+
+	// 폴더가 없으면 만든다.
+	filesystem::create_directory(path.parent_path());
+
+	shared_ptr<FileUtils> file = make_shared<FileUtils>();
+	file->Open(finalPath, FileMode::Write);
+
+	file->Write<string>(animation->name);
+	file->Write<float>(animation->duration);
+	file->Write<float>(animation->frameRate);
+	file->Write<uint32>(animation->frameCount);
+
+	file->Write<uint32>(animation->keyframes.size());
+
+	for (shared_ptr<asKeyframe> keyframe : animation->keyframes)
+	{
+		file->Write<string>(keyframe->boneName);
+
+		file->Write<uint32>(keyframe->transforms.size());
+		file->Write(&keyframe->transforms[0], sizeof(asKeyframeData) * keyframe->transforms.size());
+	}
+}
+
+shared_ptr<asAnimationNode> Converter::ParseAnimationNode(shared_ptr<asAnimation> animation, aiNodeAnim* srcNode)
+{
+	std::shared_ptr<asAnimationNode> node = make_shared<asAnimationNode>();
+	node->name = srcNode->mNodeName;
+
+	uint32 keyCount = max(max(srcNode->mNumPositionKeys, srcNode->mNumScalingKeys), srcNode->mNumRotationKeys);
+
+	for (uint32 k = 0; k < keyCount; k++)
+	{
+		asKeyframeData frameData;
+		// Position
+		{
+			aiVectorKey key = srcNode->mPositionKeys[k];
+			frameData.time = (float)key.mTime;
+			::memcpy_s(&frameData.translation, sizeof(Vec3), &key.mValue, sizeof(aiVector3D));
+		}
+
+		// Rotation
+		{
+			aiQuatKey key = srcNode->mRotationKeys[k];
+			frameData.time = (float)key.mTime;
+
+			frameData.rotation.x = key.mValue.x;
+			frameData.rotation.y = key.mValue.y;
+			frameData.rotation.z = key.mValue.z;
+			frameData.rotation.w = key.mValue.w;
+		}
+
+		// Scale
+		{
+			aiVectorKey key = srcNode->mScalingKeys[k];
+			frameData.time = (float)key.mTime;
+			::memcpy_s(&frameData.scale, sizeof(Vec3), &key.mValue, sizeof(aiVector3D));
+		}
+
+		node->keyframe.push_back(frameData);
+	}
+
+	// Keyframe 늘려주기
+	if (node->keyframe.size() < animation->frameCount)
+	{
+		uint32 count = animation->frameCount - node->keyframe.size();
+		asKeyframeData keyFrame = node->keyframe.back();
+
+		for (uint32 n = 0; n < count; n++)
+			node->keyframe.push_back(keyFrame);
+	}
+
+	return node;
+}
+
 void Converter::ExportModelData(wstring savePath)
 {
-	wstring finalPath = _modelPath + savePath + L".mesh";
+
+	wstring finalPath = savePath + L".mesh";
+	wstring finalSkinDataPath = savePath + L".csv";
+
 	ReadModelData(_scene->mRootNode, -1, -1);
+
+	ReadSkinData();
+	WriteSkinFile(finalSkinDataPath);
+
 	WriteModelFile(finalPath);
 }
 
-void Converter::ReadMaterialData()
+bool Converter::ReadMaterialData()
 {
+	if (_scene->mNumMaterials <= 0)
+	{
+		return false;
+	}
+
 	for (uint32 i = 0; i < _scene->mNumMaterials; i++)
 	{
 		//source
@@ -174,6 +420,8 @@ void Converter::ReadMaterialData()
 		//Push Data
 		_materials.push_back(material);
 	}
+
+	return true;
 }
 
 void Converter::WriteMaterialData(wstring finalPath)
@@ -308,9 +556,52 @@ string Converter::WriteTexture(string saveFolder, string file)
 
 void Converter::ExportMaterialData(wstring savePath)
 {
-	wstring finalPath = _texturePath + savePath + L".xml";
+	wstring finalPath = savePath + L".xml";
 	ReadMaterialData();
 	WriteMaterialData(finalPath);
+}
+
+void Converter::ExportAnimationData(wstring savePath, uint32 index)
+{
+	wstring finalPath = savePath + L".anim";
+	assert(index < _scene->mNumAnimations);
+
+	shared_ptr<asAnimation> animation = ReadAnimationData(_scene->mAnimations[index]);
+	WriteAnimationData(animation, finalPath);
+}
+
+void Converter::Init()
+{
+	if (_scene != nullptr)
+	{
+		if (_meshes.size() > 0)
+		{
+			for (auto mesh : _meshes)
+			{
+				mesh = nullptr;
+			}
+			_meshes.clear();
+		}
+		if (_bones.size() > 0)
+		{
+			for (auto bone : _bones)
+			{
+				bone = nullptr;
+			}
+			_bones.clear();
+		}
+		if (_materials.size() > 0)
+		{
+			for (auto material : _materials)
+			{
+				material = nullptr;
+			}
+			_materials.clear();
+		}
+
+		_importer->FreeScene();
+		_scene = nullptr;
+	}
 }
 
 void Converter::ReadAssetFile(ModelType type, wstring fileName)
@@ -319,13 +610,13 @@ void Converter::ReadAssetFile(ModelType type, wstring fileName)
 	switch (type)
 	{
 	case ModelType::Skeletal:
-		_currentType = ModelType::Skeletal;
+		//_currentType = ModelType::Skeletal;
 		_assetPath = RESOURCES_ADDR_ASSET_SKELETAL;
 		_modelPath = RESOURCES_ADDR_MESH_SKELETAL;
 		_texturePath = RESOURCES_ADDR_TEXTURE_SKELETAL;
 		break;
 	case ModelType::Static:
-		_currentType = ModelType::Static;
+		//_currentType = ModelType::Static;
 		_assetPath = RESOURCES_ADDR_ASSET_STATIC;
 		_modelPath = RESOURCES_ADDR_MESH_STATIC;
 		_texturePath = RESOURCES_ADDR_TEXTURE_STATIC;
@@ -341,15 +632,55 @@ void Converter::ReadAssetFile(ModelType type, wstring fileName)
 		//File Read
 		_scene = _importer->ReadFile(
 			Utils::ToString(fileStr),
-			aiProcess_ConvertToLeftHanded |
+			aiProcess_MakeLeftHanded |
+			aiProcess_FlipUVs |
+			aiProcess_FlipWindingOrder |
+			//aiProcess_JoinIdenticalVertices |
+			aiProcess_ImproveCacheLocality |
+			aiProcess_RemoveRedundantMaterials |
 			aiProcess_Triangulate |
 			aiProcess_GenUVCoords |
+			aiProcess_TransformUVCoords |
+			aiProcess_FindInstances |
+			//aiProcess_LimitBoneWeights |
 			aiProcess_GenNormals |
-			aiProcess_CalcTangentSpace
+			aiProcess_CalcTangentSpace |
+			aiProcess_SortByPType
+		);
+		//is not Read
+		assert(_scene != nullptr);
+	}
+}
+
+bool Converter::ReadAssetFile(wstring filePath)
+{
+	//File path Check
+	auto p = std::filesystem::path(filePath);
+	//is Exists
+	if (std::filesystem::exists(p))
+	{
+		//File Read
+		_scene = _importer->ReadFile(
+			Utils::ToString(filePath),
+			aiProcess_MakeLeftHanded |
+			aiProcess_FlipUVs |
+			aiProcess_FlipWindingOrder |
+			//aiProcess_JoinIdenticalVertices |
+			aiProcess_ImproveCacheLocality |
+			aiProcess_RemoveRedundantMaterials |
+			aiProcess_Triangulate |
+			aiProcess_GenUVCoords |
+			aiProcess_TransformUVCoords |
+			aiProcess_FindInstances |
+			//aiProcess_LimitBoneWeights |
+			aiProcess_GenNormals |
+			aiProcess_CalcTangentSpace |
+			aiProcess_SortByPType
 		);
 		//is not Read
 		if (_scene == nullptr)
-			return;
+			return false;
 	}
+	return true;
 }
 
