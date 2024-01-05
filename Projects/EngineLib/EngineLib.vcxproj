@@ -186,6 +186,7 @@ copy "Bin\\Release\\*.pdb" "..\\..\\Libraries\\lib\\engine"</Command>
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshRenderer.h" />
+    <ClInclude Include="MetaData.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelAnimation.h" />
     <ClInclude Include="ModelAnimator.h" />
@@ -226,6 +227,7 @@ copy "Bin\\Release\\*.pdb" "..\\..\\Libraries\\lib\\engine"</Command>
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshRenderer.cpp" />
+    <ClCompile Include="MetaData.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelAnimation.cpp" />
     <ClCompile Include="ModelAnimator.cpp" />

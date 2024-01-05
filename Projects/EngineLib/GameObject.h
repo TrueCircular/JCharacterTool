@@ -11,14 +11,14 @@ private:
 	ComPtr<ID3D11DeviceContext>	_deviceContext;
 protected:
 	array<shared_ptr<Component>, FIXED_COMPONENT_COUNT> _components;
-	vector<shared_ptr<MonoBehaviour>> _scripts;
+	vector<shared_ptr<MonoBehaviour>>					_scripts;
 	wstring _name;
-	bool _isActive = true;
+	bool	_isActive = true;
 public:	
-	void AddComponent(shared_ptr<Component> component);
+	void						AddComponent(shared_ptr<Component> component);
 	template<class T>
-	shared_ptr<T>			GetComponent();
-	shared_ptr<Component>	GetFixedComponent(ComponentType type);
+	shared_ptr<T>				GetComponent();
+	shared_ptr<Component>		GetFixedComponent(ComponentType type);
 public:
 	shared_ptr<Transform>		GetTransform();
 	shared_ptr<Camera>			GetCamera();

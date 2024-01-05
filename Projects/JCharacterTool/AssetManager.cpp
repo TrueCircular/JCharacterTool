@@ -161,7 +161,7 @@ void AssetManager::Update()
 		auto rtv = GRAPHICS()->GetRenderTargetView(1);
 		auto dsv = GRAPHICS()->GetDepthStencilView(1);
 
-		float clearColor[4] = { 0.f,0.5f,0.f,0.5f };
+		float clearColor[4] = { 0.f,0.5f,0.f,0.3f };
 		DC()->OMSetRenderTargets(1, rtv.GetAddressOf(), dsv.Get());
 		DC()->ClearRenderTargetView(rtv.Get(), clearColor);
 		DC()->ClearDepthStencilView(dsv.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);

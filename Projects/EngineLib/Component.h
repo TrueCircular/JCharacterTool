@@ -32,9 +32,9 @@ protected:
 private:
 	void SetGameObject(shared_ptr<GameObject> obj) { _gameObject = obj; }
 public:
-	shared_ptr<GameObject> GetGameObject();
-	shared_ptr<Transform> GetTransform();
-	ComponentType GetType() const { return _type; }
+	shared_ptr<GameObject>	GetGameObject();
+	shared_ptr<Transform>	GetTransform();
+	ComponentType			GetType() const { return _type; }
 public:
 	virtual void Awake() {}
 	virtual void Start() {}

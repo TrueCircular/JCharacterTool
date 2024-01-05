@@ -106,6 +106,8 @@ void Model::SetModelType(ModelType type)
 void Model::ReadMaterial(wstring fileName)
 {
 	wstring fullPath = fileName;
+	_materialPath = fullPath;
+
 	auto parentPath = filesystem::path(fullPath).parent_path();
 
 	tinyxml2::XMLDocument* document = new tinyxml2::XMLDocument();
@@ -224,6 +226,7 @@ void Model::ReadMaterial(wstring fileName)
 void Model::ReadModel(wstring fileName)
 {
 	wstring fullPath = fileName;
+	_modelPath = fullPath;
 
 	shared_ptr<FileUtils> file = make_shared<FileUtils>();
 	file->Open(fullPath, FileMode::Read);
@@ -309,6 +312,7 @@ void Model::ReadModel(wstring fileName)
 void Model::ReadAnimation(wstring filename)
 {
 	wstring fullPath = filename;
+	_animPath = fullPath;
 
 	shared_ptr<FileUtils> file = make_shared<FileUtils>();
 	file->Open(fullPath, FileMode::Read);
@@ -341,6 +345,50 @@ void Model::ReadAnimation(wstring filename)
 	_animations.push_back(animation);
 }
 
+void Model::Load(const wstring& path)
+{
+}
+
 void Model::Save(const wstring& path)
 {
+	//디렉토리 확인
+	wstring fullPath = path + L".meta";
+	auto _path = filesystem::path(path);
+	bool isOk = filesystem::is_directory(_path);
+
+	//유효여부 체크, 없을 경우 생성
+	if (!isOk)
+	{
+		filesystem::create_directory(_path.parent_path());
+	}
+
+	//파일 생성
+	shared_ptr<FileUtils> file = make_shared<FileUtils>();
+	file->Open(fullPath, FileMode::Write);
+
+	//Model Type 저장
+	file->Write<uint16>(static_cast<uint16>(_type));
+
+	//ModelPath 여부, Write
+	bool pathEmty = _modelPath.empty();
+	if (!pathEmty)
+	{
+		file->Write<wstring>(_modelPath);
+	}
+
+	//MaterialPath 여부, Write
+	pathEmty = _materialPath.empty();
+	if (!pathEmty)
+	{
+		file->Write<wstring>(_materialPath);
+	}
+
+	//Animation 여부, Write
+	pathEmty = _animPath.empty();
+	if (!pathEmty)
+	{
+		file->Write<wstring>(_animPath);
+	}
+	
+	Vec3 pos = 
 }
