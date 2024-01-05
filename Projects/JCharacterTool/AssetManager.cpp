@@ -157,7 +157,6 @@ void AssetManager::Init()
 
 void AssetManager::Update()
 {
-	//TOOL
 	{
 		auto rtv = GRAPHICS()->GetRenderTargetView(1);
 		auto dsv = GRAPHICS()->GetDepthStencilView(1);
