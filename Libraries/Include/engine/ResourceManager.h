@@ -2,6 +2,7 @@
 #include "ResourceBase.h"
 
 class Mesh;
+class Model;
 class Shader;
 class Texture;
 class Material;

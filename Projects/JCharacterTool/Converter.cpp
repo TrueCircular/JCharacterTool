@@ -362,15 +362,13 @@ shared_ptr<asAnimationNode> Converter::ParseAnimationNode(shared_ptr<asAnimation
 
 void Converter::ExportModelData(wstring savePath)
 {
-
-	wstring finalPath = savePath + L".mesh";
-	wstring finalSkinDataPath = savePath + L".csv";
+	wstring finalPath = savePath;
+	size_t findSize = finalPath.find_last_of(L".");
+	wstring finalSkinDataPath = finalPath.substr(0, findSize) + L".csv";
 
 	ReadModelData(_scene->mRootNode, -1, -1);
-
 	ReadSkinData();
 	WriteSkinFile(finalSkinDataPath);
-
 	WriteModelFile(finalPath);
 }
 
@@ -556,18 +554,18 @@ string Converter::WriteTexture(string saveFolder, string file)
 
 void Converter::ExportMaterialData(wstring savePath)
 {
-	wstring finalPath = savePath + L".xml";
+	wstring finalPath = savePath;
 	ReadMaterialData();
 	WriteMaterialData(finalPath);
 }
 
 void Converter::ExportAnimationData(wstring savePath, uint32 index)
 {
-	wstring finalPath = savePath + L".anim";
+	wstring finalPath = savePath;
 	assert(index < _scene->mNumAnimations);
 
-	shared_ptr<asAnimation> animation = ReadAnimationData(_scene->mAnimations[index]);
-	WriteAnimationData(animation, finalPath);
+	_animation = ReadAnimationData(_scene->mAnimations[index]);
+	WriteAnimationData(_animation, finalPath);
 }
 
 void Converter::Init()
@@ -635,17 +633,13 @@ void Converter::ReadAssetFile(ModelType type, wstring fileName)
 			aiProcess_MakeLeftHanded |
 			aiProcess_FlipUVs |
 			aiProcess_FlipWindingOrder |
-			//aiProcess_JoinIdenticalVertices |
 			aiProcess_ImproveCacheLocality |
 			aiProcess_RemoveRedundantMaterials |
 			aiProcess_Triangulate |
 			aiProcess_GenUVCoords |
 			aiProcess_TransformUVCoords |
-			aiProcess_FindInstances |
-			//aiProcess_LimitBoneWeights |
 			aiProcess_GenNormals |
-			aiProcess_CalcTangentSpace |
-			aiProcess_SortByPType
+			aiProcess_CalcTangentSpace
 		);
 		//is not Read
 		assert(_scene != nullptr);
@@ -665,17 +659,13 @@ bool Converter::ReadAssetFile(wstring filePath)
 			aiProcess_MakeLeftHanded |
 			aiProcess_FlipUVs |
 			aiProcess_FlipWindingOrder |
-			//aiProcess_JoinIdenticalVertices |
 			aiProcess_ImproveCacheLocality |
 			aiProcess_RemoveRedundantMaterials |
 			aiProcess_Triangulate |
 			aiProcess_GenUVCoords |
 			aiProcess_TransformUVCoords |
-			aiProcess_FindInstances |
-			//aiProcess_LimitBoneWeights |
 			aiProcess_GenNormals |
-			aiProcess_CalcTangentSpace |
-			aiProcess_SortByPType
+			aiProcess_CalcTangentSpace
 		);
 		//is not Read
 		if (_scene == nullptr)

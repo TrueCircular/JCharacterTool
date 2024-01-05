@@ -9,16 +9,6 @@ enum class GUIType
 	End
 };
 
-enum class AssetType
-{
-	None,
-	Skeletal,
-	Static,
-	Effect,
-	Animation,
-	End
-};
-
 class GUIInterface
 {
 public:

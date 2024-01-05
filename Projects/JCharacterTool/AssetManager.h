@@ -1,26 +1,35 @@
 #pragma once
 #include "Converter.h"
 
-struct AssetPathDesc
+struct AssetData
 {
-	ModelType Type;
+	vector<shared_ptr<asBone>>		bones;
+	vector<shared_ptr<asMesh>>		meshes;
+	vector<shared_ptr<asMaterial>>	materials;
+	shared_ptr<asAnimation>			animation;
+};
+
+struct MeshPathDesc
+{
 	wstring Name;
-	wstring ReadPath;
+	wstring ReadMeshPath;
 	wstring SaveMeshPath;
 	wstring SaveMaterialPath;
+	ModelType Type;
 };
 
 struct AnimPathDesc
 {
 	wstring Name;
-	wstring ReadPath;
-	wstring SavePath;
+	wstring ReadAnimPath;
+	wstring SaveAnimPath;
 };
 
 class AssetManager
 {
-	using ModelMap = unordered_map<wstring, shared_ptr<Model>>;
-	using ObjectList = vector<shared_ptr<GameObject>>;
+	using Asset_Dictionary = map<wstring, shared_ptr<GameObject>>;
+	using Asset_Data_Dictionary = map<wstring, AssetData>;
+
 private:
 	static AssetManager* _instance;
 public:
@@ -36,27 +45,34 @@ private:
 	~AssetManager();
 private:
 	shared_ptr<Converter>	_converter;
-	AssetPathDesc			_assetDesc;
+	MeshPathDesc			_meshDesc;
 	AnimPathDesc			_animDesc;
 private:
-	ModelMap	_models;
-	ObjectList	_currentViewObjects;
+	Asset_Dictionary				_assets;
+	Asset_Data_Dictionary			_assetData;
+	vector<shared_ptr<GameObject>>	_currentAssets;
+private:
+	//Helper Function
 public:
-	bool AddModelAsset(wstring key, shared_ptr<Model> model);
-	shared_ptr<Model> GetModelByName(wstring name);
+	//Read Asset
+	bool ReadMeshAssetFile(MeshPathDesc& desc);
+	bool ReadAnimAssetFile(AnimPathDesc& desc);
 public:
+	//Export Asset
+	bool ExportMaterialData(wstring& exportPath);
+	bool ExportMaterialData(wstring& name, wstring& exportPath);
 
+	bool ExportModelData(wstring& exportPath);
+	bool ExportModelData(wstring& name, wstring& exportPath);
+
+	bool ExportAnimationData(wstring& exportPath);
+	bool ExportAnimationData(wstring& name, wstring& exportPath);
 public:
-	bool ReadAssetFile(AssetPathDesc& desc);
-	bool ReadAnimationFile(AnimPathDesc& desc);
+	bool CreateMeshAsset(MeshPathDesc& desc);
+	bool CreateAnimAsset(AnimPathDesc& desc);
 public:
-	bool ExportMaterialData(wstring exportPath);
-	bool ExportModelData(wstring exportPath);
-	bool ExportAnimationData(wstring exportPath);
-public:
-	bool CreateModel();
-	bool CreateObject();
-	bool ReadAnimation();
+	shared_ptr<GameObject>	GetAssetByName(wstring& name);
+	AssetData&				GetAssetDataByName(wstring& name);
 public:
 	void Init();
 	void Update();

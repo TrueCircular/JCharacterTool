@@ -3,28 +3,18 @@
 #include "CameraMove.h"
 #include "Converter.h"
 #include "ImGuiManager.h"
+#include "AssetManager.h"
 
 void Demo::Init()
 {
-	_shader = make_shared<Shader>(L"GameObject.fx");
-	//{
-	//	shared_ptr<Converter> converter = make_shared<Converter>();
-	//	converter->ReadAssetFile(ModelType::Skeletal, L"Turret/Turret_Deploy1.FBX");
-	//	converter->ExportMaterialData(L"Turret/Turret");
-	//	converter->ExportModelData(L"Turret/Turret");
-	//}
-	//{
-	//	shared_ptr<Converter> converter = make_shared<Converter>();
-
-	//	converter->ReadAssetFile(ModelType::Skeletal, L"Ragnaros/Animations/Idle.fbx");
-	//	converter->ExportAnimationData(L"Ragnaros/Idle");
-	//}
 
 	//리소스 매니저 초기화
 	MANAGER_RESOURCES()->Init();
 	{
+		_shader = make_shared<Shader>(L"GameObject.fx");
 		MANAGER_RESOURCES()->AddResource<Shader>(L"Default", _shader);
 	}
+	//랜더 매니저 초기화
 	MANAGER_RENDERER()->Init(_shader);
 	//Camera
 	{
@@ -34,14 +24,6 @@ void Demo::Init()
 		_camera->AddComponent(make_shared<Camera>());
 		_camera->AddComponent(make_shared<CameraMove>());
 	}
-
-
-	CreateRagnaros();
-	//CreateCoreHound();
-	//CreateGiant();
-	//CreateBaronGeddon();
-	//CreateTurret();
-
 	//light
 	{
 		LightDesc lightDesc;
@@ -51,18 +33,17 @@ void Demo::Init()
 		lightDesc.direction = Vec3(1.f, 0.f, 1.f);
 		MANAGER_RENDERER()->PushLightData(lightDesc);
 	}
+
+	//CreateRagnaros();
 }
 
 void Demo::Update()
 {
 	_camera->Update();
 	MANAGER_RENDERER()->Update();
-
-	{
-		_obj->Update();
-		_obj->LateUpdate();
-	}
-
+	//_obj->Update();
+	//_obj->LateUpdate();
+	MANAGER_ASSET()->Update();
 }
 
 void Demo::Render()
@@ -74,22 +55,14 @@ void Demo::CreateRagnaros()
 	//Model Import
 	shared_ptr<Model> m1 = make_shared<Model>();
 	m1->SetModelType(ModelType::Skeletal);
-	m1->ReadModel(L"Ragnaros/Ragnaros");
-	m1->ReadMaterial(L"Ragnaros/Ragnaros");
-
-	m1->ReadAnimation(L"Ragnaros/Idle");
-	m1->ReadAnimation(L"Ragnaros/Roar");
-	m1->ReadAnimation(L"Ragnaros/Stun");
-	m1->ReadAnimation(L"Ragnaros/Appear");
-	m1->ReadAnimation(L"Ragnaros/DisAppear");
-	m1->ReadAnimation(L"Ragnaros/DisAppeared");
-	m1->ReadAnimation(L"Ragnaros/Death");
-	m1->ReadAnimation(L"Ragnaros/Battle");
-	m1->ReadAnimation(L"Ragnaros/Casting");
-	m1->ReadAnimation(L"Ragnaros/Attack1");
-	m1->ReadAnimation(L"Ragnaros/Attack2");
-	m1->ReadAnimation(L"Ragnaros/Ability");
-
+	wstring adr = RESOURCES_ADDR_MESH_SKELETAL;
+	adr += L"Ragnaros";
+	adr += L"/Ragnaros.mesh";
+	m1->ReadModel(adr);
+	wstring adr2 = RESOURCES_ADDR_TEXTURE_SKELETAL;
+	adr2 += L"Ragnaros";
+	adr2 += L"/Ragnaros.xml";
+	m1->ReadMaterial(adr2);
 
 	//GameObejct
 	_obj = make_shared<GameObject>();
@@ -127,17 +100,17 @@ void Demo::CreateCoreHound()
 	m1->ReadAnimation(L"CoreHound/Attack2");
 
 	//GameObejct
-	_obj = make_shared<GameObject>();
-	_obj->Awake();
-	_obj->GetTransform()->SetPosition(Vec3(0, 0, 10));
-	_obj->GetTransform()->SetScale(Vec3(0.01f));
-	auto rot = _obj->GetTransform()->GetLocalRotation();
-	rot.x += ::XMConvertToRadians(90.f);
-	rot.y += ::XMConvertToRadians(90.f);
-	_obj->GetTransform()->SetLocalRotation(rot);
+	//_obj = make_shared<GameObject>();
+	//_obj->Awake();
+	//_obj->GetTransform()->SetPosition(Vec3(0, 0, 10));
+	//_obj->GetTransform()->SetScale(Vec3(0.01f));
+	//auto rot = _obj->GetTransform()->GetLocalRotation();
+	//rot.x += ::XMConvertToRadians(90.f);
+	//rot.y += ::XMConvertToRadians(90.f);
+	//_obj->GetTransform()->SetLocalRotation(rot);
 
-	_obj->AddComponent(make_shared<ModelAnimator>(_shader));
-	_obj->GetModelAnimator()->SetModel(m1);
+	//_obj->AddComponent(make_shared<ModelAnimator>(_shader));
+	//_obj->GetModelAnimator()->SetModel(m1);
 }
 
 void Demo::CreateGiant()
@@ -158,17 +131,17 @@ void Demo::CreateGiant()
 	m1->ReadAnimation(L"Giant/Attack2");
 
 	//GameObejct
-	_obj = make_shared<GameObject>();
-	_obj->Awake();
-	_obj->GetTransform()->SetPosition(Vec3(0, 0, 10));
-	_obj->GetTransform()->SetScale(Vec3(0.01f));
-	auto rot = _obj->GetTransform()->GetLocalRotation();
-	rot.x += ::XMConvertToRadians(90.f);
-	rot.y += ::XMConvertToRadians(90.f);
-	_obj->GetTransform()->SetLocalRotation(rot);
+	//_obj = make_shared<GameObject>();
+	//_obj->Awake();
+	//_obj->GetTransform()->SetPosition(Vec3(0, 0, 10));
+	//_obj->GetTransform()->SetScale(Vec3(0.01f));
+	//auto rot = _obj->GetTransform()->GetLocalRotation();
+	//rot.x += ::XMConvertToRadians(90.f);
+	//rot.y += ::XMConvertToRadians(90.f);
+	//_obj->GetTransform()->SetLocalRotation(rot);
 
-	_obj->AddComponent(make_shared<ModelAnimator>(_shader));
-	_obj->GetModelAnimator()->SetModel(m1);
+	//_obj->AddComponent(make_shared<ModelAnimator>(_shader));
+	//_obj->GetModelAnimator()->SetModel(m1);
 }
 
 void Demo::CreateBaronGeddon()
@@ -190,67 +163,16 @@ void Demo::CreateBaronGeddon()
 	m1->ReadAnimation(L"BaronGeddon/Attack2");
 	m1->ReadAnimation(L"BaronGeddon/Ability");
 
-
 	//GameObejct
-	_obj = make_shared<GameObject>();
-	_obj->Awake();
-	_obj->GetTransform()->SetPosition(Vec3(0, 0, 10));
-	_obj->GetTransform()->SetScale(Vec3(0.01f));
-	auto rot = _obj->GetTransform()->GetLocalRotation();
-	rot.x += ::XMConvertToRadians(90.f);
-	rot.y += ::XMConvertToRadians(90.f);
-	_obj->GetTransform()->SetLocalRotation(rot);
-
-	_obj->AddComponent(make_shared<ModelAnimator>(_shader));
-	_obj->GetModelAnimator()->SetModel(m1);
-}
-
-void Demo::CreateMesh()
-{
-	//Model Import
-	shared_ptr<Model> m1 = make_shared<Model>();
-	m1->SetModelType(ModelType::Skeletal);
-	m1->ReadModel(L"Kachujin/Kachujin");
-	m1->ReadMaterial(L"Kachujin/Kachujin");
-
-	m1->ReadAnimation(L"Kachujin/Idle");
-	//m1->ReadAnimation(L"Kachujin/Run");
-	//m1->ReadAnimation(L"Kachujin/Slash");
-
-	//GameObejct
-	_obj = make_shared<GameObject>();
-	_obj->Awake();
-
-	_obj->GetTransform()->SetPosition(Vec3(0, 0, 1));
-	_obj->GetTransform()->SetScale(Vec3(0.01f));
-
-	_obj->AddComponent(make_shared<ModelAnimator>(_shader));
-	_obj->GetModelAnimator()->SetModel(m1);
-	//_obj->GetModelAnimator()->SetPass(1);
-}
-
-void Demo::CreateTurret()
-{
-	//Model Import
-	shared_ptr<Model> m1 = make_shared<Model>();
-	m1->SetModelType(ModelType::Skeletal);
-	m1->ReadModel(L"Turret/Turret");
-	m1->ReadMaterial(L"Turret/Turret");
-
-	m1->ReadAnimation(L"Turret/ani");
-	//m1->ReadAnimation(L"Kachujin/Run");
-	//m1->ReadAnimation(L"Kachujin/Slash");
-
-	//GameObejct
-	_obj = make_shared<GameObject>();
-	_obj->Awake();
-
-	_obj->GetTransform()->SetPosition(Vec3(0, 0, 5));
-	_obj->GetTransform()->SetScale(Vec3(1.0f));
-	Vec3 rot = _obj->GetTransform()->GetLocalRotation();
-	rot.x += ::XMConvertToRadians(90.f);
-	_obj->GetTransform()->SetLocalRotation(rot);
-
-	_obj->AddComponent(make_shared<ModelAnimator>(_shader));
-	_obj->GetModelAnimator()->SetModel(m1);
+//	_obj = make_shared<GameObject>();
+//	_obj->Awake();
+//	_obj->GetTransform()->SetPosition(Vec3(0, 0, 10));
+//	_obj->GetTransform()->SetScale(Vec3(0.01f));
+//	auto rot = _obj->GetTransform()->GetLocalRotation();
+//	rot.x += ::XMConvertToRadians(90.f);
+//	rot.y += ::XMConvertToRadians(90.f);
+//	_obj->GetTransform()->SetLocalRotation(rot);
+//
+//	_obj->AddComponent(make_shared<ModelAnimator>(_shader));
+//	_obj->GetModelAnimator()->SetModel(m1);
 }

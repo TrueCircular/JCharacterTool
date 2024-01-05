@@ -22,20 +22,22 @@ GUIFile::~GUIFile()
 {
 }
 
-AssetPathDesc GUIFile::CreateAssetPathDesc(wstring& fileName, wstring& filePath)
+MeshPathDesc GUIFile::CreateMeshPathDesc(wstring& fileName, wstring& filePath)
 {
-	AssetPathDesc desc;
+	MeshPathDesc desc;
 	{
 		desc.Name = fileName;
-		desc.ReadPath = filePath;
-		desc.SaveMaterialPath = RESOURCES_ADDR_TEXTURE + desc.Name + L"/" + desc.Name;
+		desc.ReadMeshPath = filePath;
 		switch (_type)
 		{
-		case AssetType::Skeletal:
-			desc.SaveMeshPath = RESOURCES_ADDR_MESH_SKELETAL + desc.Name + L"/" + desc.Name;
+		case AssetType::SkeletalMesh:
+			desc.SaveMeshPath = RESOURCES_ADDR_MESH_SKELETAL + desc.Name + L"/" + desc.Name + L".mesh";
+			desc.SaveMaterialPath = RESOURCES_ADDR_TEXTURE_SKELETAL + desc.Name + L"/" + desc.Name + L".xml";
+
 			break;
-		case AssetType::Static:
-			desc.SaveMeshPath = RESOURCES_ADDR_MESH_STATIC + desc.Name + L"/" + desc.Name;
+		case AssetType::StaticMesh:
+			desc.SaveMeshPath = RESOURCES_ADDR_MESH_STATIC + desc.Name + L"/" + desc.Name + L".mesh";
+			desc.SaveMaterialPath = RESOURCES_ADDR_TEXTURE_STATIC + desc.Name + L"/" + desc.Name + L".xml";
 			break;
 		}
 	}
@@ -57,7 +59,32 @@ wstring GUIFile::SplitFileName(string name)
 	return rName;
 }
 
-void GUIFile::SavePoPUP()
+void GUIFile::MeshReadPoPUp()
+{
+	if (_isReadMesh)
+	{
+		ImGui::OpenPopup("Success Mesh Read!");
+		if (ImGui::BeginPopupModal("Success Mesh Read!", 0, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			if (ImGui::Button("OK", ImVec2(120.f, 20.f)))
+			{
+				_isReadMesh = false;
+
+				MANAGER_IMGUI()->GetGui<GUIView>()->_showScene = true;
+				MANAGER_IMGUI()->GetGui<GUIView>()->_showBoneHierarchy = true;
+				MANAGER_IMGUI()->GetGui<GUIView>()->_showInspector = true;
+				MANAGER_IMGUI()->GetGui<GUIView>()->_showLoadedAsset = true;
+
+
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
+		}
+	}
+}
+
+void GUIFile::MeshSavePoPUp()
 {
 	if (_isSaveMesh)
 	{
@@ -70,11 +97,11 @@ void GUIFile::SavePoPUP()
 			{
 				string adr;
 
-				if (_type == AssetType::Skeletal)
+				if (_type == AssetType::SkeletalMesh)
 				{
 					adr = Utils::ToString(RESOURCES_ADDR_MESH_SKELETAL);
 				}
-				else if (_type == AssetType::Static)
+				else if (_type == AssetType::StaticMesh)
 				{
 					adr = Utils::ToString(RESOURCES_ADDR_MESH_SKELETAL);
 				}
@@ -99,29 +126,12 @@ void GUIFile::SavePoPUP()
 	}
 }
 
-void GUIFile::ReadPoPUP()
+void GUIFile::AnimationReadPoPUp()
 {
-	if(_isReadMesh)
-	{
-		ImGui::OpenPopup("Success Mesh Read!");
-		if (ImGui::BeginPopupModal("Success Mesh Read!", 0, ImGuiWindowFlags_AlwaysAutoResize))
-		{
-			if (ImGui::Button("OK", ImVec2(120.f, 20.f)))
-			{
-				_isReadMesh = false;
+}
 
-				MANAGER_IMGUI()->GetGui<GUIView>()->_showScene = true;
-				MANAGER_IMGUI()->GetGui<GUIView>()->_showBoneHierarchy = true;
-				MANAGER_IMGUI()->GetGui<GUIView>()->_showInspector = true;
-				MANAGER_IMGUI()->GetGui<GUIView>()->_showLoadedAsset = true;
-
-
-				ImGui::CloseCurrentPopup();
-			}
-
-			ImGui::EndPopup();
-		}
-	}
+void GUIFile::AnimationSavePoPUp()
+{
 }
 
 void GUIFile::Update()
@@ -131,10 +141,10 @@ void GUIFile::Update()
 	{
 		//Model Asset
 		{
-			ImGui::MenuItem("(Model)", NULL, false, false);
+			ImGui::MenuItem("(Mesh)", NULL, false, false);
 
 			//Asset Read
-			if (ImGui::BeginMenu("Read Model Asset File"))
+			if (ImGui::BeginMenu("Read Mesh Asset File"))
 			{
 				if (ImGui::MenuItem("Skeletal"))
 				{
@@ -143,7 +153,7 @@ void GUIFile::Update()
 					_dialog.OpenDialog("ReadModelAssets", "File", ".fbx,.obj",
 						adr, 1, nullptr, ImGuiFileDialogFlags_Modal);
 					//Asset Type Set
-					_type = AssetType::Skeletal;
+					_type = AssetType::SkeletalMesh;
 				}
 				if (ImGui::MenuItem("Static"))
 				{
@@ -152,7 +162,7 @@ void GUIFile::Update()
 					_dialog.OpenDialog("ReadModelAssets", "File", ".fbx,.obj",
 						adr, 1, nullptr, ImGuiFileDialogFlags_Modal);
 					//Asset Type Set
-					_type = AssetType::Static;
+					_type = AssetType::StaticMesh;
 				}
 				ImGui::EndMenu();
 			}
@@ -162,7 +172,7 @@ void GUIFile::Update()
 			//----------------------
 
 			//Save Mesh File
-			if (ImGui::MenuItem("Save Asset File as Mesh File"))
+			if (ImGui::MenuItem("Save Mesh Asset File"))
 			{
 				_isSaveMesh = true;
 			}
@@ -185,7 +195,7 @@ void GUIFile::Update()
 			ImGui::Separator();
 			//----------------------
 
-			if (ImGui::MenuItem("Save Asset File as Anim File"))
+			if (ImGui::MenuItem("Save Animation Asset File"))
 			{
 
 			}
@@ -199,6 +209,15 @@ void GUIFile::Update()
 		{
 			ImGui::MenuItem("(Effect)", NULL, false, false);
 
+			if (ImGui::MenuItem("Read Effect Asset File"))
+			{
+
+			}
+
+			if (ImGui::MenuItem("Save Effect Asset File"))
+			{
+
+			}
 		}
 
 		//End MainMenu
@@ -210,11 +229,12 @@ void GUIFile::Render()
 {
 	//PoPUp
 	{
-		ReadPoPUP();
-		SavePoPUP();
+		MeshReadPoPUp();
+		MeshSavePoPUp();
 	}
 
 	ImGui::SetNextWindowPos(_readsaveDialogPos);
+
 	if (_dialog.Display("ReadModelAssets", ImGuiWindowFlags_NoCollapse, _minDialogSize, _maxDialogSize))
 	{
 		if (_dialog.IsOk())
@@ -222,9 +242,9 @@ void GUIFile::Render()
 			_filePath = Utils::ToWString(_dialog.GetFilePathName());
 			_fileName = SplitFileName(_dialog.GetCurrentFileName());
 
-			AssetPathDesc desc = CreateAssetPathDesc(_fileName, _filePath);
+			MeshPathDesc desc = CreateMeshPathDesc(_fileName, _filePath);
 
-			if (MANAGER_ASSET()->ReadAssetFile(desc))
+			if (MANAGER_ASSET()->ReadMeshAssetFile(desc))
 			{
 				_isReadMesh = true;
 			}

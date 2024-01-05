@@ -100,24 +100,12 @@ shared_ptr<ModelAnimation> Model::GetAnimationByName(wstring name)
 
 void Model::SetModelType(ModelType type)
 {
-	switch (type)
-	{
-	case ModelType::Skeletal: {
-		_modelType = ModelType::Skeletal;
-		_modelPath = RESOURCES_ADDR_MESH_SKELETAL;
-		_texturePath = RESOURCES_ADDR_TEXTURE_SKELETAL;
-	}break;
-	case ModelType::Static: {
-		_modelType = ModelType::Static;
-		_modelPath = RESOURCES_ADDR_MESH_STATIC;
-		_texturePath = RESOURCES_ADDR_TEXTURE_STATIC;
-	}break;
-	}
+	_modelType = type;
 }
 
 void Model::ReadMaterial(wstring fileName)
 {
-	wstring fullPath = _texturePath + fileName + L".xml";
+	wstring fullPath = fileName;
 	auto parentPath = filesystem::path(fullPath).parent_path();
 
 	tinyxml2::XMLDocument* document = new tinyxml2::XMLDocument();
@@ -235,7 +223,7 @@ void Model::ReadMaterial(wstring fileName)
 
 void Model::ReadModel(wstring fileName)
 {
-	wstring fullPath = _modelPath + fileName + L".mesh";
+	wstring fullPath = fileName;
 
 	shared_ptr<FileUtils> file = make_shared<FileUtils>();
 	file->Open(fullPath, FileMode::Read);
@@ -320,7 +308,7 @@ void Model::ReadModel(wstring fileName)
 
 void Model::ReadAnimation(wstring filename)
 {
-	wstring fullPath = _animPath + filename + L".anim";
+	wstring fullPath = filename;
 
 	shared_ptr<FileUtils> file = make_shared<FileUtils>();
 	file->Open(fullPath, FileMode::Read);

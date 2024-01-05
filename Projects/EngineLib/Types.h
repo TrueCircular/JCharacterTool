@@ -28,5 +28,16 @@ enum class ModelType
 	None,
 	Skeletal,
 	Static,
+	Effect,
+	End
+};
+//AssetType
+enum class AssetType
+{
+	None,
+	SkeletalMesh,
+	StaticMesh,
+	Effect,
+	Animation,
 	End
 };

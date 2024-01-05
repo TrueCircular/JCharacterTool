@@ -37,7 +37,9 @@ public:
 	void SetPass(uint8 pass) { _pass = pass; }
 public:
 	void SetPlay(bool play) { _isPlay = play; }
+	bool GetPlay() { return _isPlay; }
 	void SetLoop(bool loop) { _isLoop = loop; }
+	bool GetLoop() { return _isLoop; }
 public:
 	virtual void Awake() override;
 	virtual void Update() override;

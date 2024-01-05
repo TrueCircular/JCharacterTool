@@ -2,7 +2,7 @@
 #include "GUIInterface.h"
 
 #pragma region Declaration
-struct AssetPathDesc;
+struct MeshPathDesc;
 struct AnimPathDesc;
 #pragma endregion
 
@@ -15,9 +15,9 @@ public:
 	virtual ~GUIFile();
 private:
 	//Cache
-	wstring _filePath;
-	wstring _fileName;
-	AssetType _type;
+	wstring		_filePath;
+	wstring		_fileName;
+	AssetType	_type;
 private:
 	//Dialog
 	ImVec2 _minDialogSize;
@@ -25,16 +25,25 @@ private:
 	ImVec2 _readsaveDialogPos;
 private:
 	//UI flag
-	bool _isSaveMesh = false;
+	//Mesh
 	bool _isReadMesh = false;
+	bool _isSaveMesh = false;
+	//Animation
+	bool _isReadAnimation = false;
+	bool _isSaveAnimation = false;
+	//Effect
+	bool _isReadEffect = false;
+	bool _isSaveEffect = false;
 private:
 	//Helper
-	AssetPathDesc	CreateAssetPathDesc(wstring& fileName, wstring& filePath);
+	MeshPathDesc	CreateMeshPathDesc(wstring& fileName, wstring& filePath);
 	AnimPathDesc	CreateAnimPathDesc(wstring& fileName, wstring& filePath);
 	wstring			SplitFileName(string name);
 private:
-	void SavePoPUP();
-	void ReadPoPUP();
+	void MeshReadPoPUp();
+	void MeshSavePoPUp();
+	void AnimationReadPoPUp();
+	void AnimationSavePoPUp();
 public:
 	virtual void Update() override;
 	virtual void Render() override;
