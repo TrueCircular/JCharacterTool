@@ -36,7 +36,7 @@ private:
 	void SetGameObject(shared_ptr<GameObject> obj) { _gameObject = obj; }
 	void SetComponentName(string& name) { _comName = name; }
 public:
-	string					GetComponentName() { return _comName; }
+	string&					GetComponentName() { return _comName; }
 	shared_ptr<GameObject>	GetGameObject();
 	shared_ptr<Transform>	GetTransform();
 	ComponentType			GetType() const { return _type; }

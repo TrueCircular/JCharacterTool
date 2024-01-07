@@ -13,9 +13,9 @@ struct TransformData
 
 struct TransformMetaData : GameData
 {
+	int32 parentIndex;
+	int32 index;
 	TransformData local;
-	TransformData parent;
-	vector<TransformData> child;
 };
 
 struct ModelMetaData : GameData

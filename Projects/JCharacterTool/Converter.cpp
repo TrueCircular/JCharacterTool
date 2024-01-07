@@ -15,7 +15,7 @@ Converter::~Converter()
 
 void Converter::ReadModelData(aiNode* node, int32 index, int32 parent)
 {
-	//if (node == nullptr) return;
+	if (node == nullptr) return;
 
 	shared_ptr<asBone> bone = make_shared<asBone>();
 	bone->index = index;

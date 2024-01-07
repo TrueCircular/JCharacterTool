@@ -114,8 +114,39 @@ bool AssetManager::CreateMeshAsset(MeshPathDesc& desc)
 	asset->GetModelRenderer()->SetPass(0);
 	asset->Awake();
 
-	asset->GetTransform()->SetLocalScale(Vec3(0.01f));
+	asset->GetTransform()->SetPosition(Vec3(0.f, -10.f, 0.f));
+	asset->GetTransform()->SetLocalScale(Vec3(0.1f));
+	auto rot = asset->GetTransform()->GetLocalRotation();
+	rot.x += ::XMConvertToRadians(90.f);
+	rot.y += ::XMConvertToRadians(90.f);
+	asset->GetTransform()->SetRotation(rot);
 	_assets.insert(make_pair(desc.Name, asset));
+
+	//test
+	{
+		shared_ptr<GameObject> obj1 = make_shared<GameObject>();
+		obj1->Awake();
+		obj1->GetTransform()->SetPosition(Vec3(2.f));
+
+		shared_ptr<GameObject> obj2 = make_shared<GameObject>();
+		obj2->Awake();
+		obj2->GetTransform()->SetPosition(Vec3(3.f));
+		obj1->GetTransform()->AddChild(obj2->GetTransform());
+
+		shared_ptr<GameObject> obj3 = make_shared<GameObject>();
+		obj3->Awake();
+		obj3->GetTransform()->SetPosition(Vec3(4.f));
+		obj1->GetTransform()->AddChild(obj3->GetTransform());
+
+		shared_ptr<GameObject> obj4 = make_shared<GameObject>();
+		obj4->Awake();
+		obj4->GetTransform()->SetPosition(Vec3(5.f));
+		obj3->GetTransform()->AddChild(obj4->GetTransform());
+
+		asset->GetTransform()->AddChild(obj1->GetTransform());
+		wstring tString = L"test";
+		asset->GetTransform()->SaveMetaData(tString);
+	}
 
 	return true;
 }
@@ -144,7 +175,7 @@ AssetData& AssetManager::GetAssetDataByName(wstring& name)
 	{
 		ta = findIter->second;
 	}
-	
+
 	return ta;
 }
 
@@ -161,7 +192,7 @@ void AssetManager::Update()
 		auto rtv = GRAPHICS()->GetRenderTargetView(1);
 		auto dsv = GRAPHICS()->GetDepthStencilView(1);
 
-		float clearColor[4] = { 0.f,0.5f,0.f,0.3f };
+		float clearColor[4] = { 1.f,1.f,1.f,0.3f };
 		DC()->OMSetRenderTargets(1, rtv.GetAddressOf(), dsv.Get());
 		DC()->ClearRenderTargetView(rtv.Get(), clearColor);
 		DC()->ClearDepthStencilView(dsv.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);

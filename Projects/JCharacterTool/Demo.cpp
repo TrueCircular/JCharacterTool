@@ -19,7 +19,7 @@ void Demo::Init()
 	{
 		_camera = make_shared<GameObject>();
 		_camera->Awake();
-		_camera->GetTransform()->SetPosition(Vec3(0.f, 8.f, -50.f));
+		_camera->GetTransform()->SetPosition(Vec3(0.f, 0.f, -100.f));
 		_camera->AddComponent(make_shared<Camera>());
 		_camera->AddComponent(make_shared<CameraMove>());
 	}
@@ -38,7 +38,6 @@ void Demo::Update()
 {
 	_camera->Update();
 	MANAGER_RENDERER()->Update();
-	MANAGER_ASSET()->Update();
 }
 
 void Demo::Render()

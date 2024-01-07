@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "GUIView.h"
+#include "AssetManager.h"
 
 static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
 
@@ -98,7 +99,9 @@ void GUIView::Scene()
 	{
 		ImGui::SetNextWindowPos(_scenePos);
 		ImGui::SetNextWindowSize(_sceneSize);
-		ImGuiWindowFlags scFlags = ImGuiWindowFlags_NoMove;
+		ImGuiWindowFlags scFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize;
+
+		MANAGER_ASSET()->Update();
 
 		ImGui::Begin("Scene", &_showScene, scFlags);
 		{
@@ -394,7 +397,7 @@ void GUIView::Update()
 			}
 		}
 
-		if (ImGui::MenuItem("Loaded AssetList",NULL, _showLoadedAsset))
+		if (ImGui::MenuItem("Loaded AssetList", NULL, _showLoadedAsset))
 		{
 			if (_showLoadedAsset)
 			{
@@ -494,6 +497,40 @@ void GUIView::Update()
 		ImGui::EndMenu();
 	}
 
+	if (!_showLoadedAsset ||
+		!_showScene)
+	{
+		_showAssetSection = false;
+	}
+	else
+	{
+		_showAssetSection = true;
+	}
+
+	if (!_showInspector ||
+		!_showBoneHierarchy)
+	{
+		_showModelSection = false;
+	}
+	else
+	{
+		_showModelSection = true;
+	}
+
+	if (!_showAssetSection ||
+		!_showLoadedAsset ||
+		!_showScene ||
+		!_showModelSection ||
+		!_showInspector ||
+		!_showBoneHierarchy ||
+		!_showAnimation)
+	{
+		_showAll = false;
+	}
+	else
+	{
+		_showAll = true;
+	}
 }
 
 void GUIView::Render()
