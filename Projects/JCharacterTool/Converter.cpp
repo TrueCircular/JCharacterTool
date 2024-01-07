@@ -437,7 +437,7 @@ void Converter::WriteMaterialData(wstring finalPath)
 	//머티리얼 목록
 	tinyxml2::XMLElement* root = document->NewElement("Materials");
 	document->LinkEndChild(root);
-
+	
 	for (auto material : _materials)
 	{
 		//머티리얼 당

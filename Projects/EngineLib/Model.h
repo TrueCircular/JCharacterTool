@@ -2,8 +2,6 @@
 #include "ModelMesh.h"
 #include "ModelAnimation.h"
 
-
-
 class Model : public ResourceBase, public enable_shared_from_this<Model>
 {
 	using Super = ResourceBase;
@@ -18,9 +16,6 @@ private:
 	vector<shared_ptr<ModelAnimation>>	_animations;
 private:
 	ModelType		_modelType = ModelType::None;
-	wstring			_modelPath;
-	wstring			_materialPath;
-	wstring			_animPath;
 	ModelMetaData	_modelData;
 private:
 	void BindCacheInfo();
@@ -45,17 +40,13 @@ public:
 	shared_ptr<ModelAnimation> GetAnimationByIndex(UINT index) { return (index < 0 || index >= _animations.size()) ? nullptr : _animations[index]; }
 	shared_ptr<ModelAnimation> GetAnimationByName(wstring name);
 public:
-	ModelType GetModelType() { return _modelType; }
-	void	  SetModelType(ModelType type);
+	ModelType		GetModelType() { return _modelType; }
+	void			SetModelType(ModelType type);
+	ModelMetaData	GetModelMetaData() { return _modelData; }
 public:
 	//Asset Read Helper
 	void ReadMaterial(wstring fileName);
 	void ReadModel(wstring fileName);
 	void ReadAnimation(wstring filename);
-public:
-	//Load Meta File
-	virtual void Load(const wstring& path) override;
-	//Save Meta File
-	virtual void Save(const wstring& path) override;
 };
 

@@ -31,6 +31,9 @@ public:
 	void SetName(wstring& name);
 	wstring GetName();
 public:
+	void LoadGameObjcet(wstring& loadPath);
+	void SaveGameObject(wstring& savePath);
+public:
 	virtual void Awake();
 	virtual void Start();
 	virtual void FixedUpdate();

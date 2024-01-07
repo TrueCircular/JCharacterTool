@@ -83,6 +83,16 @@ wstring GameObject::GetName()
 	return _name;
 }
 
+void GameObject::LoadGameObjcet(wstring& loadPath)
+{
+
+}
+
+void GameObject::SaveGameObject(wstring& savePath)
+{
+	
+}
+
 void GameObject::AddComponent(shared_ptr<Component> component)
 {
 	component->SetGameObject(shared_from_this());

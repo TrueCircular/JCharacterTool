@@ -165,6 +165,9 @@
     <ClInclude Include="MetaData.h">
       <Filter>03. GameObject</Filter>
     </ClInclude>
+    <ClInclude Include="GameFactory.h">
+      <Filter>100. Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -280,6 +283,9 @@
     </ClCompile>
     <ClCompile Include="MetaData.cpp">
       <Filter>03. GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="GameFactory.cpp">
+      <Filter>100. Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
