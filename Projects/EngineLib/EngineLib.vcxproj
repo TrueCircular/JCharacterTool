@@ -134,12 +134,15 @@
     <PostBuildEvent>
       <Command>copy "*.h" "..\\..\\Libraries\\Include\\engine"
 copy "*.inl" "..\\..\\Libraries\\Include\\engine"
-copy "..\\..\\Libraries\\lib\\assimp\\*.dll" "..\\..\\output\\Debug"
-copy "..\\..\\Libraries\\lib\\fmod\\*.dll" "..\\..\\output\\Debug"
 copy "Bin\\Debug\\*.idb" "..\\..\\Libraries\\lib\\engine"
 copy "Bin\\Debug\\*.lib" "..\\..\\Libraries\\lib\\engine"
 copy "Bin\\Debug\\*.pdb" "..\\..\\Libraries\\lib\\engine"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>mkdir "..\\..\\Output\\Debug"
+copy "..\\..\\Libraries\\lib\\assimp\\*.dll" "..\\..\\output\\Debug"
+copy "..\\..\\Libraries\\lib\\fmod\\*.dll" "..\\..\\output\\Debug"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
