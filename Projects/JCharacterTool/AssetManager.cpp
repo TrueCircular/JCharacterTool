@@ -108,14 +108,26 @@ bool AssetManager::CreateMeshAsset(MeshPathDesc& desc)
 	model->ReadModel(desc.SaveMeshPath);
 	model->ReadMaterial(desc.SaveMaterialPath);
 
+	wstring adr = RESOURCES_ADDR_ASSET;
+	adr += L"Animation/";
+	adr += L"/BlackCow/Walk.fbx";
+	_converter->ReadAssetFile(adr);
+	wstring anim = RESOURCES_ADDR_ANIMATION;
+	anim += L"BlackCow/Walk.anim";
+	_converter->ExportAnimationData(anim);
+
+	model->ReadAnimation(anim);
+
 	shared_ptr<GameObject> asset = make_shared<GameObject>();
 	asset->AddComponent(make_shared<ModelRenderer>(shader));
 	asset->GetModelRenderer()->SetModel(model);
-	asset->GetModelRenderer()->SetPass(0);
+	asset->GetModelRenderer()->SetPass(1);
+	asset->AddComponent(make_shared<ModelAnimator>(shader));
 	asset->Awake();
+	asset->GetModelAnimator()->SetPlay(true);
 
 	asset->GetTransform()->SetPosition(Vec3(0.f, -10.f, 0.f));
-	asset->GetTransform()->SetLocalScale(Vec3(0.1f));
+	asset->GetTransform()->SetLocalScale(Vec3(1.f));
 	auto rot = asset->GetTransform()->GetLocalRotation();
 	rot.x += ::XMConvertToRadians(90.f);
 	rot.y += ::XMConvertToRadians(90.f);

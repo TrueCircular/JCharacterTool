@@ -8,7 +8,7 @@ public:
 	Converter();
 	~Converter();
 private:
-	shared_ptr<Assimp::Importer> _importer;
+	shared_ptr<Assimp::Importer>	_importer;
 	const aiScene*				_scene = nullptr;
 	vector<aiNode*>				_nodeList;
 	vector<aiNodeAnim*>			_animNodeList;

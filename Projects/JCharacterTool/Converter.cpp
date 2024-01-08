@@ -224,11 +224,14 @@ shared_ptr<asAnimation> Converter::ReadAnimationData(aiAnimation* srcAnimation)
 	shared_ptr<asAnimation> animation = make_shared<asAnimation>();
 	animation->name = srcAnimation->mName.C_Str();
 	animation->duration = (float)srcAnimation->mDuration;
-	//animation->frameCount = (uint32)srcAnimation->mDuration + 1;
+	animation->frameCount = srcAnimation->mDuration+1;
+	//animation->frameCount = srcAnimation->mNumChannels;
+	animation->frameAllCount = srcAnimation->mNumChannels;
+	animation->frameRate = 30;
+
 	//animation->frameRate = (float)srcAnimation->mTicksPerSecond;
-	uint32 num = (srcAnimation->mChannels[0]->mNumPositionKeys + srcAnimation->mChannels[0]->mNumRotationKeys + srcAnimation->mChannels[0]->mNumScalingKeys) / 3;
-	animation->frameCount = num;
-	animation->frameRate = (float)(num / 2);
+	//uint32 num = (srcAnimation->mChannels[0]->mNumPositionKeys + srcAnimation->mChannels[0]->mNumRotationKeys + srcAnimation->mChannels[0]->mNumScalingKeys) / 3;
+	//animation->frameCount = num;
 
 	map<string, shared_ptr<asAnimationNode>> cacheAnimNodes;
 	for (uint32 i = 0; i < srcAnimation->mNumChannels; i++)
@@ -297,6 +300,7 @@ void Converter::WriteAnimationData(shared_ptr<asAnimation> animation, wstring fi
 	file->Write<float>(animation->duration);
 	file->Write<float>(animation->frameRate);
 	file->Write<uint32>(animation->frameCount);
+	file->Write<uint32>(animation->frameAllCount);
 
 	file->Write<uint32>(animation->keyframes.size());
 
@@ -665,7 +669,7 @@ bool Converter::ReadAssetFile(wstring filePath)
 			aiProcess_GenUVCoords |
 			aiProcess_TransformUVCoords |
 			aiProcess_GenNormals |
-			aiProcess_CalcTangentSpace
+			aiProcess_CalcTangentSpace 
 		);
 		//is not Read
 		if (_scene == nullptr)

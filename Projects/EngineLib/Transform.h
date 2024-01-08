@@ -8,9 +8,9 @@ public:
 	Transform();
 	virtual ~Transform();
 private:
-	shared_ptr<Transform>		  _parent;
-	vector<shared_ptr<Transform>> _children;
-	vector<TransformMetaData>	  _transfromMetaDataList;
+	shared_ptr<Transform>			_parent;
+	vector<shared_ptr<Transform>>	_children;
+	vector<TransformMetaData>		_transfromMetaDataList;
 private:
 	//local
 	Vec3 _localScale = { 1.f,1.f,1.f };

@@ -99,6 +99,7 @@ void ModelAnimator::CreateAnimationTransform(uint32 index)
 			Matrix matAnimation;
 
 			shared_ptr<ModelKeyframe> frame = animation->GetKeyframe(bone->name);
+
 			if (frame != nullptr)
 			{
 				ModelKeyframeData& data = frame->transforms[f];
@@ -151,11 +152,34 @@ void ModelAnimator::Update()
 		if (_texture == nullptr)
 			CreateTexture();
 
+		//_keyFrameDesc.sumTime += MANAGER_TIME()->GetDeltaTime();
+		//_keyFrameDesc.animIndex = 0;
+
+
+		//ImGui::InputInt("AnimIndex", &_keyFrameDesc.animIndex);
+		//_keyFrameDesc.animIndex %= _model->GetAnimationCount();
+		//ImGui::InputInt("CurrFrame", (int*)&_keyFrameDesc.currentFrame);
+		//_keyFrameDesc.currentFrame %= _model->GetAnimationByIndex(_keyFrameDesc.animIndex)->frameCount;
+
+		//double _time = 1 / 1000.f;
+
+		//if (_keyFrameDesc.sumTime >= _time)
+		//{
+		//	if (_keyFrameDesc.currentFrame > 203)
+		//		_keyFrameDesc.currentFrame = 0;
+
+		//	_keyFrameDesc.currentFrame += 1;
+		//	_keyFrameDesc.sumTime = 0.f;
+		//}
+
 		_keyFrameDesc.sumTime += MANAGER_TIME()->GetDeltaTime();
 		_currentAnim = _model->GetAnimationByIndex(_keyFrameDesc.animIndex);
 		if (_currentAnim)
 		{
-			_timePerFrame = 1 / (_currentAnim->frameRate * _keyFrameDesc.speed);
+	/*		if (_keyFrameDesc.currentFrame > 43)
+				_keyFrameDesc.currentFrame = 1;*/
+
+			_timePerFrame = 1 / ( _currentAnim->frameRate * _keyFrameDesc.speed);
 
 			if (_keyFrameDesc.sumTime >= _timePerFrame)
 			{

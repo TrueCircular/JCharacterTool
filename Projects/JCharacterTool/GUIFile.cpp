@@ -150,7 +150,7 @@ void GUIFile::Update()
 				{
 					//Dialog Open
 					string adr = Utils::ToString(RESOURCES_ADDR_ASSET_SKELETAL);
-					_dialog.OpenDialog("ReadModelAssets", "File", ".fbx,.obj",
+					_dialog.OpenDialog("ReadModelAssets", "File", ".fbx,.obj,.m2",
 						adr, 1, nullptr, ImGuiFileDialogFlags_Modal);
 					//Asset Type Set
 					_type = AssetType::SkeletalMesh;
