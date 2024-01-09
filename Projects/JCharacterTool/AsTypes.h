@@ -120,7 +120,6 @@ struct asAnimation
 	float frameRate;
 	float duration;
 	vector<shared_ptr<asKeyframe>> keyframes;
-	uint32 frameAllCount;
 };
 struct asAnimationNode
 {

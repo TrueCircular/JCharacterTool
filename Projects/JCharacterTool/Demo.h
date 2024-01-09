@@ -8,9 +8,6 @@ public:
 	virtual void Update() override;
 	virtual void Render() override;
 private:
-	//TEST
-	void CreateRagnaros();
-private:
 	//Shader
 	shared_ptr<Shader>		_shader;
 	//Camera

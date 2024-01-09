@@ -26,12 +26,13 @@ bool AssetManager::ReadMeshAssetFile(MeshPathDesc& desc)
 		ExportMaterialData(_meshDesc.SaveMaterialPath);
 		ExportModelData(_meshDesc.SaveMeshPath);
 
-		AssetData data;
+		AssetMeshData data;
+		data.meshName = _meshDesc.Name;
 		data.materials = _converter->_materials;
-		data.meshes = _converter->_meshes;
 		data.bones = _converter->_bones;
+		data.meshes = _converter->_meshes;
 
-		_assetData.insert(make_pair(_meshDesc.Name, data));
+		_meshData.insert(make_pair(_meshDesc.Name, data));
 
 		if (CreateMeshAsset(_meshDesc))
 		{
@@ -55,7 +56,7 @@ bool AssetManager::ReadAnimAssetFile(AnimPathDesc& desc)
 	//read animation file
 	if (_converter->ReadAssetFile(_animDesc.ReadAnimPath))
 	{
-		if (ExportAnimationData(_animDesc.SaveAnimPath))
+		if (ExportAnimationData(_animDesc.AnimName,_animDesc.SaveAnimPath))
 		{
 			return true;
 		}
@@ -97,75 +98,62 @@ bool AssetManager::ExportAnimationData(wstring& exportPath)
 
 bool AssetManager::ExportAnimationData(wstring& name, wstring& exportPath)
 {
-	return false;
+	_converter->ExportAnimationData(name, exportPath);
+
+	return true;
 }
 
 bool AssetManager::CreateMeshAsset(MeshPathDesc& desc)
 {
+	//Shader Set
 	auto shader = MANAGER_RESOURCES()->GetResource<Shader>(L"Default");
+
+	//Model Create
 	shared_ptr<Model> model = make_shared<Model>();
 	model->SetModelType(desc.Type);
 	model->ReadModel(desc.SaveMeshPath);
 	model->ReadMaterial(desc.SaveMaterialPath);
 
-	wstring adr = RESOURCES_ADDR_ASSET;
-	adr += L"Animation/";
-	adr += L"/BlackCow/Walk.fbx";
-	_converter->ReadAssetFile(adr);
-	wstring anim = RESOURCES_ADDR_ANIMATION;
-	anim += L"BlackCow/Walk.anim";
-	_converter->ExportAnimationData(anim);
-
-	model->ReadAnimation(anim);
-
+	//Object Create
 	shared_ptr<GameObject> asset = make_shared<GameObject>();
-	asset->AddComponent(make_shared<ModelRenderer>(shader));
-	asset->GetModelRenderer()->SetModel(model);
-	asset->GetModelRenderer()->SetPass(1);
-	asset->AddComponent(make_shared<ModelAnimator>(shader));
-	asset->Awake();
-	asset->GetModelAnimator()->SetPlay(true);
-
-	asset->GetTransform()->SetPosition(Vec3(0.f, -10.f, 0.f));
-	asset->GetTransform()->SetLocalScale(Vec3(1.f));
-	auto rot = asset->GetTransform()->GetLocalRotation();
-	rot.x += ::XMConvertToRadians(90.f);
-	rot.y += ::XMConvertToRadians(90.f);
-	asset->GetTransform()->SetRotation(rot);
-	_assets.insert(make_pair(desc.Name, asset));
-
-	//test
 	{
-		shared_ptr<GameObject> obj1 = make_shared<GameObject>();
-		obj1->Awake();
-		obj1->GetTransform()->SetPosition(Vec3(2.f));
+		//Init
+		asset->SetName(desc.Name);
+		asset->AddComponent(make_shared<ModelRenderer>(shader));
+		asset->GetModelRenderer()->SetModel(model);
+		asset->GetModelRenderer()->SetPass(0);
+		asset->Awake();
 
-		shared_ptr<GameObject> obj2 = make_shared<GameObject>();
-		obj2->Awake();
-		obj2->GetTransform()->SetPosition(Vec3(3.f));
-		obj1->GetTransform()->AddChild(obj2->GetTransform());
-
-		shared_ptr<GameObject> obj3 = make_shared<GameObject>();
-		obj3->Awake();
-		obj3->GetTransform()->SetPosition(Vec3(4.f));
-		obj1->GetTransform()->AddChild(obj3->GetTransform());
-
-		shared_ptr<GameObject> obj4 = make_shared<GameObject>();
-		obj4->Awake();
-		obj4->GetTransform()->SetPosition(Vec3(5.f));
-		obj3->GetTransform()->AddChild(obj4->GetTransform());
-
-		asset->GetTransform()->AddChild(obj1->GetTransform());
-		wstring tString = L"test";
-		asset->GetTransform()->SaveMetaData(tString);
+		//Default Setting
+		asset->GetTransform()->SetPosition(Vec3(0.f, -10.f, 0.f));
+		asset->GetTransform()->SetLocalScale(Vec3(0.1f));
+		auto rot = asset->GetTransform()->GetLocalRotation();
+		rot.x += ::XMConvertToRadians(90.f);
+		rot.y += ::XMConvertToRadians(90.f);
+		asset->GetTransform()->SetRotation(rot);
 	}
+
+	//Add Object in Loaded Object List
+	_assets.insert(make_pair(desc.Name, asset));
 
 	return true;
 }
 
 bool AssetManager::CreateAnimAsset(AnimPathDesc& desc)
 {
-	return false;
+
+	//{
+	//	wstring adr = RESOURCES_ADDR_ASSET;
+	//	adr += L"Animation/";
+	//	adr += L"/BlackCow/Loot.fbx";
+	//	_converter->ReadAssetFile(adr);
+	//	wstring anim = RESOURCES_ADDR_ANIMATION;
+	//	anim += L"BlackCow/Loot.anim";
+	//	_converter->ExportAnimationData(anim);
+	//	model->ReadAnimation(anim);
+	//}
+
+	return true;
 }
 
 shared_ptr<GameObject> AssetManager::GetAssetByName(wstring& name)
@@ -176,19 +164,6 @@ shared_ptr<GameObject> AssetManager::GetAssetByName(wstring& name)
 		return findIter->second;
 
 	return nullptr;
-}
-
-AssetData& AssetManager::GetAssetDataByName(wstring& name)
-{
-	AssetData ta;
-	const auto& findIter = _assetData.find(name);
-
-	if (findIter != _assetData.end())
-	{
-		ta = findIter->second;
-	}
-
-	return ta;
 }
 
 void AssetManager::Init()
@@ -213,6 +188,7 @@ void AssetManager::Update()
 
 	for (int i = 0; i < _currentAssets.size(); i++)
 	{
+		_currentAssets[i]->FixedUpdate();
 		_currentAssets[i]->Update();
 		_currentAssets[i]->LateUpdate();
 	}

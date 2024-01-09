@@ -16,6 +16,72 @@ void GUIView::HelpMarker(const char* desc)
 	}
 }
 
+void GUIView::ButtonManage()
+{
+	//Section
+	{
+		if (_showAssetSection)
+		{
+			_showScene = true;
+			_showLoadedAsset = true;
+		}
+		else
+		{
+			_showScene = false;
+			_showLoadedAsset = false;
+		}
+
+		if (_showModelSection)
+		{
+			_showBoneHierarchy = true;
+			_showInspector = true;
+		}
+		else
+		{
+			_showBoneHierarchy = false;
+			_showInspector = false;
+		}
+	}
+
+	//Exception
+	{
+		if (!_showLoadedAsset ||
+			!_showScene)
+		{
+			_showAssetSection = false;
+		}
+		else
+		{
+			_showAssetSection = true;
+		}
+
+		if (!_showInspector ||
+			!_showBoneHierarchy)
+		{
+			_showModelSection = false;
+		}
+		else
+		{
+			_showModelSection = true;
+		}
+
+		if (!_showAssetSection ||
+			!_showLoadedAsset ||
+			!_showScene ||
+			!_showModelSection ||
+			!_showInspector ||
+			!_showBoneHierarchy ||
+			!_showAnimation)
+		{
+			_showAll = false;
+		}
+		else
+		{
+			_showAll = true;
+		}
+	}
+}
+
 GUIView::GUIView() : Super(GUIType::View)
 {
 	{
@@ -66,11 +132,6 @@ GUIView::GUIView() : Super(GUIType::View)
 		_transformScale[1] = 1.f;
 		_transformScale[2] = 1.f;
 	}
-
-	wstring texadr = RESOURCES_ADDR_TEXTURE;
-	texadr += L"veigar.jpg";
-	tempTex = make_shared<Texture>();
-	tempTex->CreateTexture(texadr);
 }
 
 GUIView::~GUIView()
@@ -370,7 +431,6 @@ void GUIView::Update()
 			}
 		}
 
-
 		//----------------------
 		ImGui::Separator();
 		//----------------------
@@ -497,40 +557,7 @@ void GUIView::Update()
 		ImGui::EndMenu();
 	}
 
-	if (!_showLoadedAsset ||
-		!_showScene)
-	{
-		_showAssetSection = false;
-	}
-	else
-	{
-		_showAssetSection = true;
-	}
-
-	if (!_showInspector ||
-		!_showBoneHierarchy)
-	{
-		_showModelSection = false;
-	}
-	else
-	{
-		_showModelSection = true;
-	}
-
-	if (!_showAssetSection ||
-		!_showLoadedAsset ||
-		!_showScene ||
-		!_showModelSection ||
-		!_showInspector ||
-		!_showBoneHierarchy ||
-		!_showAnimation)
-	{
-		_showAll = false;
-	}
-	else
-	{
-		_showAll = true;
-	}
+	ButtonManage();
 }
 
 void GUIView::Render()

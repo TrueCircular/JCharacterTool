@@ -225,9 +225,7 @@ shared_ptr<asAnimation> Converter::ReadAnimationData(aiAnimation* srcAnimation)
 	animation->name = srcAnimation->mName.C_Str();
 	animation->duration = (float)srcAnimation->mDuration;
 	animation->frameCount = srcAnimation->mDuration+1;
-	//animation->frameCount = srcAnimation->mNumChannels;
-	animation->frameAllCount = srcAnimation->mNumChannels;
-	animation->frameRate = 30;
+	animation->frameRate = srcAnimation->mTicksPerSecond;
 
 	//animation->frameRate = (float)srcAnimation->mTicksPerSecond;
 	//uint32 num = (srcAnimation->mChannels[0]->mNumPositionKeys + srcAnimation->mChannels[0]->mNumRotationKeys + srcAnimation->mChannels[0]->mNumScalingKeys) / 3;
@@ -300,8 +298,6 @@ void Converter::WriteAnimationData(shared_ptr<asAnimation> animation, wstring fi
 	file->Write<float>(animation->duration);
 	file->Write<float>(animation->frameRate);
 	file->Write<uint32>(animation->frameCount);
-	file->Write<uint32>(animation->frameAllCount);
-
 	file->Write<uint32>(animation->keyframes.size());
 
 	for (shared_ptr<asKeyframe> keyframe : animation->keyframes)
@@ -604,6 +600,16 @@ void Converter::Init()
 		_importer->FreeScene();
 		_scene = nullptr;
 	}
+}
+
+void Converter::ExportAnimationData(wstring& name, wstring& savePath, uint32 index)
+{
+	wstring finalPath = savePath;
+	assert(index < _scene->mNumAnimations);
+
+	_animation = ReadAnimationData(_scene->mAnimations[index]);
+	_animation->name = Utils::ToString(name);
+	WriteAnimationData(_animation, finalPath);
 }
 
 void Converter::ReadAssetFile(ModelType type, wstring fileName)

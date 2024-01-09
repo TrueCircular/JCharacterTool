@@ -323,7 +323,6 @@ void Model::ReadAnimation(wstring filename)
 	animation->duration = file->Read<float>();
 	animation->frameRate = file->Read<float>();
 	animation->frameCount = file->Read<uint32>();
-	animation->frameAllCount = file->Read<uint32>();
 
 	uint32 keyframesCount = file->Read<uint32>();
 	for (uint32 i = 0; i < keyframesCount; i++)
