@@ -55,9 +55,9 @@ private:
 	MeshPathDesc			_meshDesc;
 	AnimPathDesc			_animDesc;
 private:
-	AssetDictionary				_assets;
-	MeshDataDictionary			_meshData;
-	AnimDataDictionary			_animData;
+	AssetDictionary			_assets;
+	MeshDataDictionary		_meshData;
+	AnimDataDictionary		_animData;
 	vector<shared_ptr<GameObject>>	_currentAssets;
 private:
 	//Helper Function
@@ -78,6 +78,8 @@ public:
 public:
 	bool CreateMeshAsset(MeshPathDesc& desc);
 	bool CreateAnimAsset(AnimPathDesc& desc);
+public:
+	AssetDictionary GetLoadedAssetList() const { return _assets; }
 public:
 	shared_ptr<GameObject>	GetAssetByName(wstring& name);
 	AssetMeshData&			GetMeshDataByName(wstring& name);

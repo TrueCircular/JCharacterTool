@@ -81,8 +81,10 @@ void GUIFile::MeshReadPoPUp()
 			{
 				_isReadMesh = false;
 
-				MANAGER_IMGUI()->GetGui<GUIView>()->_showAssetSection = true;
-				MANAGER_IMGUI()->GetGui<GUIView>()->_showModelSection = true;
+				MANAGER_IMGUI()->GetGui<GUIView>()->_showLoadedAsset = true;
+				MANAGER_IMGUI()->GetGui<GUIView>()->_showScene = true;
+				MANAGER_IMGUI()->GetGui<GUIView>()->_showBoneHierarchy = true;
+				MANAGER_IMGUI()->GetGui<GUIView>()->_showInspector = true;
 
 				ImGui::CloseCurrentPopup();
 			}

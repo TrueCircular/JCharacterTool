@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "GUIView.h"
 #include "AssetManager.h"
+#include "engine/Utils.h"
 
 static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
 
@@ -18,31 +19,6 @@ void GUIView::HelpMarker(const char* desc)
 
 void GUIView::ButtonManage()
 {
-	//Section
-	{
-		if (_showAssetSection)
-		{
-			_showScene = true;
-			_showLoadedAsset = true;
-		}
-		else
-		{
-			_showScene = false;
-			_showLoadedAsset = false;
-		}
-
-		if (_showModelSection)
-		{
-			_showBoneHierarchy = true;
-			_showInspector = true;
-		}
-		else
-		{
-			_showBoneHierarchy = false;
-			_showInspector = false;
-		}
-	}
-
 	//Exception
 	{
 		if (!_showLoadedAsset ||
@@ -85,8 +61,8 @@ void GUIView::ButtonManage()
 GUIView::GUIView() : Super(GUIType::View)
 {
 	{
-		_loadedAssetPos.x = g_gameDesc.width - 350.f;
-		_loadedAssetPos.y = (g_gameDesc.height - 250.f);
+		_loadedAssetPos.x = 0;
+		_loadedAssetPos.y = 18.f;
 		_loadedAssetSize.x = 350.f;
 		_loadedAssetSize.y = 250.f;
 	}
@@ -100,14 +76,14 @@ GUIView::GUIView() : Super(GUIType::View)
 
 	{
 		_boneHierarchyPos.x = 0.f;
-		_boneHierarchyPos.y = 18.f;
+		_boneHierarchyPos.y = 268.f;
 		_boneHierarchySize.x = 350.f;
-		_boneHierarchySize.y = g_gameDesc.height - 18.f;
+		_boneHierarchySize.y = 632.f;
 	}
 
 	{
 		_inspectorPos.x = g_gameDesc.width - 350.f;
-		_inspectorPos.y = 18.f;
+		_inspectorPos.y = 268.f;
 		_inspectorSize.x = 350.f;
 		_inspectorSize.y = 632.f;
 	}
@@ -146,9 +122,56 @@ void GUIView::LoadedAsset()
 		ImGui::SetNextWindowSize(_loadedAssetSize);
 		ImGuiWindowFlags assetFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize;
 
+		const map<wstring, shared_ptr<GameObject>>& assetList = MANAGER_ASSET()->GetLoadedAssetList();
+
+		ImGuiTabBarFlags tabBarFlag = ImGuiTabBarFlags_TabListPopupButton | ImGuiTabBarFlags_FittingPolicyResizeDown;
+
 		if (ImGui::Begin("AssetList",&_showLoadedAsset, assetFlags))
 		{
+			if (ImGui::BeginTabBar("mtbar", tabBarFlag))
+			{
+				//Skeletal Moddel Tab
+				if (ImGui::BeginTabItem("Skeletal"))
+				{
+					if (ImGui::BeginListBox("##SkeletalTabBox", ImVec2(_loadedAssetSize.x - 15, _loadedAssetSize.y - 58.f)))
+					{
+						for (auto& asset : assetList)
+						{
+							ImGui::Selectable(Utils::ToString(asset.second->GetName()).c_str());
+						}
 
+						ImGui::EndListBox();
+					}
+
+					ImGui::EndTabItem();
+				}
+				//Static Model Tab
+				if (ImGui::BeginTabItem("Static"))
+				{
+					if (ImGui::BeginListBox("##StaticTabBox", ImVec2(_loadedAssetSize.x - 15, _loadedAssetSize.y - 58.f)))
+					{
+						for (auto& asset : assetList)
+						{
+							ImGui::Selectable(Utils::ToString(asset.second->GetName()).c_str());
+						}
+
+						ImGui::EndListBox();
+					}
+
+					ImGui::EndTabItem();
+				}
+				//Animation Tab
+				if (ImGui::BeginTabItem("Animation"))
+				{
+					ImGui::EndTabItem();
+				}
+				//Effect Tab
+				if (ImGui::BeginTabItem("Effect"))
+				{
+					ImGui::EndTabItem();
+				}
+				ImGui::EndTabBar();
+			}
 		}
 		ImGui::End();
 	}
