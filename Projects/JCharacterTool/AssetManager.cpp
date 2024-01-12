@@ -58,6 +58,11 @@ bool AssetManager::ReadAnimAssetFile(AnimPathDesc& desc)
 	{
 		if (ExportAnimationData(_animDesc.AnimName,_animDesc.SaveAnimPath))
 		{
+
+
+
+
+
 			return true;
 		}
 	}
@@ -141,17 +146,11 @@ bool AssetManager::CreateMeshAsset(MeshPathDesc& desc)
 
 bool AssetManager::CreateAnimAsset(AnimPathDesc& desc)
 {
+	shared_ptr<Model> loader = make_shared<Model>();
 
-	//{
-	//	wstring adr = RESOURCES_ADDR_ASSET;
-	//	adr += L"Animation/";
-	//	adr += L"/BlackCow/Loot.fbx";
-	//	_converter->ReadAssetFile(adr);
-	//	wstring anim = RESOURCES_ADDR_ANIMATION;
-	//	anim += L"BlackCow/Loot.anim";
-	//	_converter->ExportAnimationData(anim);
-	//	model->ReadAnimation(anim);
-	//}
+	loader->ReadAnimation(desc.SaveAnimPath);
+	const auto& animation = loader->GetAnimationByIndex(0);
+
 
 	return true;
 }

@@ -39,10 +39,11 @@ public:
 	vector<shared_ptr<ModelAnimation>>& GetAnimations() { return _animations; }
 	shared_ptr<ModelAnimation> GetAnimationByIndex(UINT index) { return (index < 0 || index >= _animations.size()) ? nullptr : _animations[index]; }
 	shared_ptr<ModelAnimation> GetAnimationByName(wstring name);
+	void AddAnimation(const shared_ptr<ModelAnimation>& animation) { _animations.push_back(animation); }
 public:
 	ModelType		GetModelType() { return _modelType; }
-	void			SetModelType(ModelType type);
-	ModelMetaData	GetModelMetaData() { return _modelData; }
+	void				SetModelType(ModelType type);
+	ModelMetaData		GetModelMetaData() { return _modelData; }
 public:
 	//Asset Read Helper
 	void ReadMaterial(wstring fileName);

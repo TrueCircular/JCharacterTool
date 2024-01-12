@@ -138,6 +138,23 @@ void GUIFile::MeshSavePoPUp()
 
 void GUIFile::AnimationReadPoPUp()
 {
+	if (_isReadAnimationAsset)
+	{
+		ImGui::OpenPopup("Success Mesh Read!");
+		if (ImGui::BeginPopupModal("Success Mesh Read!", 0, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			if (ImGui::Button("OK", ImVec2(120.f, 20.f)))
+			{
+				_isReadAnimationAsset = false;
+
+				MANAGER_IMGUI()->GetGui<GUIView>()->_showAnimation = true;
+
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
+		}
+	}
 }
 
 void GUIFile::AnimationSavePoPUp()
