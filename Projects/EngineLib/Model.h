@@ -16,7 +16,7 @@ private:
 	vector<shared_ptr<ModelAnimation>>	_animations;
 private:
 	ModelType		_modelType = ModelType::None;
-	ModelMetaData	_modelData;
+	ModelMetaData		_modelData;
 private:
 	void BindCacheInfo();
 public:

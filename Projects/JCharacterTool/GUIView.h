@@ -25,6 +25,10 @@ private:
 	//Loaded Asset
 	ImVec2 _loadedAssetPos;
 	ImVec2 _loadedAssetSize;
+	int _currentSkeletalItemIndex = 0;
+	int _currentStaticItemIndex = 0;
+	int _currentAnimationItemIndex = 0;
+
 	//Scene
 	ImVec2 _scenePos;
 	ImVec2 _sceneSize;
@@ -34,9 +38,9 @@ private:
 	//Inspector
 	ImVec2 _inspectorPos;
 	ImVec2 _inspectorSize;
-	float _transformPos[3];
-	float _transformRot[3];
-	float _transformScale [3];
+	float _transformPos[3] = { 0, };
+	float _transformRot[3] = { 0, };
+	float _transformScale[3] = { 1,1,1 };
 	bool _scaleCheck = false;
 	//Animation
 	ImVec2 _animationPos;

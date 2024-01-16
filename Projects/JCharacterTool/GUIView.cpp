@@ -94,20 +94,6 @@ GUIView::GUIView() : Super(GUIType::View)
 		_animationSize.x = 900.f;
 		_animationSize.y = 250.f;
 	}
-
-	{
-		_transformPos[0] = 0.f;
-		_transformPos[1] = 0.f;
-		_transformPos[2] = 0.f;
-
-		_transformRot[0] = 0.f;
-		_transformRot[1] = 0.f;
-		_transformRot[2] = 0.f;
-
-		_transformScale[0] = 1.f;
-		_transformScale[1] = 1.f;
-		_transformScale[2] = 1.f;
-	}
 }
 
 GUIView::~GUIView()
@@ -135,9 +121,18 @@ void GUIView::LoadedAsset()
 				{
 					if (ImGui::BeginListBox("##SkeletalTabBox", ImVec2(_loadedAssetSize.x - 15, _loadedAssetSize.y - 58.f)))
 					{
+						int index = 0;
 						for (auto& asset : assetList)
 						{
-							ImGui::Selectable(Utils::ToString(asset.second->GetName()).c_str());
+							const bool is_selected = (_currentSkeletalItemIndex == index);
+							if(ImGui::Selectable(Utils::ToString(asset.second->GetName()).c_str(),is_selected))
+							{
+								_currentSkeletalItemIndex = index;
+							}
+							if (is_selected)
+								ImGui::SetItemDefaultFocus();
+
+							index++;
 						}
 
 						ImGui::EndListBox();
@@ -145,14 +140,24 @@ void GUIView::LoadedAsset()
 
 					ImGui::EndTabItem();
 				}
+
 				//Static Model Tab
 				if (ImGui::BeginTabItem("Static"))
 				{
 					if (ImGui::BeginListBox("##StaticTabBox", ImVec2(_loadedAssetSize.x - 15, _loadedAssetSize.y - 58.f)))
 					{
+						int index = 0;
 						for (auto& asset : assetList)
 						{
-							ImGui::Selectable(Utils::ToString(asset.second->GetName()).c_str());
+							const bool is_selected = (_currentStaticItemIndex == index);
+							if (ImGui::Selectable(Utils::ToString(asset.second->GetName()).c_str(), is_selected))
+							{
+								_currentStaticItemIndex = index;
+							}
+							if (is_selected)
+								ImGui::SetItemDefaultFocus();
+
+							index++;
 						}
 
 						ImGui::EndListBox();
@@ -160,11 +165,31 @@ void GUIView::LoadedAsset()
 
 					ImGui::EndTabItem();
 				}
+
 				//Animation Tab
 				if (ImGui::BeginTabItem("Animation"))
 				{
+					if (ImGui::BeginListBox("##AnimationTabBox", ImVec2(_loadedAssetSize.x - 15, _loadedAssetSize.y - 58.f)))
+					{
+						int index = 0;
+						for (auto& asset : assetList)
+						{
+							const bool is_selected = (_currentAnimationItemIndex == index);
+							if (ImGui::Selectable(Utils::ToString(asset.second->GetName()).c_str(), is_selected))
+							{
+								_currentAnimationItemIndex = index;
+							}
+							if (is_selected)
+								ImGui::SetItemDefaultFocus();
+
+							index++;
+						}
+
+						ImGui::EndListBox();
+					}
 					ImGui::EndTabItem();
 				}
+
 				//Effect Tab
 				if (ImGui::BeginTabItem("Effect"))
 				{

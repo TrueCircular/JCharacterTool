@@ -58,10 +58,10 @@ bool AssetManager::ReadAnimAssetFile(AnimPathDesc& desc)
 	{
 		if (ExportAnimationData(_animDesc.AnimName,_animDesc.SaveAnimPath))
 		{
+			if (CreateAnimAsset(_animDesc))
+			{
 
-
-
-
+			}
 
 			return true;
 		}

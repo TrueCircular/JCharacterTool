@@ -44,13 +44,14 @@ MeshPathDesc GUIFile::CreateMeshPathDesc(wstring& fileName, wstring& filePath)
 	return desc;
 }
 
-AnimPathDesc GUIFile::CreateAnimPathDesc(wstring& fileName, wstring& filePath)
+AnimPathDesc GUIFile::CreateAnimPathDesc(wstring& fileName, wstring& filePath, wstring& animOwner)
 {
 	AnimPathDesc desc;
 	{
 		desc.AnimName = fileName;
+		desc.AnimOwnerName = animOwner;
 		desc.ReadAnimPath = filePath;
-		//desc.SaveAnimPath = RESOURCES_ADDR_ANIMATION + desc.Name + L"/" + desc.Name + L".anim";
+		desc.SaveAnimPath = RESOURCES_ADDR_ANIMATION + desc.AnimOwnerName + L"/" + desc.AnimName + L".anim";
 	}
 
 	return desc;
@@ -67,7 +68,14 @@ wstring GUIFile::SplitFileName(string name)
 
 wstring GUIFile::SplitParentFilePath(string path)
 {
-	return wstring();
+	string spName = path;
+	size_t sp = spName.find_last_of("\\");
+	string spName2 = spName.substr(0, sp);
+	size_t spName2Size = spName2.size();
+	size_t sp2 = spName2.find_last_of("\\") + 1;
+	wstring rName = Utils::ToWString(spName2.substr(sp2, sp2 - spName2Size));
+
+	return rName;
 }
 
 void GUIFile::MeshReadPoPUp()
@@ -271,6 +279,7 @@ void GUIFile::Render()
 	{
 		MeshReadPoPUp();
 		MeshSavePoPUp();
+		AnimationReadPoPUp();
 	}
 
 	ImGui::SetNextWindowPos(_readsaveDialogPos);
@@ -307,8 +316,9 @@ void GUIFile::Render()
 		{
 			_fileName = SplitFileName(_dialog.GetCurrentFileName());
 			_filePath = Utils::ToWString(_dialog.GetFilePathName());
+			_fileParentPath = SplitParentFilePath(_dialog.GetFilePathName());
 
-			AnimPathDesc desc = CreateAnimPathDesc(_fileName, _filePath);
+			AnimPathDesc desc = CreateAnimPathDesc(_fileName, _filePath, _fileParentPath);
 
 			if (MANAGER_ASSET()->ReadAnimAssetFile(desc))
 			{

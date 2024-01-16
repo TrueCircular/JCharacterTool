@@ -38,7 +38,7 @@ private:
 private:
 	//Helper
 	MeshPathDesc	CreateMeshPathDesc(wstring& fileName, wstring& filePath);
-	AnimPathDesc	CreateAnimPathDesc(wstring& fileName, wstring& filePath);
+	AnimPathDesc	CreateAnimPathDesc(wstring& fileName, wstring& filePath, wstring& animOwner);
 	wstring		SplitFileName(string name);
 	wstring		SplitParentFilePath(string path);
 private:

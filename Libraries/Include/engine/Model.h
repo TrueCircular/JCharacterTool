@@ -16,7 +16,7 @@ private:
 	vector<shared_ptr<ModelAnimation>>	_animations;
 private:
 	ModelType		_modelType = ModelType::None;
-	ModelMetaData	_modelData;
+	ModelMetaData		_modelData;
 private:
 	void BindCacheInfo();
 public:
@@ -39,6 +39,7 @@ public:
 	vector<shared_ptr<ModelAnimation>>& GetAnimations() { return _animations; }
 	shared_ptr<ModelAnimation> GetAnimationByIndex(UINT index) { return (index < 0 || index >= _animations.size()) ? nullptr : _animations[index]; }
 	shared_ptr<ModelAnimation> GetAnimationByName(wstring name);
+	void AddAnimation(const shared_ptr<ModelAnimation>& animation) { _animations.push_back(animation); }
 public:
 	ModelType		GetModelType() { return _modelType; }
 	void				SetModelType(ModelType type);
