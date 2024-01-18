@@ -46,8 +46,6 @@ private:
 	ImVec2 _animationPos;
 	ImVec2 _animationSize;
 
-	shared_ptr<Texture> tempTex;
-
 	ComPtr<ID3D11Texture2D> pTex;
 	ComPtr<ID3D11ShaderResourceView> pSRV;
 private:

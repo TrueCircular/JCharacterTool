@@ -1,7 +1,12 @@
 #pragma once
 #include "Converter.h"
 
-struct AssetMeshData
+__interface AssetData
+{
+
+};
+
+struct AssetMeshData : public AssetData
 {
 	wstring						meshName;
 	vector<shared_ptr<asBone>>		bones;
@@ -9,7 +14,7 @@ struct AssetMeshData
 	vector<shared_ptr<asMaterial>>	materials;
 };
 
-struct AssetAnimData
+struct AssetAnimData : public AssetData
 {
 	wstring					animName;
 	shared_ptr<asAnimation>	animation;

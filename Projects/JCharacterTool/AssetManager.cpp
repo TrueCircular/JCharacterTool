@@ -48,7 +48,16 @@ bool AssetManager::ReadMeshAssetFile(MeshPathDesc& desc)
 bool AssetManager::ReadAnimAssetFile(AnimPathDesc& desc)
 {
 	//desc init
-	_animDesc = desc;
+	_animDesc.AnimName.clear();
+	_animDesc.AnimOwnerName.clear();
+	_animDesc.ReadAnimPath.clear();
+	_animDesc.SaveAnimPath.clear();
+
+	_animDesc.AnimName = wstring(desc.AnimName);
+	_animDesc.AnimOwnerName = wstring(desc.AnimOwnerName);
+	_animDesc.ReadAnimPath = wstring(desc.ReadAnimPath);
+	_animDesc.SaveAnimPath = wstring(desc.SaveAnimPath);
+
 
 	//converter init
 	_converter->Init();
@@ -150,7 +159,6 @@ bool AssetManager::CreateAnimAsset(AnimPathDesc& desc)
 
 	loader->ReadAnimation(desc.SaveAnimPath);
 	const auto& animation = loader->GetAnimationByIndex(0);
-
 
 	return true;
 }

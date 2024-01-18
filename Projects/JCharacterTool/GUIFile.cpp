@@ -44,12 +44,12 @@ MeshPathDesc GUIFile::CreateMeshPathDesc(wstring& fileName, wstring& filePath)
 	return desc;
 }
 
-AnimPathDesc GUIFile::CreateAnimPathDesc(wstring& fileName, wstring& filePath, wstring& animOwner)
+AnimPathDesc GUIFile::CreateAnimPathDesc(wstring fileName, wstring filePath, wstring animOwner)
 {
 	AnimPathDesc desc;
 	{
-		desc.AnimName = fileName;
 		desc.AnimOwnerName = animOwner;
+		desc.AnimName = fileName;
 		desc.ReadAnimPath = filePath;
 		desc.SaveAnimPath = RESOURCES_ADDR_ANIMATION + desc.AnimOwnerName + L"/" + desc.AnimName + L".anim";
 	}
@@ -73,7 +73,7 @@ wstring GUIFile::SplitParentFilePath(string path)
 	string spName2 = spName.substr(0, sp);
 	size_t spName2Size = spName2.size();
 	size_t sp2 = spName2.find_last_of("\\") + 1;
-	wstring rName = Utils::ToWString(spName2.substr(sp2, sp2 - spName2Size));
+	wstring rName = Utils::ToWString(spName2.substr(sp2, sp2 - spName2Size+1));
 
 	return rName;
 }
