@@ -227,10 +227,6 @@ shared_ptr<asAnimation> Converter::ReadAnimationData(aiAnimation* srcAnimation)
 	animation->frameCount = srcAnimation->mDuration+1;
 	animation->frameRate = srcAnimation->mTicksPerSecond;
 
-	//animation->frameRate = (float)srcAnimation->mTicksPerSecond;
-	//uint32 num = (srcAnimation->mChannels[0]->mNumPositionKeys + srcAnimation->mChannels[0]->mNumRotationKeys + srcAnimation->mChannels[0]->mNumScalingKeys) / 3;
-	//animation->frameCount = num;
-
 	map<string, shared_ptr<asAnimationNode>> cacheAnimNodes;
 	for (uint32 i = 0; i < srcAnimation->mNumChannels; i++)
 	{
@@ -241,7 +237,7 @@ shared_ptr<asAnimation> Converter::ReadAnimationData(aiAnimation* srcAnimation)
 		shared_ptr<asAnimationNode> node = ParseAnimationNode(animation, srcNode);
 
 		// 현재 찾은 노드 중에 제일 긴 시간으로 애니메이션 시간 갱신
-		//animation->duration = max(animation->duration, node->keyframe.back().time);
+		animation->duration = max(animation->duration, node->keyframe.back().time);
 
 		cacheAnimNodes[srcNode->mNodeName.C_Str()] = node;
 	}
