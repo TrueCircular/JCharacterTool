@@ -1,5 +1,6 @@
 #pragma once
 #include "GUIInterface.h"
+#include "CameraMove.h"
 
 class GUIView : public GUIInterface
 {
@@ -8,6 +9,13 @@ class GUIView : public GUIInterface
 public:
 	GUIView();
 	virtual ~GUIView();
+private:
+	shared_ptr<GameObject> _camera;
+	shared_ptr<Camera> _cameraCom;
+	shared_ptr<CameraMove> _cameraMove;
+
+	shared_ptr<Transform> _target;
+
 private:
 	bool _showAll = false;
 
@@ -21,6 +29,8 @@ private:
 
 	bool _showAnimation = false;
 	bool _showGrid = false;
+
+	bool _showCameraWindow = false;
 private:
 	//Loaded Asset
 	ImVec2 _loadedAssetPos;
@@ -32,6 +42,7 @@ private:
 	//Scene
 	ImVec2 _scenePos;
 	ImVec2 _sceneSize;
+	ImVec2 _sceneDrawSize;
 	//BoneHierarchy
 	ImVec2 _boneHierarchyPos;
 	ImVec2 _boneHierarchySize;
@@ -45,6 +56,10 @@ private:
 	//Animation
 	ImVec2 _animationPos;
 	ImVec2 _animationSize;
+
+	//Camera
+	ImVec2 _cameraWindowPos;
+	ImVec2 _cameraWindowSize;
 
 	ComPtr<ID3D11Texture2D> pTex;
 	ComPtr<ID3D11ShaderResourceView> pSRV;
@@ -69,6 +84,8 @@ private:
 	void Animation();
 	//
 	void Lighting();
+	//
+	void CameraWindow();
 public:
 	virtual void Update() override;
 	virtual void Render() override;

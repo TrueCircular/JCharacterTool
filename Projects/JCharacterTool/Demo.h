@@ -10,7 +10,5 @@ public:
 private:
 	//Shader
 	shared_ptr<Shader>		_shader;
-	//Camera
-	shared_ptr<GameObject>	_camera;
 };
 

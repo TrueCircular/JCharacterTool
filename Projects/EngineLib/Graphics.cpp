@@ -67,7 +67,7 @@ void Graphics::CreateRenderTargetView()
 
 	for (int i = 1; i < _backBuffers.size(); i++)
 	{
-		CreateRenderTexture(1600, 900, _backBuffers[i]);
+		CreateRenderTexture(1243, 642, _backBuffers[i]);
 	}
 
 	for (int i = 0; i < _renderTargetViews.size(); i++)

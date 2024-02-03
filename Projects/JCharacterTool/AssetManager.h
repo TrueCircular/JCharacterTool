@@ -1,14 +1,13 @@
 #pragma once
 #include "Converter.h"
 
-__interface AssetData
+struct AssetData
 {
-
 };
 
 struct AssetMeshData : public AssetData
 {
-	wstring						meshName;
+	wstring							meshName;
 	vector<shared_ptr<asBone>>		bones;
 	vector<shared_ptr<asMesh>>		meshes;
 	vector<shared_ptr<asMaterial>>	materials;

@@ -47,7 +47,8 @@ void GUIView::ButtonManage()
 			!_showModelSection ||
 			!_showInspector ||
 			!_showBoneHierarchy ||
-			!_showAnimation)
+			!_showAnimation ||
+			!_showCameraWindow)
 		{
 			_showAll = false;
 		}
@@ -61,10 +62,30 @@ void GUIView::ButtonManage()
 GUIView::GUIView() : Super(GUIType::View)
 {
 	{
+		_cameraCom = make_shared<Camera>();
+		_cameraMove = make_shared<CameraMove>();
+		_camera = make_shared<GameObject>();
+		_camera->Awake();
+		_camera->AddComponent(_cameraCom);
+		_camera->AddComponent(_cameraMove);
+
+		_cameraCom->SetWidth(1243.f);
+		_cameraCom->SetHeight(642.f);
+
+	}
+
+	{
 		_loadedAssetPos.x = 0;
 		_loadedAssetPos.y = 18.f;
 		_loadedAssetSize.x = 350.f;
 		_loadedAssetSize.y = 250.f;
+	}
+
+	{
+		_cameraWindowPos.x = g_gameDesc.width - 350.f;;
+		_cameraWindowPos.y = 18.f;
+		_cameraWindowSize.x = 350.f;
+		_cameraWindowSize.y = 250.f;
 	}
 
 	{
@@ -211,24 +232,29 @@ void GUIView::Scene()
 		ImGuiWindowFlags scFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize;
 
 		MANAGER_ASSET()->Update();
+		_camera->Update();
 
 		ImGui::Begin("Scene", &_showScene, scFlags);
 		{
+
 			{
 				pTex = GRAPHICS()->GetRenderTexture(1).Get();
+				D3D11_TEXTURE2D_DESC desc;
+				pTex->GetDesc(&desc);
 
 				D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-				srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+				srvDesc.Format = desc.Format;
 				srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 				srvDesc.Texture2D.MostDetailedMip = 0;
 				srvDesc.Texture2D.MipLevels = 1;
 				DEVICE()->CreateShaderResourceView(pTex.Get(), &srvDesc, pSRV.GetAddressOf());
 			}
+			_sceneDrawSize = ImVec2(ImGui::GetCursorScreenPos().x + _sceneSize.x - 15.f, ImGui::GetCursorScreenPos().y + _sceneSize.y - 35.f);
 
 			ImGui::GetWindowDrawList()->AddImage(
 				(void*)pSRV.Get(),
 				ImGui::GetCursorScreenPos(),
-				ImVec2(ImGui::GetCursorScreenPos().x + _sceneSize.x-15.f, ImGui::GetCursorScreenPos().y + _sceneSize.y-35.f)
+				_sceneDrawSize
 			);
 		}
 		ImGui::End();
@@ -436,6 +462,60 @@ void GUIView::Lighting()
 {
 }
 
+void GUIView::CameraWindow()
+{
+	if (_showCameraWindow)
+	{
+		ImGui::SetNextWindowPos(_cameraWindowPos);
+		ImGui::SetNextWindowSize(_cameraWindowSize);
+		ImGuiWindowFlags camFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize;
+
+		if(ImGui::Begin("Camera", &_showCameraWindow, camFlags))
+		{
+			//Position
+			ImGui::Columns(2);
+			ImGui::Separator();
+			ImGui::SetColumnWidth(ImGui::GetColumnIndex(), 75.f);
+			ImGui::Text("Position");
+			ImGui::NextColumn();
+			Vec3 pos = _camera->GetTransform()->GetLocalPosition();
+			ImGui::DragFloat3("##CamPosition", (float*)&pos, 0.01f);
+			ImGui::SameLine(0.f, 40.f);
+			ImGui::PushID("##CamPosID");
+			if (ImGui::ButtonEx("Reset"))
+			{
+				_transformPos[0] = 0.f;
+				_transformPos[1] = 0.f;
+				_transformPos[2] = 0.f;
+			}
+			ImGui::PopID();
+			ImGui::Columns();
+
+			//Rotation
+			ImGui::Columns(2);
+			ImGui::Separator();
+			ImGui::SetColumnWidth(ImGui::GetColumnIndex(), 75.f);
+			ImGui::Text("Rotaiotn");
+			ImGui::NextColumn();
+			Vec3 rot = _camera->GetTransform()->GetLocalRotation();
+			ImGui::DragFloat3("##CamRotation", (float*)&rot, 0.01f);
+			ImGui::SameLine(0.f, 40.f);
+			ImGui::PushID("##CamRotID");
+			if (ImGui::ButtonEx("Reset"))
+			{
+				_transformRot[0] = 0.f;
+				_transformRot[1] = 0.f;
+				_transformRot[2] = 0.f;
+			}
+			ImGui::PopID();
+			ImGui::Columns();
+			ImGui::Separator();
+		}
+		ImGui::End();
+
+	}
+}
+
 float* GUIView::ConvertMatrixToFloat(Matrix& mat)
 {
 	float ReturnFloat[16] = { 0, };
@@ -450,6 +530,18 @@ float* GUIView::ConvertMatrixToFloat(Matrix& mat)
 
 void GUIView::Update()
 {
+	if (_showAll)
+	{
+		_showAssetSection = true;
+		_showLoadedAsset = true;
+		_showScene = true;
+		_showModelSection = true;
+		_showInspector = true;
+		_showBoneHierarchy = true;
+		_showAnimation = true;
+		_showCameraWindow = true;
+	}
+
 	//Begin MainMenu
 	if (ImGui::BeginMenu("View"))
 	{
@@ -465,6 +557,7 @@ void GUIView::Update()
 				_showInspector = false;
 				_showBoneHierarchy = false;
 				_showAnimation = false;
+				_showCameraWindow = false;
 			}
 			else
 			{
@@ -476,9 +569,21 @@ void GUIView::Update()
 				_showInspector = true;
 				_showBoneHierarchy = true;
 				_showAnimation = true;
+				_showCameraWindow = true;
 			}
 		}
 
+		if (ImGui::MenuItem("Camera", NULL, _showCameraWindow))
+		{
+			if (_showCameraWindow)
+			{
+				_showCameraWindow = false;
+			}
+			else
+			{
+				_showCameraWindow = true;
+			}
+		}
 		//----------------------
 		ImGui::Separator();
 		//----------------------
@@ -611,10 +716,14 @@ void GUIView::Update()
 void GUIView::Render()
 {
 
-
 	//LoadedAsset
 	{
 		LoadedAsset();
+	}
+
+	//Camera
+	{
+		CameraWindow();
 	}
 
 	//Scene
@@ -636,4 +745,6 @@ void GUIView::Render()
 	{
 		Animation();
 	}
+
+
 }
