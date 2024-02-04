@@ -13,6 +13,7 @@ private:
 	shared_ptr<GameObject> _camera;
 	shared_ptr<Camera> _cameraCom;
 	shared_ptr<CameraMove> _cameraMove;
+	shared_ptr<Transform> _camTransfrom;
 
 	shared_ptr<Transform> _target;
 
@@ -72,7 +73,6 @@ private:
 	void LoadedAsset();
 	//
 	void Scene();
-	void CreateRenderScene();
 	//
 	void BoneHierarchy();
 	//

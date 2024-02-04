@@ -190,7 +190,7 @@ void AssetManager::Update()
 		DC()->OMSetRenderTargets(1, rtv.GetAddressOf(), dsv.Get());
 		DC()->ClearRenderTargetView(rtv.Get(), clearColor);
 		DC()->ClearDepthStencilView(dsv.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
-		DC()->RSSetViewports(1, &GRAPHICS()->GetViewport());
+		DC()->RSSetViewports(1, &GRAPHICS()->GetViewport(1));
 	}
 
 	for (int i = 0; i < _currentAssets.size(); i++)
@@ -205,7 +205,7 @@ void AssetManager::Update()
 		const auto& dsv = GRAPHICS()->GetDepthStencilView(0);
 
 		DC()->OMSetRenderTargets(1, rtv.GetAddressOf(), dsv.Get());
-		DC()->RSSetViewports(1, &GRAPHICS()->GetViewport());
+		DC()->RSSetViewports(1, &GRAPHICS()->GetViewport(0));
 	}
 }
 

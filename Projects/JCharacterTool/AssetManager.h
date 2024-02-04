@@ -62,7 +62,10 @@ private:
 	AssetDictionary			_assets;
 	MeshDataDictionary		_meshData;
 	AnimDataDictionary		_animData;
+private:
 	vector<shared_ptr<GameObject>>	_currentAssets;
+	shared_ptr<GameObject> _seletableMesh;
+	shared_ptr<ModelAnimation> _seletableAnimation;
 private:
 	//Helper Function
 public:

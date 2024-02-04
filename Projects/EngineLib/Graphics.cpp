@@ -65,10 +65,7 @@ void Graphics::CreateRenderTargetView()
 		(void**)_backBuffers[0].GetAddressOf());
 	CHECK(hr);
 
-	for (int i = 1; i < _backBuffers.size(); i++)
-	{
-		CreateRenderTexture(1243, 642, _backBuffers[i]);
-	}
+	CreateRenderTexture(1243, 642, _backBuffers[1]);
 
 	for (int i = 0; i < _renderTargetViews.size(); i++)
 	{
@@ -80,12 +77,20 @@ void Graphics::CreateRenderTargetView()
 
 void Graphics::SetViewPort()
 {
-	_viewPort.TopLeftX = 0.f;
-	_viewPort.TopLeftY = 0.f;
-	_viewPort.Width = static_cast<float>(_width);
-	_viewPort.Height = static_cast<float>(_height);
-	_viewPort.MinDepth = 0.f;
-	_viewPort.MaxDepth = 1.f;
+	_viewPorts.resize(2);
+	_viewPorts[0].TopLeftX = 0.f;
+	_viewPorts[0].TopLeftY = 0.f;
+	_viewPorts[0].Width = static_cast<float>(_width);
+	_viewPorts[0].Height = static_cast<float>(_height);
+	_viewPorts[0].MinDepth = 0.f;
+	_viewPorts[0].MaxDepth = 1.f;
+
+	_viewPorts[1].TopLeftX = 0.f;
+	_viewPorts[1].TopLeftY = 0.f;
+	_viewPorts[1].Width = 1243.f;
+	_viewPorts[1].Height = 642.f;
+	_viewPorts[1].MinDepth = 0.f;
+	_viewPorts[1].MaxDepth = 1.f;
 }
 
 void Graphics::CreateRenderTexture(UINT width, UINT height, ComPtr<ID3D11Texture2D>& texture)
@@ -181,7 +186,7 @@ void Graphics::RenderBegin()
 	_deviceContext->ClearRenderTargetView(_renderTargetViews[0].Get(), _clearColor);
 	_deviceContext->ClearDepthStencilView(_depthStancilViews[0].Get(),
 		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
-	_deviceContext->RSSetViewports(1, &_viewPort);
+	_deviceContext->RSSetViewports(1, &_viewPorts[0]);
 }
 
 void Graphics::RenderEnd()

@@ -68,10 +68,9 @@ GUIView::GUIView() : Super(GUIType::View)
 		_camera->Awake();
 		_camera->AddComponent(_cameraCom);
 		_camera->AddComponent(_cameraMove);
-
+		_camTransfrom = _camera->GetTransform();
 		_cameraCom->SetWidth(1243.f);
 		_cameraCom->SetHeight(642.f);
-
 	}
 
 	{
@@ -259,10 +258,6 @@ void GUIView::Scene()
 		}
 		ImGui::End();
 	}
-}
-
-void GUIView::CreateRenderScene()
-{
 }
 
 void GUIView::BoneHierarchy()
@@ -478,15 +473,14 @@ void GUIView::CameraWindow()
 			ImGui::SetColumnWidth(ImGui::GetColumnIndex(), 75.f);
 			ImGui::Text("Position");
 			ImGui::NextColumn();
-			Vec3 pos = _camera->GetTransform()->GetLocalPosition();
+			Vec3 pos = _camTransfrom->GetLocalPosition();
 			ImGui::DragFloat3("##CamPosition", (float*)&pos, 0.01f);
+			_camTransfrom->SetLocalPosition(pos);
 			ImGui::SameLine(0.f, 40.f);
 			ImGui::PushID("##CamPosID");
 			if (ImGui::ButtonEx("Reset"))
 			{
-				_transformPos[0] = 0.f;
-				_transformPos[1] = 0.f;
-				_transformPos[2] = 0.f;
+				_camTransfrom->SetLocalPosition(Vec3(0.f));
 			}
 			ImGui::PopID();
 			ImGui::Columns();
@@ -497,15 +491,14 @@ void GUIView::CameraWindow()
 			ImGui::SetColumnWidth(ImGui::GetColumnIndex(), 75.f);
 			ImGui::Text("Rotaiotn");
 			ImGui::NextColumn();
-			Vec3 rot = _camera->GetTransform()->GetLocalRotation();
+			Vec3 rot = _camTransfrom->GetLocalRotation();
 			ImGui::DragFloat3("##CamRotation", (float*)&rot, 0.01f);
+			_camTransfrom->SetLocalRotation(rot);
 			ImGui::SameLine(0.f, 40.f);
 			ImGui::PushID("##CamRotID");
 			if (ImGui::ButtonEx("Reset"))
 			{
-				_transformRot[0] = 0.f;
-				_transformRot[1] = 0.f;
-				_transformRot[2] = 0.f;
+				_camTransfrom->SetLocalRotation(Vec3(0.f));
 			}
 			ImGui::PopID();
 			ImGui::Columns();

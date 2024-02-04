@@ -34,7 +34,7 @@ private:
 	vector<ComPtr<ID3D11Texture2D>>			_depthStancilTextures;
 	vector<ComPtr<ID3D11DepthStencilView>>	_depthStancilViews;
 	//Misc
-	D3D11_VIEWPORT				_viewPort = { 0, };
+	vector<D3D11_VIEWPORT>					_viewPorts;
 	float						_clearColor[4] = { 0.f,0.f,0.f,0.f };
 	float						_clearColor2[4] = { 0.5f,0.5f,0.5f,1.f };
 public:
@@ -65,7 +65,15 @@ public:
 		}
 		return nullptr;
 	}
-	D3D11_VIEWPORT& GetViewport() { return _viewPort; }
+	D3D11_VIEWPORT& GetViewport(uint16 num)
+	{
+		D3D11_VIEWPORT temp;
+		if (num < _viewPorts.size())
+		{
+			return temp = _viewPorts[num];
+		}
+		return temp;
+	}
 private:
 	void CreateDeviceAndSwapChain();
 	void CreateRenderTargetView();
