@@ -64,8 +64,8 @@ private:
 	AnimDataDictionary		_animData;
 private:
 	vector<shared_ptr<GameObject>>	_currentAssets;
-	shared_ptr<GameObject> _seletableMesh;
-	shared_ptr<ModelAnimation> _seletableAnimation;
+	shared_ptr<GameObject> _selectedModel;
+	shared_ptr<ModelAnimation> _selectedAnimation;
 private:
 	//Helper Function
 public:
