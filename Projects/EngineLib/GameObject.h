@@ -24,7 +24,7 @@ public:
 	shared_ptr<Component>		GetFixedComponent(ComponentType type);
 public:
 	shared_ptr<Transform>		GetTransform();
-	shared_ptr<Camera>		GetCamera();
+	shared_ptr<Camera>			GetCamera();
 	shared_ptr<MeshRenderer>	GetMeshRenderer();
 	shared_ptr<ModelRenderer>	GetModelRenderer();
 	shared_ptr<ModelAnimator>	GetModelAnimator();

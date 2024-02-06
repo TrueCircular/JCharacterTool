@@ -26,17 +26,8 @@ bool AssetManager::ReadMeshAssetFile(MeshPathDesc& desc)
 		ExportMaterialData(_meshDesc.SaveMaterialPath);
 		ExportModelData(_meshDesc.SaveMeshPath);
 
-		AssetMeshData data;
-		data.meshName = _meshDesc.Name;
-		data.materials = _converter->_materials;
-		data.bones = _converter->_bones;
-		data.meshes = _converter->_meshes;
-
-		_meshData.insert(make_pair(_meshDesc.Name, data));
-
 		if (CreateMeshAsset(_meshDesc))
 		{
-			_currentAssets.push_back(GetAssetByName(_meshDesc.Name));
 		}
 
 		return true;
@@ -69,10 +60,8 @@ bool AssetManager::ReadAnimAssetFile(AnimPathDesc& desc)
 		{
 			if (CreateAnimAsset(_animDesc))
 			{
-
+				return true;
 			}
-
-			return true;
 		}
 	}
 
@@ -145,10 +134,21 @@ bool AssetManager::CreateMeshAsset(MeshPathDesc& desc)
 		rot.x += ::XMConvertToRadians(90.f);
 		rot.y += ::XMConvertToRadians(90.f);
 		asset->GetTransform()->SetRotation(rot);
+
+		asset->SetActive(false);
 	}
 
-	//Add Object in Loaded Object List
-	_assets.insert(make_pair(desc.Name, asset));
+	//AssetData Save
+	{
+		AssetMeshData data;
+		data.Name = _meshDesc.Name;
+		data.Type = _meshDesc.Type;
+		data.SourceMaterials = _converter->_materials;
+		data.SourceBones = _converter->_bones;
+		data.SourceMeshes = _converter->_meshes;
+		data.Model = asset;
+		_meshData.insert(make_pair(_meshDesc.Name, data));
+	}
 
 	return true;
 }
@@ -156,21 +156,26 @@ bool AssetManager::CreateMeshAsset(MeshPathDesc& desc)
 bool AssetManager::CreateAnimAsset(AnimPathDesc& desc)
 {
 	shared_ptr<Model> loader = make_shared<Model>();
-
 	loader->ReadAnimation(desc.SaveAnimPath);
-	const auto& animation = loader->GetAnimationByIndex(0);
 
-	return true;
-}
+	const auto& anim = loader->GetAnimationByIndex(0);
 
-shared_ptr<GameObject> AssetManager::GetAssetByName(wstring& name)
-{
-	auto findIter = _assets.find(name);
+	if (anim)
+	{
+		wstring animName = desc.AnimOwnerName;
+		animName += L"/";
+		animName += desc.AnimName;
 
-	if (findIter != _assets.end())
-		return findIter->second;
+		AssetAnimData data;
+		data.Name = animName;
+		data.SourceAnim = _converter->_animation;
+		data.Anim = anim;
+		_animData.insert(make_pair(data.Name, data));
 
-	return nullptr;
+		return true;
+	}
+
+	return false;
 }
 
 void AssetManager::Init()
@@ -186,18 +191,17 @@ void AssetManager::Update()
 		auto rtv = GRAPHICS()->GetRenderTargetView(1);
 		auto dsv = GRAPHICS()->GetDepthStencilView(1);
 
-		float clearColor[4] = { 1.f,1.f,1.f,0.3f };
+		float clearColor[4] = { 1.f,1.f,1.f,0.75f };
 		DC()->OMSetRenderTargets(1, rtv.GetAddressOf(), dsv.Get());
 		DC()->ClearRenderTargetView(rtv.Get(), clearColor);
 		DC()->ClearDepthStencilView(dsv.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
 		DC()->RSSetViewports(1, &GRAPHICS()->GetViewport(1));
+		DC()->OMSetBlendState(nullptr, 0, -1);
 	}
 
-	for (int i = 0; i < _currentAssets.size(); i++)
+	//Model Rendering
 	{
-		_currentAssets[i]->FixedUpdate();
-		_currentAssets[i]->Update();
-		_currentAssets[i]->LateUpdate();
+	
 	}
 
 	{

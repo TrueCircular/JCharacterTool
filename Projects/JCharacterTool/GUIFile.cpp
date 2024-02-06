@@ -89,7 +89,11 @@ void GUIFile::MeshReadPoPUp()
 			{
 				_isReadMesh = false;
 
-				MANAGER_IMGUI()->GetGui<GUIView>()->_showAll = true;
+				MANAGER_IMGUI()->GetGui<GUIView>()->_showCameraWindow = true;
+				MANAGER_IMGUI()->GetGui<GUIView>()->_showLoadedAsset = true;
+				MANAGER_IMGUI()->GetGui<GUIView>()->_showScene = true;
+				MANAGER_IMGUI()->GetGui<GUIView>()->_showBoneHierarchy = true;
+				MANAGER_IMGUI()->GetGui<GUIView>()->_showInspector = true;
 
 				ImGui::CloseCurrentPopup();
 			}
@@ -235,15 +239,6 @@ void GUIFile::Update()
 				_dialog.OpenDialog("ReadAnim", "Read", ".fbx,.FBX",
 					adr, 1, nullptr, ImGuiFileDialogFlags_Modal);
 			}
-
-			//----------------------
-			ImGui::Separator();
-			//----------------------
-
-			if (ImGui::MenuItem("Save Animation Asset File"))
-			{
-
-			}
 		}
 
 		//----------------------
@@ -259,7 +254,7 @@ void GUIFile::Update()
 
 			}
 
-			if (ImGui::MenuItem("Save Effect Asset File"))
+			if (ImGui::MenuItem("Save Effect File"))
 			{
 
 			}

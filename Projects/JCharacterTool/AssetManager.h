@@ -7,16 +7,19 @@ struct AssetData
 
 struct AssetMeshData : public AssetData
 {
-	wstring							meshName;
-	vector<shared_ptr<asBone>>		bones;
-	vector<shared_ptr<asMesh>>		meshes;
-	vector<shared_ptr<asMaterial>>	materials;
+	wstring							Name;
+	ModelType						Type;
+	vector<shared_ptr<asBone>>		SourceBones;
+	vector<shared_ptr<asMesh>>		SourceMeshes;
+	vector<shared_ptr<asMaterial>>	SourceMaterials;
+	shared_ptr<GameObject>			Model;
 };
 
 struct AssetAnimData : public AssetData
 {
-	wstring					animName;
-	shared_ptr<asAnimation>	animation;
+	wstring					Name;
+	shared_ptr<asAnimation>	SourceAnim;
+	shared_ptr<ModelAnimation> Anim;
 };
 
 struct MeshPathDesc
@@ -38,7 +41,6 @@ struct AnimPathDesc
 
 class AssetManager
 {
-	using AssetDictionary = map<wstring, shared_ptr<GameObject>>;
 	using MeshDataDictionary = map<wstring, AssetMeshData>;
 	using AnimDataDictionary = map<wstring, AssetAnimData>;
 private:
@@ -59,15 +61,11 @@ private:
 	MeshPathDesc			_meshDesc;
 	AnimPathDesc			_animDesc;
 private:
-	AssetDictionary			_assets;
 	MeshDataDictionary		_meshData;
 	AnimDataDictionary		_animData;
 private:
-	vector<shared_ptr<GameObject>>	_currentAssets;
-	shared_ptr<GameObject> _selectedModel;
-	shared_ptr<ModelAnimation> _selectedAnimation;
-private:
-	//Helper Function
+	shared_ptr<GameObject>			_selectedAsset;
+	shared_ptr<ModelAnimation>		_selectedAnimation;
 public:
 	//Read Asset
 	bool ReadMeshAssetFile(MeshPathDesc& desc);
@@ -86,11 +84,8 @@ public:
 	bool CreateMeshAsset(MeshPathDesc& desc);
 	bool CreateAnimAsset(AnimPathDesc& desc);
 public:
-	AssetDictionary GetLoadedAssetList() const { return _assets; }
-public:
-	shared_ptr<GameObject>	GetAssetByName(wstring& name);
-	AssetMeshData&			GetMeshDataByName(wstring& name);
-	AssetAnimData&			GetAnimDataByName(wstring& name);
+	MeshDataDictionary GetLoadedMeshDataList() const { return _meshData; }
+	AnimDataDictionary GetLoadedAnimDataList() const { return _animData; }
 public:
 	void Init();
 	void Update();

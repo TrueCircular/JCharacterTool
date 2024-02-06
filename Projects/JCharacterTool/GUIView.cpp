@@ -31,6 +31,7 @@ void GUIView::ButtonManage()
 			_showAssetSection = true;
 		}
 
+
 		if (!_showInspector ||
 			!_showBoneHierarchy)
 		{
@@ -41,21 +42,44 @@ void GUIView::ButtonManage()
 			_showModelSection = true;
 		}
 
-		if (!_showAssetSection ||
-			!_showLoadedAsset ||
-			!_showScene ||
-			!_showModelSection ||
-			!_showInspector ||
-			!_showBoneHierarchy ||
-			!_showAnimation ||
-			!_showCameraWindow)
+
+		if ((!_showCameraWindow && _showAll) ||
+			(!_showLoadedAsset && _showAll) ||
+			(!_showScene && _showAll) ||
+			(!_showInspector && _showAll) ||
+			(!_showBoneHierarchy && _showAll) ||
+			(!_showAnimation && _showAll))
 		{
 			_showAll = false;
 		}
-		else
+		else if ((!_showCameraWindow && !_showAll) ||
+			(!_showLoadedAsset && !_showAll) ||
+			(!_showScene && !_showAll) ||
+			(!_showInspector && !_showAll) ||
+			(!_showBoneHierarchy && !_showAll) ||
+			(!_showAnimation && !_showAll))
+		{
+			_showAll = false;
+		}
+		else if ((_showCameraWindow && _showAll) ||
+			(_showLoadedAsset && _showAll) ||
+			(_showScene && _showAll) ||
+			(_showInspector && _showAll) ||
+			(_showBoneHierarchy && _showAll) ||
+			(_showAnimation && _showAll))
 		{
 			_showAll = true;
 		}
+		else if ((_showCameraWindow && !_showAll) ||
+			(_showLoadedAsset && !_showAll) ||
+			(_showScene && !_showAll) ||
+			(_showInspector && !_showAll) ||
+			(_showBoneHierarchy && !_showAll) ||
+			(_showAnimation && !_showAll))
+		{
+			_showAll = true;
+		}
+
 	}
 }
 
@@ -128,74 +152,82 @@ void GUIView::LoadedAsset()
 		ImGui::SetNextWindowSize(_loadedAssetSize);
 		ImGuiWindowFlags assetFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize;
 
-		const map<wstring, shared_ptr<GameObject>>& assetList = MANAGER_ASSET()->GetLoadedAssetList();
 
 		ImGuiTabBarFlags tabBarFlag = ImGuiTabBarFlags_TabListPopupButton | ImGuiTabBarFlags_FittingPolicyResizeDown;
 
-		if (ImGui::Begin("AssetList",&_showLoadedAsset, assetFlags))
+		if (ImGui::Begin("AssetList", &_showLoadedAsset, assetFlags))
 		{
 			if (ImGui::BeginTabBar("mtbar", tabBarFlag))
 			{
 				//Skeletal Moddel Tab
 				if (ImGui::BeginTabItem("Skeletal"))
 				{
+					const auto& assetList = MANAGER_ASSET()->GetLoadedMeshDataList();
+
 					if (ImGui::BeginListBox("##SkeletalTabBox", ImVec2(_loadedAssetSize.x - 15, _loadedAssetSize.y - 58.f)))
 					{
 						int index = 0;
 						for (auto& asset : assetList)
 						{
-							const bool is_selected = (_currentSkeletalItemIndex == index);
-							if(ImGui::Selectable(Utils::ToString(asset.second->GetName()).c_str(),is_selected))
+							if (asset.second.Type == ModelType::Skeletal)
 							{
-								_currentSkeletalItemIndex = index;
+
+								const bool is_selected = (_currentSkeletalItemIndex == index);
+								if (ImGui::Selectable(Utils::ToString(asset.second.Name).c_str(), is_selected))
+								{
+									_currentSkeletalItemIndex = index;
+								}
+								if (is_selected)
+									ImGui::SetItemDefaultFocus();
+
+								index++;
 							}
-							if (is_selected)
-								ImGui::SetItemDefaultFocus();
-
-							index++;
 						}
-
 						ImGui::EndListBox();
 					}
-
 					ImGui::EndTabItem();
 				}
 
 				//Static Model Tab
 				if (ImGui::BeginTabItem("Static"))
 				{
+					const auto& assetList = MANAGER_ASSET()->GetLoadedMeshDataList();
+
 					if (ImGui::BeginListBox("##StaticTabBox", ImVec2(_loadedAssetSize.x - 15, _loadedAssetSize.y - 58.f)))
 					{
 						int index = 0;
 						for (auto& asset : assetList)
 						{
-							const bool is_selected = (_currentStaticItemIndex == index);
-							if (ImGui::Selectable(Utils::ToString(asset.second->GetName()).c_str(), is_selected))
+							if (asset.second.Type == ModelType::Static)
 							{
-								_currentStaticItemIndex = index;
+								const bool is_selected = (_currentSkeletalItemIndex == index);
+								if (ImGui::Selectable(Utils::ToString(asset.second.Name).c_str(), is_selected))
+								{
+									_currentSkeletalItemIndex = index;
+								}
+								if (is_selected)
+									ImGui::SetItemDefaultFocus();
+
+								index++;
 							}
-							if (is_selected)
-								ImGui::SetItemDefaultFocus();
-
-							index++;
 						}
-
 						ImGui::EndListBox();
 					}
-
 					ImGui::EndTabItem();
 				}
 
 				//Animation Tab
 				if (ImGui::BeginTabItem("Animation"))
 				{
+					const auto& assetList = MANAGER_ASSET()->GetLoadedAnimDataList();
+
 					if (ImGui::BeginListBox("##AnimationTabBox", ImVec2(_loadedAssetSize.x - 15, _loadedAssetSize.y - 58.f)))
 					{
 						int index = 0;
 						for (auto& asset : assetList)
 						{
 							const bool is_selected = (_currentAnimationItemIndex == index);
-							if (ImGui::Selectable(Utils::ToString(asset.second->GetName()).c_str(), is_selected))
+							if (ImGui::Selectable(Utils::ToString(asset.second.Name).c_str(), is_selected))
 							{
 								_currentAnimationItemIndex = index;
 							}
@@ -330,7 +362,7 @@ void GUIView::Inspector()
 		ImGuiWindowFlags insFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize;
 		//Begin Inspector
 		if (ImGui::Begin("Inspector", &_showInspector, insFlags))
-		{		
+		{
 			//Transform
 			{
 				this->Transform();
@@ -352,7 +384,7 @@ void GUIView::Inspector()
 void GUIView::Transform()
 {
 	if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
-	{	
+	{
 		HelpMarker("If you want, you can adjust Transform by default through mouse drag. Alternatively, you can enter the value directly by double-clicking.");
 
 		//Position
@@ -364,7 +396,7 @@ void GUIView::Transform()
 		ImGui::DragFloat3("##Position", _transformPos, 0.01f);
 		ImGui::SameLine(0.f, 40.f);
 		ImGui::PushID("##PosID");
-		if(ImGui::ButtonEx("Reset"))
+		if (ImGui::ButtonEx("Reset"))
 		{
 			_transformPos[0] = 0.f;
 			_transformPos[1] = 0.f;
@@ -465,7 +497,7 @@ void GUIView::CameraWindow()
 		ImGui::SetNextWindowSize(_cameraWindowSize);
 		ImGuiWindowFlags camFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize;
 
-		if(ImGui::Begin("Camera", &_showCameraWindow, camFlags))
+		if (ImGui::Begin("Camera", &_showCameraWindow, camFlags))
 		{
 			//Position
 			ImGui::Columns(2);
@@ -523,18 +555,6 @@ float* GUIView::ConvertMatrixToFloat(Matrix& mat)
 
 void GUIView::Update()
 {
-	if (_showAll)
-	{
-		_showAssetSection = true;
-		_showLoadedAsset = true;
-		_showScene = true;
-		_showModelSection = true;
-		_showInspector = true;
-		_showBoneHierarchy = true;
-		_showAnimation = true;
-		_showCameraWindow = true;
-	}
-
 	//Begin MainMenu
 	if (ImGui::BeginMenu("View"))
 	{
@@ -543,38 +563,24 @@ void GUIView::Update()
 			if (_showAll)
 			{
 				_showAll = false;
-				_showAssetSection = false;
+
+				_showCameraWindow = false;
 				_showLoadedAsset = false;
 				_showScene = false;
-				_showModelSection = false;
 				_showInspector = false;
 				_showBoneHierarchy = false;
 				_showAnimation = false;
-				_showCameraWindow = false;
 			}
 			else
 			{
 				_showAll = true;
-				_showAssetSection = true;
+
+				_showCameraWindow = true;
 				_showLoadedAsset = true;
 				_showScene = true;
-				_showModelSection = true;
 				_showInspector = true;
 				_showBoneHierarchy = true;
 				_showAnimation = true;
-				_showCameraWindow = true;
-			}
-		}
-
-		if (ImGui::MenuItem("Camera", NULL, _showCameraWindow))
-		{
-			if (_showCameraWindow)
-			{
-				_showCameraWindow = false;
-			}
-			else
-			{
-				_showCameraWindow = true;
 			}
 		}
 		//----------------------
@@ -594,12 +600,14 @@ void GUIView::Update()
 				_showAssetSection = false;
 				_showLoadedAsset = false;
 				_showScene = false;
+				_showCameraWindow = false;
 			}
 			else
 			{
 				_showAssetSection = true;
 				_showLoadedAsset = true;
 				_showScene = true;
+				_showCameraWindow = true;
 			}
 		}
 
@@ -624,6 +632,18 @@ void GUIView::Update()
 			else
 			{
 				_showScene = true;
+			}
+		}
+
+		if (ImGui::MenuItem("Camera", NULL, _showCameraWindow))
+		{
+			if (_showCameraWindow)
+			{
+				_showCameraWindow = false;
+			}
+			else
+			{
+				_showCameraWindow = true;
 			}
 		}
 

@@ -14,7 +14,7 @@ void Demo::Init()
 	//light
 	{
 		LightDesc lightDesc;
-		lightDesc.ambient = Vec4(0.93, 0.91f, 0.67f, 1.0f);
+		lightDesc.ambient = Vec4(1.0, 1.0f, 1.0f, 1.0f);
 		lightDesc.diffuse = Vec4(0.93, 0.91f, 0.67f, 1.0f);
 		lightDesc.specular = Vec4(0.93, 0.91f, 0.67f, 1.0f);
 		lightDesc.direction = Vec3(1.f, -1.f, -1.f);

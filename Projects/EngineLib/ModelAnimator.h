@@ -36,6 +36,7 @@ public:
 	void SetModel(shared_ptr<Model> model) { _model = model; }
 	void SetShader(shared_ptr<Shader> shader) { _shader = shader; }
 	void SetPass(uint8 pass) { _pass = pass; }
+	uint8 GetPassState() const { return _pass; }
 public:
 	void	SetAnimationByIndex(int32 index);
 	int32	GetCurrentAnimationByIndex() const { return _keyFrameDesc.animIndex; }
