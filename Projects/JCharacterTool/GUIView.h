@@ -2,6 +2,9 @@
 #include "GUIInterface.h"
 #include "CameraMove.h"
 
+#define MAX_SKELETAL_ASSET_COUNT (int)500
+#define MAX_STATIC_ASSET_COUNT (int)500
+
 class GUIView : public GUIInterface
 {
 	friend class GUIFile;
@@ -39,14 +42,18 @@ private:
 	int _currentSkeletalItemIndex = 0;
 	int _currentStaticItemIndex = 0;
 	int _currentAnimationItemIndex = 0;
+	vector<bool*> _skeletalCheckList;
+	vector<bool*> _staticCheckList;
 
 	//Scene
 	ImVec2 _scenePos;
 	ImVec2 _sceneSize;
 	ImVec2 _sceneDrawSize;
+
 	//BoneHierarchy
 	ImVec2 _boneHierarchyPos;
 	ImVec2 _boneHierarchySize;
+
 	//Inspector
 	ImVec2 _inspectorPos;
 	ImVec2 _inspectorSize;
@@ -54,10 +61,11 @@ private:
 	float _transformRot[3] = { 0, };
 	float _transformScale[3] = { 1,1,1 };
 	bool _scaleCheck = false;
+
 	//Animation
 	ImVec2 _animationPos;
 	ImVec2 _animationSize;
-
+	int _currentAnimationComboIndex = 0;
 	//Camera
 	ImVec2 _cameraWindowPos;
 	ImVec2 _cameraWindowSize;

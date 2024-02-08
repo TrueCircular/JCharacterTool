@@ -15,7 +15,11 @@ AssetManager::~AssetManager()
 bool AssetManager::ReadMeshAssetFile(MeshPathDesc& desc)
 {
 	//desc init
-	_meshDesc = desc;
+	_meshDesc.Name = wstring(desc.Name);
+	_meshDesc.ReadMeshPath = wstring(desc.ReadMeshPath);
+	_meshDesc.SaveMaterialPath = wstring(desc.SaveMaterialPath);
+	_meshDesc.SaveMeshPath = wstring(desc.SaveMeshPath);
+	_meshDesc.Type = desc.Type;
 
 	//converter init
 	_converter->Init();
@@ -28,9 +32,9 @@ bool AssetManager::ReadMeshAssetFile(MeshPathDesc& desc)
 
 		if (CreateMeshAsset(_meshDesc))
 		{
+			return true;
 		}
 
-		return true;
 	}
 
 	return false;
@@ -123,6 +127,7 @@ bool AssetManager::CreateMeshAsset(MeshPathDesc& desc)
 		//Init
 		asset->SetName(desc.Name);
 		asset->AddComponent(make_shared<ModelRenderer>(shader));
+		asset->AddComponent(make_shared<ModelAnimator>());
 		asset->GetModelRenderer()->SetModel(model);
 		asset->GetModelRenderer()->SetPass(0);
 		asset->Awake();
@@ -147,7 +152,14 @@ bool AssetManager::CreateMeshAsset(MeshPathDesc& desc)
 		data.SourceBones = _converter->_bones;
 		data.SourceMeshes = _converter->_meshes;
 		data.Model = asset;
-		_meshData.insert(make_pair(_meshDesc.Name, data));
+		if (desc.Type == ModelType::Skeletal)
+		{
+			_skeletalMeshData.insert(make_pair(_meshDesc.Name, data));
+		}
+		else if (desc.Type == ModelType::Static)
+		{
+			_staticMeshData.insert(make_pair(_meshDesc.Name, data));
+		}
 	}
 
 	return true;
@@ -191,7 +203,7 @@ void AssetManager::Update()
 		auto rtv = GRAPHICS()->GetRenderTargetView(1);
 		auto dsv = GRAPHICS()->GetDepthStencilView(1);
 
-		float clearColor[4] = { 1.f,1.f,1.f,0.75f };
+		float clearColor[4] = { 0.25f,0.25f,0.25f,0.7f };
 		DC()->OMSetRenderTargets(1, rtv.GetAddressOf(), dsv.Get());
 		DC()->ClearRenderTargetView(rtv.Get(), clearColor);
 		DC()->ClearDepthStencilView(dsv.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
@@ -201,7 +213,26 @@ void AssetManager::Update()
 
 	//Model Rendering
 	{
-	
+		//Skeletal Model
+		for (const auto& obj : _skeletalMeshData)
+		{
+			if (obj.second.Model->GetActive())
+			{
+				obj.second.Model->FixedUpdate();
+				obj.second.Model->Update();
+				obj.second.Model->LateUpdate();
+			}
+		}
+		//Static Model
+		for (const auto& obj : _staticMeshData)
+		{
+			if (obj.second.Model->GetActive())
+			{
+				obj.second.Model->FixedUpdate();
+				obj.second.Model->Update();
+				obj.second.Model->LateUpdate();
+			}
+		}
 	}
 
 	{

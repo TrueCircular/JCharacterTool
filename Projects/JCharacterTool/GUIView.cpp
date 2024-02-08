@@ -2,6 +2,7 @@
 #include "GUIView.h"
 #include "AssetManager.h"
 #include "engine/Utils.h"
+#include <array>
 
 static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
 
@@ -102,6 +103,8 @@ GUIView::GUIView() : Super(GUIType::View)
 		_loadedAssetPos.y = 18.f;
 		_loadedAssetSize.x = 350.f;
 		_loadedAssetSize.y = 250.f;
+		_skeletalCheckList.resize(MAX_SKELETAL_ASSET_COUNT,0);
+		_staticCheckList.resize(MAX_STATIC_ASSET_COUNT, 0);
 	}
 
 	{
@@ -162,26 +165,57 @@ void GUIView::LoadedAsset()
 				//Skeletal Moddel Tab
 				if (ImGui::BeginTabItem("Skeletal"))
 				{
-					const auto& assetList = MANAGER_ASSET()->GetLoadedMeshDataList();
+					const auto& assetList = MANAGER_ASSET()->GetLoadedSkeletalMeshDataList();
 
 					if (ImGui::BeginListBox("##SkeletalTabBox", ImVec2(_loadedAssetSize.x - 15, _loadedAssetSize.y - 58.f)))
 					{
 						int index = 0;
 						for (auto& asset : assetList)
 						{
-							if (asset.second.Type == ModelType::Skeletal)
+							string assetName;
+							assetName = Utils::ToString(asset.second.Name).c_str();
+
+							const bool is_selected = (_currentSkeletalItemIndex == index);
+							if (ImGui::Selectable(assetName.c_str(), is_selected))
 							{
-
-								const bool is_selected = (_currentSkeletalItemIndex == index);
-								if (ImGui::Selectable(Utils::ToString(asset.second.Name).c_str(), is_selected))
-								{
-									_currentSkeletalItemIndex = index;
-								}
-								if (is_selected)
-									ImGui::SetItemDefaultFocus();
-
-								index++;
+								_currentSkeletalItemIndex = index;
 							}
+
+							if (is_selected)
+								ImGui::SetItemDefaultFocus();
+
+							if (ImGui::BeginPopupContextItem())
+							{
+								if (ImGui::Checkbox("##check", (bool*)&_skeletalCheckList[_currentSkeletalItemIndex]))
+								{
+									bool isChecked = _skeletalCheckList[_currentSkeletalItemIndex];
+
+									if (isChecked == true)
+									{
+										if (asset.second.Model->GetActive() == false)
+										{
+											asset.second.Model->SetActive(true);
+										}
+									}
+									else
+									{
+										if (asset.second.Model->GetActive() == true)
+										{
+											asset.second.Model->SetActive(false);
+										}
+									}
+								}
+
+								ImGui::SameLine();
+								ImGui::Text("Rendering ");
+
+								if (ImGui::Button("Close"))
+								{
+									ImGui::CloseCurrentPopup();
+								}
+								ImGui::EndPopup();
+							}
+							index++;
 						}
 						ImGui::EndListBox();
 					}
@@ -191,25 +225,56 @@ void GUIView::LoadedAsset()
 				//Static Model Tab
 				if (ImGui::BeginTabItem("Static"))
 				{
-					const auto& assetList = MANAGER_ASSET()->GetLoadedMeshDataList();
+					const auto& assetList = MANAGER_ASSET()->GetLoadedStaticMeshDataList();
 
 					if (ImGui::BeginListBox("##StaticTabBox", ImVec2(_loadedAssetSize.x - 15, _loadedAssetSize.y - 58.f)))
 					{
 						int index = 0;
 						for (auto& asset : assetList)
 						{
-							if (asset.second.Type == ModelType::Static)
-							{
-								const bool is_selected = (_currentSkeletalItemIndex == index);
-								if (ImGui::Selectable(Utils::ToString(asset.second.Name).c_str(), is_selected))
-								{
-									_currentSkeletalItemIndex = index;
-								}
-								if (is_selected)
-									ImGui::SetItemDefaultFocus();
+							string assetName;
+							assetName = Utils::ToString(asset.second.Name).c_str();
 
-								index++;
+							const bool is_selected = (_currentStaticItemIndex == index);
+							if (ImGui::Selectable(assetName.c_str(), is_selected))
+							{
+								_currentStaticItemIndex = index;
 							}
+							if (is_selected)
+								ImGui::SetItemDefaultFocus();
+
+							if (ImGui::BeginPopupContextItem())
+							{
+								if (ImGui::Checkbox("##check", (bool*)&_staticCheckList[_currentStaticItemIndex]))
+								{
+									bool isChecked = _staticCheckList[_currentStaticItemIndex];
+
+									if (isChecked == true)
+									{
+										if (asset.second.Model->GetActive() == false)
+										{
+											asset.second.Model->SetActive(true);
+										}
+									}
+									else
+									{
+										if (asset.second.Model->GetActive() == true)
+										{
+											asset.second.Model->SetActive(false);
+										}
+									}
+								}
+
+								ImGui::SameLine();
+								ImGui::Text("Rendering ");
+
+								if (ImGui::Button("Close"))
+								{
+									ImGui::CloseCurrentPopup();
+								}
+								ImGui::EndPopup();
+							}
+							index++;
 						}
 						ImGui::EndListBox();
 					}
@@ -476,11 +541,39 @@ void GUIView::Animation()
 		ImGui::SetNextWindowSize(_animationSize);
 
 		ImGuiWindowFlags aniFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize;
-		//Begin Inspector
+
+		const auto& assetList = MANAGER_ASSET()->GetLoadedSkeletalMeshDataList();
+		vector<string> names;
+		{
+			for (const auto& asset : assetList)
+			{
+				names.push_back(Utils::ToString(asset.second.Name));
+			}
+		}
+
+		const char* previewName = names[_currentAnimationComboIndex].c_str();
+		//Begin Animation Window
 		if (ImGui::Begin("Animation", &_showAnimation, aniFlags))
 		{
+			//ImGui::Text("Select Model");
+			//ImGui::SameLine();
+			if (ImGui::BeginCombo("Select Model", previewName))
+			{
+				for (int n = 0; n < names.size(); n++)
+				{
+					const bool is_selected = (_currentAnimationComboIndex == n);
+					if (ImGui::Selectable(names[n].c_str(), is_selected))
+						_currentAnimationComboIndex = n;
+
+					if (is_selected)
+						ImGui::SetItemDefaultFocus();
+
+				}
+				ImGui::EndCombo();
+			}
+
 		}
-		//End Inspector
+		//End Animation Window
 		ImGui::End();
 	}
 }

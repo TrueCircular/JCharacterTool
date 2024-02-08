@@ -15,8 +15,8 @@ public:
 	virtual ~ModelAnimator();
 private:
 	shared_ptr<Model>		_model;
-	shared_ptr<Shader>	_shader;
-	uint8				_pass = 0;
+	shared_ptr<Shader>		_shader;
+	uint8					_pass = 0;
 private:
 	vector<AnimTransform>				_animTransforms;
 	shared_ptr<ModelAnimation>			_currentAnim;

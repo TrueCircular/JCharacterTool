@@ -61,10 +61,12 @@ private:
 	MeshPathDesc			_meshDesc;
 	AnimPathDesc			_animDesc;
 private:
-	MeshDataDictionary		_meshData;
+	MeshDataDictionary		_skeletalMeshData;
+	MeshDataDictionary		_staticMeshData;
 	AnimDataDictionary		_animData;
 private:
-	shared_ptr<GameObject>			_selectedAsset;
+	shared_ptr<GameObject>			_selectedSkeletalAsset;
+	shared_ptr<GameObject>			_selectedStaticAsset;
 	shared_ptr<ModelAnimation>		_selectedAnimation;
 public:
 	//Read Asset
@@ -84,7 +86,8 @@ public:
 	bool CreateMeshAsset(MeshPathDesc& desc);
 	bool CreateAnimAsset(AnimPathDesc& desc);
 public:
-	MeshDataDictionary GetLoadedMeshDataList() const { return _meshData; }
+	const MeshDataDictionary& GetLoadedSkeletalMeshDataList() const { return _skeletalMeshData; }
+	const MeshDataDictionary& GetLoadedStaticMeshDataList() const { return _staticMeshData; }
 	AnimDataDictionary GetLoadedAnimDataList() const { return _animData; }
 public:
 	void Init();

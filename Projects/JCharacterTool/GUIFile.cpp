@@ -31,13 +31,17 @@ MeshPathDesc GUIFile::CreateMeshPathDesc(wstring& fileName, wstring& filePath)
 		switch (_type)
 		{
 		case AssetType::SkeletalMesh:
+		{
 			desc.SaveMeshPath = RESOURCES_ADDR_MESH_SKELETAL + desc.Name + L"/" + desc.Name + L".mesh";
 			desc.SaveMaterialPath = RESOURCES_ADDR_TEXTURE_SKELETAL + desc.Name + L"/" + desc.Name + L".xml";
-			break;
+			desc.Type = ModelType::Skeletal;
+		}break;
 		case AssetType::StaticMesh:
+		{
 			desc.SaveMeshPath = RESOURCES_ADDR_MESH_STATIC + desc.Name + L"/" + desc.Name + L".mesh";
 			desc.SaveMaterialPath = RESOURCES_ADDR_TEXTURE_STATIC + desc.Name + L"/" + desc.Name + L".xml";
-			break;
+			desc.Type = ModelType::Static;
+		}break;
 		}
 	}
 
