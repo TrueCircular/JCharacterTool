@@ -34,7 +34,7 @@ public:
 	void SetParent(shared_ptr<Transform> parent) { _parent = parent; }
 	void AddChild(shared_ptr<Transform> child);
 public:
-	Vec3 GetLocalScale() const { return _localScale; }
+	Vec3 GetLocalScale()  { return _localScale; }
 	Vec3 GetLocalRotation() const { return _localRotation; }
 	Vec3 GetLocalPosition() const { return _localPosition; }
 	Vec3 GetScale() const { return _scale; }

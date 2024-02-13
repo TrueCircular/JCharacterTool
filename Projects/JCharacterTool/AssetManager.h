@@ -88,6 +88,8 @@ public:
 public:
 	const MeshDataDictionary& GetLoadedSkeletalMeshDataList() const { return _skeletalMeshData; }
 	const MeshDataDictionary& GetLoadedStaticMeshDataList() const { return _staticMeshData; }
+	const shared_ptr<GameObject>& GetSelectedSkeletalAsset() const { return _selectedSkeletalAsset; }
+	const shared_ptr<GameObject>& GetSelectedStatictalAsset() const { return _selectedStaticAsset; }
 	AnimDataDictionary GetLoadedAnimDataList() const { return _animData; }
 public:
 	void Init();

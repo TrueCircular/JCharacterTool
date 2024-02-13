@@ -17,23 +17,17 @@ private:
 	shared_ptr<Camera> _cameraCom;
 	shared_ptr<CameraMove> _cameraMove;
 	shared_ptr<Transform> _camTransfrom;
-
-	shared_ptr<Transform> _target;
-
+	shared_ptr<Transform> _cameTarget;
 private:
 	bool _showAll = false;
-
 	bool _showAssetSection = false;
 	bool _showLoadedAsset = false;
 	bool _showScene = false;
-
 	bool _showModelSection = false;
 	bool _showBoneHierarchy = false;
 	bool _showInspector = false;
-
 	bool _showAnimation = false;
 	bool _showGrid = false;
-
 	bool _showCameraWindow = false;
 private:
 	//Loaded Asset
@@ -44,6 +38,7 @@ private:
 	int _currentAnimationItemIndex = 0;
 	vector<bool*> _skeletalCheckList;
 	vector<bool*> _staticCheckList;
+	shared_ptr<GameObject> _selectedModelAsset;
 
 	//Scene
 	ImVec2 _scenePos;
@@ -57,15 +52,17 @@ private:
 	//Inspector
 	ImVec2 _inspectorPos;
 	ImVec2 _inspectorSize;
-	float _transformPos[3] = { 0, };
-	float _transformRot[3] = { 0, };
-	float _transformScale[3] = { 1,1,1 };
+	Vec3 _transformPos;
+	Vec3 _transformRot;
+	Vec3 _transformScale;
 	bool _scaleCheck = false;
 
 	//Animation
 	ImVec2 _animationPos;
 	ImVec2 _animationSize;
-	int _currentAnimationComboIndex = 0;
+	int _currentModelComboIndex = 0;
+	int _currentAnimComboIndex = 0;
+
 	//Camera
 	ImVec2 _cameraWindowPos;
 	ImVec2 _cameraWindowSize;

@@ -103,7 +103,7 @@ GUIView::GUIView() : Super(GUIType::View)
 		_loadedAssetPos.y = 18.f;
 		_loadedAssetSize.x = 350.f;
 		_loadedAssetSize.y = 250.f;
-		_skeletalCheckList.resize(MAX_SKELETAL_ASSET_COUNT,0);
+		_skeletalCheckList.resize(MAX_SKELETAL_ASSET_COUNT, 0);
 		_staticCheckList.resize(MAX_STATIC_ASSET_COUNT, 0);
 	}
 
@@ -141,6 +141,12 @@ GUIView::GUIView() : Super(GUIType::View)
 		_animationSize.x = 900.f;
 		_animationSize.y = 250.f;
 	}
+
+	{
+		_transformPos = Vec3(0.f);
+		_transformRot = Vec3(0.f);
+		_transformScale = Vec3(1.f);
+	}
 }
 
 GUIView::~GUIView()
@@ -154,7 +160,6 @@ void GUIView::LoadedAsset()
 		ImGui::SetNextWindowPos(_loadedAssetPos);
 		ImGui::SetNextWindowSize(_loadedAssetSize);
 		ImGuiWindowFlags assetFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize;
-
 
 		ImGuiTabBarFlags tabBarFlag = ImGuiTabBarFlags_TabListPopupButton | ImGuiTabBarFlags_FittingPolicyResizeDown;
 
@@ -182,7 +187,11 @@ void GUIView::LoadedAsset()
 							}
 
 							if (is_selected)
+							{
 								ImGui::SetItemDefaultFocus();
+
+								_selectedModelAsset = asset.second.Model;
+							}
 
 							if (ImGui::BeginPopupContextItem())
 							{
@@ -241,11 +250,14 @@ void GUIView::LoadedAsset()
 								_currentStaticItemIndex = index;
 							}
 							if (is_selected)
+							{
 								ImGui::SetItemDefaultFocus();
+								_selectedModelAsset = asset.second.Model;
+							}
 
 							if (ImGui::BeginPopupContextItem())
 							{
-								if (ImGui::Checkbox("##check", (bool*)&_staticCheckList[_currentStaticItemIndex]))
+								if (ImGui::Checkbox("##check2", (bool*)&_staticCheckList[_currentStaticItemIndex]))
 								{
 									bool isChecked = _staticCheckList[_currentStaticItemIndex];
 
@@ -264,9 +276,8 @@ void GUIView::LoadedAsset()
 										}
 									}
 								}
-
 								ImGui::SameLine();
-								ImGui::Text("Rendering ");
+								ImGui::Text("Rendering");
 
 								if (ImGui::Button("Close"))
 								{
@@ -301,15 +312,8 @@ void GUIView::LoadedAsset()
 
 							index++;
 						}
-
 						ImGui::EndListBox();
 					}
-					ImGui::EndTabItem();
-				}
-
-				//Effect Tab
-				if (ImGui::BeginTabItem("Effect"))
-				{
 					ImGui::EndTabItem();
 				}
 				ImGui::EndTabBar();
@@ -399,7 +403,6 @@ void GUIView::BoneHierarchy()
 
 						//Ex End
 						ImGui::TreePop();
-
 					}
 					ImGui::EndTable();
 				}
@@ -453,52 +456,59 @@ void GUIView::Transform()
 		HelpMarker("If you want, you can adjust Transform by default through mouse drag. Alternatively, you can enter the value directly by double-clicking.");
 
 		//Position
+		{
+			_transformPos = _selectedModelAsset->GetTransform()->GetLocalPosition();
+		}
 		ImGui::Columns(2);
 		ImGui::Separator();
 		ImGui::SetColumnWidth(ImGui::GetColumnIndex(), 75.f);
 		ImGui::Text("Position");
 		ImGui::NextColumn();
-		ImGui::DragFloat3("##Position", _transformPos, 0.01f);
+		ImGui::DragFloat3("##Position", (float*)&_transformPos, 0.01f);
 		ImGui::SameLine(0.f, 40.f);
 		ImGui::PushID("##PosID");
 		if (ImGui::ButtonEx("Reset"))
 		{
-			_transformPos[0] = 0.f;
-			_transformPos[1] = 0.f;
-			_transformPos[2] = 0.f;
+			_transformPos = Vec3(0.f);
 		}
+		_selectedModelAsset->GetTransform()->SetLocalPosition(_transformPos);
 		ImGui::PopID();
 		ImGui::Columns();
 
 		//Rotation
+		{
+			_transformRot = _selectedModelAsset->GetTransform()->GetLocalRotation();
+		}
 		ImGui::Columns(2);
 		ImGui::Separator();
 		ImGui::SetColumnWidth(ImGui::GetColumnIndex(), 75.f);
 		ImGui::Text("Rotaiotn");
 		ImGui::NextColumn();
-		ImGui::DragFloat3("##Rotation", _transformRot, 0.01f);
+		ImGui::DragFloat3("##Rotation", (float*)&_transformRot, 0.01f);
 		ImGui::SameLine(0.f, 40.f);
 		ImGui::PushID("##RotID");
 		if (ImGui::ButtonEx("Reset"))
 		{
-			_transformRot[0] = 0.f;
-			_transformRot[1] = 0.f;
-			_transformRot[2] = 0.f;
+			_transformRot = Vec3(0.f);
 		}
+		_selectedModelAsset->GetTransform()->SetLocalRotation(_transformRot);
 		ImGui::PopID();
 		ImGui::Columns();
 
 		//Scale
+		{
+			_transformScale = _selectedModelAsset->GetTransform()->GetLocalScale();
+		}
 		ImGui::Columns(2);
 		ImGui::Separator();
 		ImGui::SetColumnWidth(ImGui::GetColumnIndex(), 75.f);
 		ImGui::Text("Scale");
 		ImGui::NextColumn();
-		if (ImGui::DragFloat3("##Scale", _transformScale, 0.01f))
+		if (ImGui::DragFloat3("##Scale", (float*)&_transformScale, 0.01f))
 		{
 			if (_scaleCheck)
 			{
-				_transformScale[2] = _transformScale[1] = _transformScale[0];
+				_transformScale.z = _transformScale.y = _transformScale.x;
 			}
 		}
 		ImGui::SameLine(0.f, 10.f);
@@ -508,10 +518,9 @@ void GUIView::Transform()
 		ImGui::PushID("##ScaleID");
 		if (ImGui::ButtonEx("Reset"))
 		{
-			_transformScale[0] = 1.f;
-			_transformScale[1] = 1.f;
-			_transformScale[2] = 1.f;
+			_transformScale = Vec3(1.0f);
 		}
+		_selectedModelAsset->GetTransform()->SetLocalScale(_transformScale);
 		ImGui::PopID();
 		ImGui::Columns();
 	}
@@ -543,27 +552,53 @@ void GUIView::Animation()
 		ImGuiWindowFlags aniFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize;
 
 		const auto& assetList = MANAGER_ASSET()->GetLoadedSkeletalMeshDataList();
-		vector<string> names;
+		const auto& animList = MANAGER_ASSET()->GetLoadedAnimDataList();
+
+		vector<string> modelNames;
+		modelNames.reserve(assetList.size());
 		{
 			for (const auto& asset : assetList)
 			{
-				names.push_back(Utils::ToString(asset.second.Name));
+				modelNames.push_back(Utils::ToString(asset.second.Name));
+			}
+		}
+		vector<string> animNames;
+		animNames.reserve(animList.size());
+		{
+			for (const auto& anim : animList)
+			{
+				animNames.push_back(Utils::ToString(anim.second.Name));
 			}
 		}
 
-		const char* previewName = names[_currentAnimationComboIndex].c_str();
+		const char* previewModelName = modelNames[_currentModelComboIndex].c_str();
+		const char* previewAnimName = animNames[_currentAnimComboIndex].c_str();
+
 		//Begin Animation Window
 		if (ImGui::Begin("Animation", &_showAnimation, aniFlags))
 		{
-			//ImGui::Text("Select Model");
-			//ImGui::SameLine();
-			if (ImGui::BeginCombo("Select Model", previewName))
+			if (ImGui::BeginCombo("Select Model", previewModelName))
 			{
-				for (int n = 0; n < names.size(); n++)
+				for (int n = 0; n < modelNames.size(); n++)
 				{
-					const bool is_selected = (_currentAnimationComboIndex == n);
-					if (ImGui::Selectable(names[n].c_str(), is_selected))
-						_currentAnimationComboIndex = n;
+					const bool is_selected = (_currentModelComboIndex == n);
+					if (ImGui::Selectable(modelNames[n].c_str(), is_selected))
+						_currentModelComboIndex = n;
+
+					if (is_selected)
+						ImGui::SetItemDefaultFocus();
+
+				}
+				ImGui::EndCombo();
+			}
+
+			if (ImGui::BeginCombo("Select Animation", previewAnimName))
+			{
+				for (int n = 0; n < animNames.size(); n++)
+				{
+					const bool is_selected = (_currentAnimComboIndex == n);
+					if (ImGui::Selectable(animNames[n].c_str(), is_selected))
+						_currentAnimComboIndex = n;
 
 					if (is_selected)
 						ImGui::SetItemDefaultFocus();
