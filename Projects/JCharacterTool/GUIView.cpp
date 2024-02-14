@@ -555,22 +555,28 @@ void GUIView::Animation()
 		const auto& animList = MANAGER_ASSET()->GetLoadedAnimDataList();
 
 		vector<string> modelNames;
-		modelNames.reserve(assetList.size());
+		if (assetList.size() > 0)
 		{
-			for (const auto& asset : assetList)
+			modelNames.reserve(assetList.size());
 			{
-				modelNames.push_back(Utils::ToString(asset.second.Name));
-			}
-		}
-		vector<string> animNames;
-		animNames.reserve(animList.size());
-		{
-			for (const auto& anim : animList)
-			{
-				animNames.push_back(Utils::ToString(anim.second.Name));
+				for (const auto& asset : assetList)
+				{
+					modelNames.push_back(Utils::ToString(asset.second.Name));
+				}
 			}
 		}
 
+		vector<string> animNames;
+		if (animList.size() > 0)
+		{
+			animNames.reserve(animList.size());
+			{
+				for (const auto& anim : animList)
+				{
+					animNames.push_back(Utils::ToString(anim.second.Name));
+				}
+			}
+		}
 		const char* previewModelName = modelNames[_currentModelComboIndex].c_str();
 		const char* previewAnimName = animNames[_currentAnimComboIndex].c_str();
 
@@ -592,13 +598,13 @@ void GUIView::Animation()
 				ImGui::EndCombo();
 			}
 
-			if (ImGui::BeginCombo("Select Animation", previewAnimName))
+			if (ImGui::BeginCombo("Current Animation List In Model", previewModelName))
 			{
-				for (int n = 0; n < animNames.size(); n++)
+				for (int n = 0; n < modelNames.size(); n++)
 				{
-					const bool is_selected = (_currentAnimComboIndex == n);
-					if (ImGui::Selectable(animNames[n].c_str(), is_selected))
-						_currentAnimComboIndex = n;
+					const bool is_selected = (_currentModelComboIndex == n);
+					if (ImGui::Selectable(modelNames[n].c_str(), is_selected))
+						_currentModelComboIndex = n;
 
 					if (is_selected)
 						ImGui::SetItemDefaultFocus();
@@ -606,6 +612,21 @@ void GUIView::Animation()
 				}
 				ImGui::EndCombo();
 			}
+
+			//if (ImGui::BeginCombo("Select Animation", previewAnimName))
+			//{
+			//	for (int n = 0; n < animNames.size(); n++)
+			//	{
+			//		const bool is_selected = (_currentAnimComboIndex == n);
+			//		if (ImGui::Selectable(animNames[n].c_str(), is_selected))
+			//			_currentAnimComboIndex = n;
+
+			//		if (is_selected)
+			//			ImGui::SetItemDefaultFocus();
+
+			//	}
+			//	ImGui::EndCombo();
+			//}
 
 		}
 		//End Animation Window
@@ -886,6 +907,4 @@ void GUIView::Render()
 	{
 		Animation();
 	}
-
-
 }
