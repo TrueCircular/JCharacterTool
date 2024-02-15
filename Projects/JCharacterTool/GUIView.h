@@ -70,9 +70,9 @@ private:
 	ComPtr<ID3D11Texture2D> pTex;
 	ComPtr<ID3D11ShaderResourceView> pSRV;
 private:
-	float* ConvertMatrixToFloat(Matrix& mat);
 	void HelpMarker(const char* desc);
 	void ButtonManage();
+	void DisplayBoneHierarchyNode(const shared_ptr<ModelBone>& node, const vector<shared_ptr<ModelBone>>& nodes);
 private:
 	//
 	void LoadedAsset();

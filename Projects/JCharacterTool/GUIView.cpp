@@ -3,8 +3,44 @@
 #include "AssetManager.h"
 #include "engine/Utils.h"
 #include <array>
+#include <unordered_set>
 
 static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
+static ImGuiTreeNodeFlags tree_node_flags = ImGuiTreeNodeFlags_SpanAllColumns;
+
+void GUIView::DisplayBoneHierarchyNode(const shared_ptr<ModelBone>& node, const vector<shared_ptr<ModelBone>>& nodes)
+{
+	ImGui::TableNextRow();
+	ImGui::TableNextColumn();
+
+	const bool is_Child = (node->children.size() > 0);
+
+	if (is_Child)
+	{
+		string id = ::to_string(node->index);
+		bool open = ImGui::TreeNodeEx(id.c_str(), tree_node_flags);
+		ImGui::TableNextColumn();
+		ImGui::Text(Utils::ToString(node->name).c_str());
+
+		if (open)
+		{
+
+			for (auto& childNode : node->children)
+			{
+				DisplayBoneHierarchyNode(childNode, nodes);
+			}
+
+			ImGui::TreePop();
+		}
+	}
+	else
+	{
+		string id = ::to_string(node->index);
+		ImGui::TreeNodeEx(id.c_str(), tree_node_flags | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_NoTreePushOnOpen);
+		ImGui::TableNextColumn();
+		ImGui::Text(Utils::ToString(node->name).c_str());
+	}
+}
 
 void GUIView::HelpMarker(const char* desc)
 {
@@ -377,33 +413,21 @@ void GUIView::BoneHierarchy()
 			if (ImGui::TreeNodeEx("Bone List", ImGuiTreeNodeFlags_DefaultOpen))
 			{
 				static ImGuiTableFlags flags = ImGuiTableFlags_BordersV | ImGuiTableFlags_BordersOuterH | ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg | ImGuiTableFlags_NoBordersInBody;
-				static ImGuiTreeNodeFlags tree_node_flags = ImGuiTreeNodeFlags_SpanAllColumns;
 				ImGui::CheckboxFlags("SpanAllColumns", &tree_node_flags, ImGuiTreeNodeFlags_SpanAllColumns);
 				ImGui::CheckboxFlags("SpanFullWidth", &tree_node_flags, ImGuiTreeNodeFlags_SpanFullWidth);
 
 				if (ImGui::BeginTable("3ways", 2, flags))
 				{
-					ImGui::TableSetupColumn("Number", ImGuiTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 5.f);
-					ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_NoHide);
+					ImGui::TableSetupColumn("Number", ImGuiTableColumnFlags_NoHide);
+					ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed);
 					ImGui::TableHeadersRow();
 
-					ImGui::TableNextRow();
-					ImGui::TableNextColumn();
-					ImGuiWindowFlags childFlags = ImGuiWindowFlags_AlwaysHorizontalScrollbar |
-						ImGuiWindowFlags_AlwaysVerticalScrollbar;
-					if (ImGui::TreeNodeEx("hi", tree_node_flags))
+					if (_selectedModelAsset != nullptr)
 					{
-						ImGui::TableNextColumn();
-						ImGui::Selectable("sibal");
-						ImGui::TableNextRow();
-						ImGui::TableNextColumn();
-						ImGui::Selectable("rgasd");
-
-						ImGui::Selectable("sibsdsal");
-
-						//Ex End
-						ImGui::TreePop();
+						const auto& modelBones = _selectedModelAsset->GetModelRenderer()->GetModel()->GetBones();
+						DisplayBoneHierarchyNode(modelBones[0], modelBones);
 					}
+
 					ImGui::EndTable();
 				}
 				//Hierarchy End
@@ -688,18 +712,6 @@ void GUIView::CameraWindow()
 		ImGui::End();
 
 	}
-}
-
-float* GUIView::ConvertMatrixToFloat(Matrix& mat)
-{
-	float ReturnFloat[16] = { 0, };
-
-	ReturnFloat[0] = mat._11; ReturnFloat[1] = mat._12; ReturnFloat[2] = mat._13; ReturnFloat[3] = mat._14;
-	ReturnFloat[4] = mat._21; ReturnFloat[5] = mat._22; ReturnFloat[6] = mat._23; ReturnFloat[7] = mat._24;
-	ReturnFloat[8] = mat._31; ReturnFloat[9] = mat._32; ReturnFloat[10] = mat._33; ReturnFloat[11] = mat._34;
-	ReturnFloat[12] = mat._41; ReturnFloat[13] = mat._42; ReturnFloat[14] = mat._43; ReturnFloat[15] = mat._44;
-
-	return ReturnFloat;
 }
 
 void GUIView::Update()

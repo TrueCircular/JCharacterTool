@@ -39,16 +39,19 @@ void Model::BindCacheInfo()
 	{
 		_root = _bones[0];
 
-		for (const auto& bone : _bones)
+
+		for (int i = 1; i < _bones.size(); i++)
 		{
-			if (bone->parentIndex >= 0)
+			if (_bones[i]->parentIndex == -1)
 			{
-				bone->parent = _bones[bone->parentIndex];
-				bone->parent->children.push_back(bone);
+				_bones[0]->children.push_back(_bones[i]);
+				_bones[i]->parent = _bones[0];
 			}
-			else
+			else if (_bones[i]->parentIndex >= 0)
 			{
-				bone->parent = nullptr;
+				auto parent = GetBoneByIndex(_bones[i]->parentIndex);
+				parent->children.push_back(_bones[i]);
+				_bones[i]->parent = parent;
 			}
 		}
 	}
@@ -245,21 +248,6 @@ void Model::ReadModel(wstring fileName)
 			bone->transform = file->Read<Matrix>();
 
 			_bones.push_back(bone);
-		}
-
-		for (int i = 1; i < _bones.size(); i++)
-		{
-			if (_bones[i]->parentIndex == -1)
-			{
-				_bones[0]->children.push_back(_bones[i]);
-				_bones[i]->parent = _bones[0];
-			}
-			else if(_bones[i]->parentIndex >= 0)
-			{
-				auto parent = GetBoneByIndex(_bones[i]->parentIndex);
-				parent->children.push_back(_bones[i]);
-				_bones[i]->parent = parent;
-			}
 		}
 	}
 
