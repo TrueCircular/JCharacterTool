@@ -48,6 +48,9 @@ private:
 	//BoneHierarchy
 	ImVec2 _boneHierarchyPos;
 	ImVec2 _boneHierarchySize;
+	bool _soketCreate = false;
+	shared_ptr<ModelBone> _soketNode;
+	char _soketName[100];
 
 	//Inspector
 	ImVec2 _inspectorPos;
@@ -73,6 +76,7 @@ private:
 	void HelpMarker(const char* desc);
 	void ButtonManage();
 	void DisplayBoneHierarchyNode(const shared_ptr<ModelBone>& node, const vector<shared_ptr<ModelBone>>& nodes);
+	void CreateBoneSoket();
 private:
 	//
 	void LoadedAsset();

@@ -22,14 +22,37 @@ void GUIView::DisplayBoneHierarchyNode(const shared_ptr<ModelBone>& node, const 
 		ImGui::TableNextColumn();
 		ImGui::Text(Utils::ToString(node->name).c_str());
 
+		if (ImGui::BeginPopupContextItem(("##%s", ::to_string(node->index).c_str())))
+		{
+			ImGui::Text("Bone Number:%d", node->index);
+			ImGui::Text(("Bone Name:" + Utils::ToString(node->name)).c_str());
+
+			if (ImGui::Button("Look At Transform"))
+			{
+			}
+
+			if (ImGui::Button("Create Bone Soket"))
+			{
+				_soketCreate = true;
+				_soketNode = node;
+				::ZeroMemory(_soketName, sizeof(char) * 100);
+				ImGui::CloseCurrentPopup();
+			}
+
+			if (ImGui::Button("Close"))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
+		}
+
 		if (open)
 		{
-
 			for (auto& childNode : node->children)
 			{
 				DisplayBoneHierarchyNode(childNode, nodes);
 			}
-
 			ImGui::TreePop();
 		}
 	}
@@ -39,7 +62,51 @@ void GUIView::DisplayBoneHierarchyNode(const shared_ptr<ModelBone>& node, const 
 		ImGui::TreeNodeEx(id.c_str(), tree_node_flags | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_NoTreePushOnOpen);
 		ImGui::TableNextColumn();
 		ImGui::Text(Utils::ToString(node->name).c_str());
+
+		if (ImGui::BeginPopupContextItem(("##%s", ::to_string(node->index).c_str())))
+		{
+			ImGui::Text("Bone Number:%d", node->index);
+			ImGui::Text(("Bone Name:" + Utils::ToString(node->name)).c_str());
+
+			if (ImGui::Button("Look At Transform"))
+			{
+			}
+
+			if (ImGui::Button("Create Bone Soket"))
+			{
+				_soketCreate = true;
+				_soketNode = node;
+				ImGui::CloseCurrentPopup();
+			}
+
+			if (ImGui::Button("Close"))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
+		}
 	}
+}
+
+void GUIView::CreateBoneSoket()
+{
+	ImGui::SetNextWindowPos(ImVec2(350.f, 268.f));
+	ImGuiWindowFlags bhFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize;
+
+	if (ImGui::Begin("Soket Menu", 0, bhFlags))
+	{
+
+		ImGui::Text(("Parent Transform Name:" + Utils::ToString(_soketNode->name)).c_str());
+		ImGui::InputText("New Soket Name", _soketName, sizeof(char) * 100);
+		if (ImGui::Button("Close"))
+		{
+			_soketCreate = false;
+			ImGui::CloseCurrentPopup();
+		}
+	}
+	ImGui::End();
+
 }
 
 void GUIView::HelpMarker(const char* desc)
@@ -162,6 +229,8 @@ GUIView::GUIView() : Super(GUIType::View)
 		_boneHierarchyPos.y = 268.f;
 		_boneHierarchySize.x = 350.f;
 		_boneHierarchySize.y = 632.f;
+		::ZeroMemory(_soketName, sizeof(char) * 100);
+
 	}
 
 	{
@@ -196,7 +265,6 @@ void GUIView::LoadedAsset()
 		ImGui::SetNextWindowPos(_loadedAssetPos);
 		ImGui::SetNextWindowSize(_loadedAssetSize);
 		ImGuiWindowFlags assetFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize;
-
 		ImGuiTabBarFlags tabBarFlag = ImGuiTabBarFlags_TabListPopupButton | ImGuiTabBarFlags_FittingPolicyResizeDown;
 
 		if (ImGui::Begin("AssetList", &_showLoadedAsset, assetFlags))
@@ -365,14 +433,13 @@ void GUIView::Scene()
 	{
 		ImGui::SetNextWindowPos(_scenePos);
 		ImGui::SetNextWindowSize(_sceneSize);
-		ImGuiWindowFlags scFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize;
+		ImGuiWindowFlags scFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoBringToFrontOnFocus;
 
 		MANAGER_ASSET()->Update();
 		_camera->Update();
 
 		ImGui::Begin("Scene", &_showScene, scFlags);
 		{
-
 			{
 				pTex = GRAPHICS()->GetRenderTexture(1).Get();
 				D3D11_TEXTURE2D_DESC desc;
@@ -412,13 +479,13 @@ void GUIView::BoneHierarchy()
 
 			if (ImGui::TreeNodeEx("Bone List", ImGuiTreeNodeFlags_DefaultOpen))
 			{
-				static ImGuiTableFlags flags = ImGuiTableFlags_BordersV | ImGuiTableFlags_BordersOuterH | ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg | ImGuiTableFlags_NoBordersInBody;
-				ImGui::CheckboxFlags("SpanAllColumns", &tree_node_flags, ImGuiTreeNodeFlags_SpanAllColumns);
-				ImGui::CheckboxFlags("SpanFullWidth", &tree_node_flags, ImGuiTreeNodeFlags_SpanFullWidth);
+				static ImGuiTableFlags flags = ImGuiTableFlags_BordersV | ImGuiTableFlags_BordersOuterH | ImGuiTableFlags_RowBg | ImGuiTableFlags_NoBordersInBody | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY;
+				//ImGui::CheckboxFlags("SpanAllColumns", &tree_node_flags, ImGuiTreeNodeFlags_SpanAllColumns);
+				//ImGui::CheckboxFlags("SpanFullWidth", &tree_node_flags, ImGuiTreeNodeFlags_SpanFullWidth);
 
-				if (ImGui::BeginTable("3ways", 2, flags))
+				if (ImGui::BeginTable("3ways", 2, flags, ImVec2(290.f, 290.f)))
 				{
-					ImGui::TableSetupColumn("Number", ImGuiTableColumnFlags_NoHide);
+					ImGui::TableSetupColumn("Number", ImGuiTableColumnFlags_NoHide | ImGuiTableColumnFlags_WidthFixed);
 					ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed);
 					ImGui::TableHeadersRow();
 
@@ -426,6 +493,11 @@ void GUIView::BoneHierarchy()
 					{
 						const auto& modelBones = _selectedModelAsset->GetModelRenderer()->GetModel()->GetBones();
 						DisplayBoneHierarchyNode(modelBones[0], modelBones);
+					}
+
+					if (_soketCreate)
+					{
+						CreateBoneSoket();
 					}
 
 					ImGui::EndTable();
