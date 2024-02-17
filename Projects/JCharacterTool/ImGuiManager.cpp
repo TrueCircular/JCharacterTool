@@ -1,8 +1,5 @@
 #include "pch.h"
 #include "ImGuiManager.h"
-#include "GUIFile.h"
-#include "GUIView.h"
-#include "AssetManager.h"
 
 ImGuiManager* ImGuiManager::_instance = nullptr;
 
@@ -14,46 +11,8 @@ ImGuiManager::~ImGuiManager()
 {
 
 }
-
-void ImGuiManager::GuiCreate()
-{
-	int guiSize = static_cast<int>(GUIType::End) - 1;
-
-	_guiList.reserve(guiSize);
-	//File
-	_guiList.push_back(make_shared<GUIFile>());
-	//View
-	_guiList.push_back(make_shared<GUIView>());
-	//SceneTest
-}
-
-void ImGuiManager::GuiUpdate()
-{
-	if (ImGui::BeginMainMenuBar())
-	{
-		for (const auto& gui : _guiList)
-		{
-			gui->Update();
-		}
-
-		//MainMenuBar End
-		ImGui::EndMainMenuBar();
-	}
-}
-
-void ImGuiManager::GuiRender()
-{
-	for (int i = 0; i < _guiList.size(); i++)
-	{
-		if (_guiList[i] != nullptr)
-			_guiList[i]->Render();
-	}
-}
-
 void ImGuiManager::Init()
 {
-	MANAGER_ASSET()->Init();
-
 	//ImGui Main
 	{
 		// Show the window
@@ -70,10 +29,6 @@ void ImGuiManager::Init()
 		ImGui_ImplWin32_Init(g_gameDesc.hWnd);
 		ImGui_ImplDX11_Init(DEVICE().Get(), DC().Get());
 	}
-	//Gui Create
-	{
-		GuiCreate();
-	}
 }
 
 void ImGuiManager::Update()
@@ -87,18 +42,10 @@ void ImGuiManager::Update()
 		ImGuizmo::SetOrthographic(false);
 		ImGuizmo::BeginFrame();
 	}
-	//Gui Update
-	{
-		GuiUpdate();
-	}
 }
 
 void ImGuiManager::Render()
 {
-	//Gui Render
-	{
-		GuiRender();
-	}
 	//ImGui Main
 	{
 		ImGui::Render();
