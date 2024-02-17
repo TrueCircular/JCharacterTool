@@ -279,56 +279,59 @@ void GUIView::LoadedAsset()
 					if (ImGui::BeginListBox("##SkeletalTabBox", ImVec2(_loadedAssetSize.x - 15, _loadedAssetSize.y - 58.f)))
 					{
 						int index = 0;
-						for (auto& asset : assetList)
+						if (assetList.size() > 0)
 						{
-							string assetName;
-							assetName = Utils::ToString(asset.second.Name).c_str();
-
-							const bool is_selected = (_currentSkeletalItemIndex == index);
-							if (ImGui::Selectable(assetName.c_str(), is_selected))
+							for (auto& asset : assetList)
 							{
-								_currentSkeletalItemIndex = index;
-							}
+								string assetName;
+								assetName = Utils::ToString(asset.second.Name).c_str();
 
-							if (is_selected)
-							{
-								ImGui::SetItemDefaultFocus();
-
-								_selectedModelAsset = asset.second.Model;
-							}
-
-							if (ImGui::BeginPopupContextItem())
-							{
-								if (ImGui::Checkbox("##check", (bool*)&_skeletalCheckList[_currentSkeletalItemIndex]))
+								const bool is_selected = (_currentSkeletalItemIndex == index);
+								if (ImGui::Selectable(assetName.c_str(), is_selected))
 								{
-									bool isChecked = _skeletalCheckList[_currentSkeletalItemIndex];
-
-									if (isChecked == true)
-									{
-										if (asset.second.Model->GetActive() == false)
-										{
-											asset.second.Model->SetActive(true);
-										}
-									}
-									else
-									{
-										if (asset.second.Model->GetActive() == true)
-										{
-											asset.second.Model->SetActive(false);
-										}
-									}
+									_currentSkeletalItemIndex = index;
 								}
 
-								ImGui::SameLine();
-								ImGui::Text("Rendering ");
-
-								if (ImGui::Button("Close"))
+								if (is_selected)
 								{
-									ImGui::CloseCurrentPopup();
+									ImGui::SetItemDefaultFocus();
+
+									_selectedModelAsset = asset.second.Model;
 								}
-								ImGui::EndPopup();
+
+								if (ImGui::BeginPopupContextItem())
+								{
+									if (ImGui::Checkbox("##check", (bool*)&_skeletalCheckList[_currentSkeletalItemIndex]))
+									{
+										bool isChecked = _skeletalCheckList[_currentSkeletalItemIndex];
+
+										if (isChecked == true)
+										{
+											if (asset.second.Model->GetActive() == false)
+											{
+												asset.second.Model->SetActive(true);
+											}
+										}
+										else
+										{
+											if (asset.second.Model->GetActive() == true)
+											{
+												asset.second.Model->SetActive(false);
+											}
+										}
+									}
+
+									ImGui::SameLine();
+									ImGui::Text("Rendering ");
+
+									if (ImGui::Button("Close"))
+									{
+										ImGui::CloseCurrentPopup();
+									}
+									ImGui::EndPopup();
+								}
+								index++;
 							}
-							index++;
 						}
 						ImGui::EndListBox();
 					}
@@ -343,53 +346,56 @@ void GUIView::LoadedAsset()
 					if (ImGui::BeginListBox("##StaticTabBox", ImVec2(_loadedAssetSize.x - 15, _loadedAssetSize.y - 58.f)))
 					{
 						int index = 0;
-						for (auto& asset : assetList)
+						if (assetList.size() > 0)
 						{
-							string assetName;
-							assetName = Utils::ToString(asset.second.Name).c_str();
+							for (auto& asset : assetList)
+							{
+								string assetName;
+								assetName = Utils::ToString(asset.second.Name).c_str();
 
-							const bool is_selected = (_currentStaticItemIndex == index);
-							if (ImGui::Selectable(assetName.c_str(), is_selected))
-							{
-								_currentStaticItemIndex = index;
-							}
-							if (is_selected)
-							{
-								ImGui::SetItemDefaultFocus();
-								_selectedModelAsset = asset.second.Model;
-							}
-
-							if (ImGui::BeginPopupContextItem())
-							{
-								if (ImGui::Checkbox("##check2", (bool*)&_staticCheckList[_currentStaticItemIndex]))
+								const bool is_selected = (_currentStaticItemIndex == index);
+								if (ImGui::Selectable(assetName.c_str(), is_selected))
 								{
-									bool isChecked = _staticCheckList[_currentStaticItemIndex];
+									_currentStaticItemIndex = index;
+								}
+								if (is_selected)
+								{
+									ImGui::SetItemDefaultFocus();
+									_selectedModelAsset = asset.second.Model;
+								}
 
-									if (isChecked == true)
+								if (ImGui::BeginPopupContextItem())
+								{
+									if (ImGui::Checkbox("##check2", (bool*)&_staticCheckList[_currentStaticItemIndex]))
 									{
-										if (asset.second.Model->GetActive() == false)
+										bool isChecked = _staticCheckList[_currentStaticItemIndex];
+
+										if (isChecked == true)
 										{
-											asset.second.Model->SetActive(true);
+											if (asset.second.Model->GetActive() == false)
+											{
+												asset.second.Model->SetActive(true);
+											}
+										}
+										else
+										{
+											if (asset.second.Model->GetActive() == true)
+											{
+												asset.second.Model->SetActive(false);
+											}
 										}
 									}
-									else
-									{
-										if (asset.second.Model->GetActive() == true)
-										{
-											asset.second.Model->SetActive(false);
-										}
-									}
-								}
-								ImGui::SameLine();
-								ImGui::Text("Rendering");
+									ImGui::SameLine();
+									ImGui::Text("Rendering");
 
-								if (ImGui::Button("Close"))
-								{
-									ImGui::CloseCurrentPopup();
+									if (ImGui::Button("Close"))
+									{
+										ImGui::CloseCurrentPopup();
+									}
+									ImGui::EndPopup();
 								}
-								ImGui::EndPopup();
+								index++;
 							}
-							index++;
 						}
 						ImGui::EndListBox();
 					}
@@ -404,17 +410,20 @@ void GUIView::LoadedAsset()
 					if (ImGui::BeginListBox("##AnimationTabBox", ImVec2(_loadedAssetSize.x - 15, _loadedAssetSize.y - 58.f)))
 					{
 						int index = 0;
-						for (auto& asset : assetList)
+						if (assetList.size() > 0)
 						{
-							const bool is_selected = (_currentAnimationItemIndex == index);
-							if (ImGui::Selectable(Utils::ToString(asset.second.Name).c_str(), is_selected))
+							for (auto& asset : assetList)
 							{
-								_currentAnimationItemIndex = index;
-							}
-							if (is_selected)
-								ImGui::SetItemDefaultFocus();
+								const bool is_selected = (_currentAnimationItemIndex == index);
+								if (ImGui::Selectable(Utils::ToString(asset.second.Name).c_str(), is_selected))
+								{
+									_currentAnimationItemIndex = index;
+								}
+								if (is_selected)
+									ImGui::SetItemDefaultFocus();
 
-							index++;
+								index++;
+							}
 						}
 						ImGui::EndListBox();
 					}
@@ -547,6 +556,9 @@ void GUIView::Inspector()
 
 void GUIView::Transform()
 {
+	if (_selectedModelAsset == nullptr)
+		return;
+
 	if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		HelpMarker("If you want, you can adjust Transform by default through mouse drag. Alternatively, you can enter the value directly by double-clicking.");
