@@ -190,7 +190,7 @@ void GUIFile::Update()
 				{
 					//Dialog Open
 					string adr = Utils::ToString(RESOURCES_ADDR_ASSET_SKELETAL);
-					_dialog.OpenDialog("ReadModelAssets", "Read", ".fbx,.FBX,.obj",
+					_dialog.OpenDialog("ReadModelAssets", "Read", ".FBX,.fbx,.obj",
 						adr, 1, nullptr, ImGuiFileDialogFlags_Modal);
 					//Asset Type Set
 					_type = AssetType::SkeletalMesh;
@@ -199,7 +199,7 @@ void GUIFile::Update()
 				{
 					//Dialog Open
 					string adr = Utils::ToString(RESOURCES_ADDR_ASSET_STATIC);
-					_dialog.OpenDialog("ReadModelAssets", "Read", ".fbx,.FBX,.obj",
+					_dialog.OpenDialog("ReadModelAssets", "Read", ".FBX,.fbx,.obj",
 						adr, 1, nullptr, ImGuiFileDialogFlags_Modal);
 					//Asset Type Set
 					_type = AssetType::StaticMesh;
@@ -229,7 +229,7 @@ void GUIFile::Update()
 			if (ImGui::MenuItem("Read Animation Asset File"))
 			{
 				string adr = Utils::ToString(RESOURCES_ADDR_ASSET_ANIMATION);
-				_dialog.OpenDialog("ReadAnimAsset", "Read", ".fbx,.FBX",
+				_dialog.OpenDialog("ReadAnimAsset", "Read", ".FBX,.fbx",
 					adr, 1, nullptr, ImGuiFileDialogFlags_Modal);
 			}
 
