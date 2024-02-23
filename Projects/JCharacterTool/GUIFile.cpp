@@ -77,7 +77,7 @@ wstring GUIFile::SplitParentFilePath(string path)
 	string spName2 = spName.substr(0, sp);
 	size_t spName2Size = spName2.size();
 	size_t sp2 = spName2.find_last_of("\\") + 1;
-	wstring rName = Utils::ToWString(spName2.substr(sp2, sp2 - spName2Size+1));
+	wstring rName = Utils::ToWString(spName2.substr(sp2, sp2 - spName2Size + 1));
 
 	return rName;
 }
@@ -113,31 +113,85 @@ void GUIFile::MeshSavePoPUp()
 	{
 		ImGuiWindowFlags saveFlags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove;
 
-		ImGui::OpenPopup("Do you want to save the selected Mesh?");
-		if (ImGui::BeginPopupModal("Do you want to save the selected Mesh?", 0, saveFlags))
+		ImGui::OpenPopup("Save Mesh");
+		if (ImGui::BeginPopupModal("Save Mesh", 0, saveFlags))
 		{
+			//Save Address
+			string adr;
+			static int _currentModelComboIndex = 0;
+
+			//Select ComboBox
+			if (_type == AssetType::SkeletalMesh)
+			{
+				//Set Save Address
+				adr = Utils::ToString(RESOURCES_ADDR_MESH_SKELETAL);
+
+				//Load SkeletalMeshList
+				const auto& SkeletalMeshList = MANAGER_ASSET()->GetLoadedSkeletalMeshDataList();
+
+				//Mesh Names Push
+				vector<string> meshNames;
+				if (SkeletalMeshList.size() > 0)
+				{
+					meshNames.reserve(SkeletalMeshList.size());
+					{
+						for (const auto& asset : SkeletalMeshList)
+						{
+							meshNames.push_back(Utils::ToString(asset.second.Name));
+						}
+					}
+				}
+				const char* previewMeshName = meshNames[_currentModelComboIndex].c_str();
+
+				//Render Combobox
+				if (ImGui::BeginCombo("Select Model", previewMeshName))
+				{
+					for (int n = 0; n < meshNames.size(); n++)
+					{
+						const bool is_selected = (_currentModelComboIndex == n);
+						if (ImGui::Selectable(meshNames[n].c_str(), is_selected))
+							_currentModelComboIndex = n;
+
+						if (is_selected)
+							ImGui::SetItemDefaultFocus();
+
+					}
+					ImGui::EndCombo();
+				}
+
+			}
+			else if (_type == AssetType::StaticMesh)
+			{
+				adr = Utils::ToString(RESOURCES_ADDR_MESH_SKELETAL);
+
+				const auto& StaticMeshList = MANAGER_ASSET()->GetLoadedStaticMeshDataList();
+
+				vector<string> meshNames;
+				if (StaticMeshList.size() > 0)
+				{
+					meshNames.reserve(StaticMeshList.size());
+					{
+						for (const auto& asset : StaticMeshList)
+						{
+							meshNames.push_back(Utils::ToString(asset.second.Name));
+						}
+					}
+				}
+			}
+
+			//Save Button
 			if (ImGui::Button("Save", ImVec2(150.f, 20.f)))
 			{
-				string adr;
-
-				if (_type == AssetType::SkeletalMesh)
-				{
-					adr = Utils::ToString(RESOURCES_ADDR_MESH_SKELETAL);
-				}
-				else if (_type == AssetType::StaticMesh)
-				{
-					adr = Utils::ToString(RESOURCES_ADDR_MESH_SKELETAL);
-				}
-
-				_dialog.OpenDialog("SaveMesh", "Choose a Directory", ".mesh", adr, 
-					"enter a file name");
+				_dialog.OpenDialog("SaveMesh", "Choose a Directory", ".mesh", adr,
+					"enter a file name", 1, nullptr, ImGuiFileDialogFlags_Modal);
 
 				_isSaveMesh = false;
 				ImGui::CloseCurrentPopup();
 			}
 
 			ImGui::SameLine();
-
+			
+			//Close Button
 			if (ImGui::Button("Close", ImVec2(150.f, 20.f)))
 			{
 				_isSaveMesh = false;
@@ -171,6 +225,10 @@ void GUIFile::AnimationReadPoPUp()
 }
 
 void GUIFile::AnimationSavePoPUp()
+{
+}
+
+void GUIFile::AssetListTab()
 {
 }
 
@@ -212,9 +270,19 @@ void GUIFile::Update()
 			//----------------------
 
 			//Save Mesh File
-			if (ImGui::MenuItem("Save Mesh File"))
+			if (ImGui::BeginMenu("Save Mesh File"))
 			{
-
+				if (ImGui::MenuItem("Skeletal"))
+				{
+					_type = AssetType::SkeletalMesh;
+					_isSaveMesh = true;
+				}
+				if (ImGui::MenuItem("Static"))
+				{
+					_type = AssetType::StaticMesh;
+					_isSaveMesh = true;
+				}
+				ImGui::EndMenu();
 			}
 		}
 

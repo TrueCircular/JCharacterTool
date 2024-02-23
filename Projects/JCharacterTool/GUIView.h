@@ -50,6 +50,7 @@ private:
 	ImVec2 _boneHierarchySize;
 	bool _soketCreate = false;
 	shared_ptr<ModelBone> _soketNode;
+
 	char _soketName[100];
 
 	//Inspector

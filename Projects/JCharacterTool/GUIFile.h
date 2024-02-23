@@ -46,6 +46,7 @@ private:
 	void MeshSavePoPUp();
 	void AnimationReadPoPUp();
 	void AnimationSavePoPUp();
+	void AssetListTab();
 public:
 	virtual void Update() override;
 	virtual void Render() override;

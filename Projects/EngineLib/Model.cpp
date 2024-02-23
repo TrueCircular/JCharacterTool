@@ -333,3 +333,41 @@ void Model::ReadAnimation(wstring filename)
 
 	_animations.push_back(animation);
 }
+
+void Model::SaveModel(wstring filePath, wstring fileName)
+{
+	//디렉토리 생성
+	wstring finalPath = filePath + fileName;
+	auto path = filesystem::path(finalPath);
+	filesystem::create_directory(path.parent_path());
+	//파일을 쓰기모드로 생성
+	shared_ptr<FileUtils> file = make_shared<FileUtils>();
+	file->Open(finalPath, FileMode::Write);
+
+	//Bone Data Input
+	file->Write<uint32>(_bones.size());
+	for (auto& bone : _bones)
+	{
+		file->Write<int32>(bone->index);
+		file->Write<string>(Utils::ToString(bone->name));
+		file->Write<int32>(bone->parentIndex);
+		file->Write<Matrix>(bone->transform);
+	}
+	//Mesh Data Input
+	file->Write<uint32>(_meshes.size());
+	for (auto& meshData : _meshes)
+	{
+		file->Write<string>(Utils::ToString(meshData->name));
+		file->Write<int32>(meshData->boneIndex);
+		file->Write<string>(Utils::ToString(meshData->materialName));
+		//Vertex
+		file->Write<uint32>(meshData->geometry->GetVertices().size());
+		auto vertices = meshData->geometry->GetVertices();
+		file->Write(&vertices[0], (uint32)(sizeof(ModelVertexType) * meshData->geometry->GetVertices().size()));
+		//Index
+		uint32 indexCount = meshData->geometry->GetIndices().size();
+		auto indices = meshData->geometry->GetIndices();
+		file->Write<uint32>(indexCount);
+		file->Write(&indices[0], sizeof(uint32) * indexCount);
+	}
+}

@@ -5,6 +5,8 @@
 class Model : public ResourceBase, public enable_shared_from_this<Model>
 {
 	using Super = ResourceBase;
+	using VertexType = VertexTextureNormalTangentBlendData;
+
 public:
 	Model();
 	~Model();
@@ -49,5 +51,7 @@ public:
 	void ReadMaterial(wstring fileName);
 	void ReadModel(wstring fileName);
 	void ReadAnimation(wstring filename);
+public:
+	void SaveModel(wstring filePath, wstring fileName);
 };
 

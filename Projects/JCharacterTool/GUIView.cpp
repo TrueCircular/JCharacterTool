@@ -4,6 +4,7 @@
 #include "engine/Utils.h"
 #include <array>
 #include <unordered_set>
+#include <codecvt>
 
 static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
 static ImGuiTreeNodeFlags tree_node_flags = ImGuiTreeNodeFlags_SpanAllColumns;
@@ -93,12 +94,47 @@ void GUIView::CreateBoneSoket()
 {
 	ImGui::SetNextWindowPos(ImVec2(350.f, 268.f));
 	ImGuiWindowFlags bhFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize;
+	static bool isCreate = false;
+	auto& _modelBones = _selectedModelAsset->GetModelRenderer()->GetModel()->GetBones();
 
 	if (ImGui::Begin("Soket Menu", 0, bhFlags))
 	{
-
 		ImGui::Text(("Parent Transform Name:" + Utils::ToString(_soketNode->name)).c_str());
 		ImGui::InputText("New Soket Name", _soketName, sizeof(char) * 100);
+
+		if (ImGui::Button("Create"))
+		{
+			if (_soketNode != nullptr)
+			{
+				shared_ptr<ModelBone> boneSoket = make_shared<ModelBone>();
+				{
+					//Set SoketName
+					string tempStr(_soketName);
+					boneSoket->name = Utils::ToWString(tempStr);
+
+					//Set SoketIndex
+					int32 index =  _modelBones.size();
+					boneSoket->index = index;
+
+					//Set SoketTransfrom
+					Matrix soketS, soketR, soketT;
+					Matrix soketTransform = Matrix::Identity;
+					soketTransform = soketTransform * _soketNode->transform;
+					boneSoket->transform = soketTransform;
+
+					//Set SoketParent and Child
+					boneSoket->parent = _soketNode;
+					_soketNode->children.push_back(boneSoket);
+					boneSoket->parentIndex = _soketNode->index;
+					_modelBones.push_back(boneSoket);
+
+					//Set Success Modal Popup Flag 
+					isCreate = true;
+				}
+			}
+			ImGui::CloseCurrentPopup();
+		}
+
 		if (ImGui::Button("Close"))
 		{
 			_soketCreate = false;
@@ -107,6 +143,22 @@ void GUIView::CreateBoneSoket()
 	}
 	ImGui::End();
 
+	//Success Modal Popup Open
+	if (isCreate == true)
+	{
+		ImGui::OpenPopup("Success Create Soket!");
+		if (ImGui::BeginPopupModal("Success Create Soket!", 0, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			if (ImGui::Button("OK", ImVec2(140.f, 20.f)))
+			{
+				isCreate = false;
+				ZeroMemory(_soketName, sizeof(char) * 100);
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
+		}
+	}
 }
 
 void GUIView::HelpMarker(const char* desc)
@@ -489,8 +541,6 @@ void GUIView::BoneHierarchy()
 			if (ImGui::TreeNodeEx("Bone List", ImGuiTreeNodeFlags_DefaultOpen))
 			{
 				static ImGuiTableFlags flags = ImGuiTableFlags_BordersV | ImGuiTableFlags_BordersOuterH | ImGuiTableFlags_RowBg | ImGuiTableFlags_NoBordersInBody | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY;
-				//ImGui::CheckboxFlags("SpanAllColumns", &tree_node_flags, ImGuiTreeNodeFlags_SpanAllColumns);
-				//ImGui::CheckboxFlags("SpanFullWidth", &tree_node_flags, ImGuiTreeNodeFlags_SpanFullWidth);
 
 				if (ImGui::BeginTable("3ways", 2, flags, ImVec2(290.f, 290.f)))
 				{
@@ -500,8 +550,8 @@ void GUIView::BoneHierarchy()
 
 					if (_selectedModelAsset != nullptr)
 					{
-						const auto& modelBones = _selectedModelAsset->GetModelRenderer()->GetModel()->GetBones();
-						DisplayBoneHierarchyNode(modelBones[0], modelBones);
+						auto& _modelBones = _selectedModelAsset->GetModelRenderer()->GetModel()->GetBones();
+						DisplayBoneHierarchyNode(_modelBones[0], _modelBones);
 					}
 
 					if (_soketCreate)
@@ -514,6 +564,8 @@ void GUIView::BoneHierarchy()
 				//Hierarchy End
 				ImGui::TreePop();
 			}
+
+			//Bone Info
 			if (ImGui::CollapsingHeader("Bone Info", ImGuiTreeNodeFlags_DefaultOpen))
 			{
 
