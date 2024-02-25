@@ -1,10 +1,10 @@
 #include "pch.h"
 #include "GUIView.h"
 #include "AssetManager.h"
+#include "ImGuiManager.h"
 #include "engine/Utils.h"
 #include <array>
 #include <unordered_set>
-#include <codecvt>
 
 static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
 static ImGuiTreeNodeFlags tree_node_flags = ImGuiTreeNodeFlags_SpanAllColumns;
@@ -725,6 +725,10 @@ void GUIView::Animation()
 				}
 			}
 		}
+		else
+		{
+			modelNames.push_back("Empty");
+		}
 
 		vector<string> animNames;
 		if (animList.size() > 0)
@@ -737,6 +741,11 @@ void GUIView::Animation()
 				}
 			}
 		}
+		else
+		{
+			animNames.push_back("Empty");
+		}
+
 		const char* previewModelName = modelNames[_currentModelComboIndex].c_str();
 		const char* previewAnimName = animNames[_currentAnimComboIndex].c_str();
 

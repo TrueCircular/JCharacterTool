@@ -29,6 +29,7 @@ private:
 	//Mesh
 	bool _isReadMesh = false;
 	bool _isSaveMesh = false;
+	shared_ptr<Model> _saveMesh;
 	//Animation
 	bool _isReadAnimationAsset = false;
 	bool _isSaveAnimation = false;

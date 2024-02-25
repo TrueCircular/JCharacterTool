@@ -34,6 +34,7 @@ private:
 	void CreateAnimationTransform(uint32 index);
 public:
 	void SetModel(shared_ptr<Model> model) { _model = model; }
+	shared_ptr<Model> GetModel() { return _model; }
 	void SetShader(shared_ptr<Shader> shader) { _shader = shader; }
 	void SetPass(uint8 pass) { _pass = pass; }
 	uint8 GetPassState() const { return _pass; }
