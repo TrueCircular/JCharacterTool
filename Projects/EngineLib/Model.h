@@ -52,6 +52,6 @@ public:
 	void ReadModel(wstring fileName);
 	void ReadAnimation(wstring filename);
 public:
-	void SaveModel(wstring filePath, wstring fileName);
+	void SaveModel(wstring filePath, wstring meshFileName);
 };
 

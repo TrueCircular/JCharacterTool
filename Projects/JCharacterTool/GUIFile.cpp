@@ -4,6 +4,8 @@
 #include "engine/Utils.h"
 #include "AssetManager.h"
 #include "ImGuiManager.h"
+#include <filesystem>
+#include "engine/FileUtils.h"
 
 GUIFile::GUIFile() : Super(GUIType::File)
 {
@@ -118,9 +120,8 @@ void GUIFile::MeshSavePoPUp()
 		{
 			//Save Address
 			string adr;
-			static int _currentModelComboIndex = 0;
 
-			//Select ComboBox
+			//Select ComboBox SkeletalMesh
 			if (_type == AssetType::SkeletalMesh)
 			{
 				//Set Save Address
@@ -141,25 +142,46 @@ void GUIFile::MeshSavePoPUp()
 						}
 					}
 				}
-				const char* previewMeshName = meshNames[_currentModelComboIndex].c_str();
+				else
+				{
+					meshNames.push_back("Empty");
+				}
+
+				//Set PreViewName, SaveMesh
+				const char* previewMeshName = meshNames[_currentSkeletalMeshComboIndex].c_str();
+				{
+					if (previewMeshName != "Empty")
+					{
+						wstring tempName = Utils::ToWString(previewMeshName);
+
+						if (MANAGER_ASSET()->GetSkeletalMeshByName(tempName) != nullptr &&
+							_saveMesh != MANAGER_ASSET()->GetSkeletalMeshByName(tempName)->GetModelRenderer()->GetModel())
+						{
+							_saveMesh = MANAGER_ASSET()->GetSkeletalMeshByName(tempName)->GetModelRenderer()->GetModel();
+						}
+					}
+
+				}
 
 				//Render Combobox
 				if (ImGui::BeginCombo("Select Model", previewMeshName))
 				{
 					for (int n = 0; n < meshNames.size(); n++)
 					{
-						const bool is_selected = (_currentModelComboIndex == n);
+						const bool is_selected = (_currentSkeletalMeshComboIndex == n);
 						if (ImGui::Selectable(meshNames[n].c_str(), is_selected))
-							_currentModelComboIndex = n;
+							_currentSkeletalMeshComboIndex = n;
 
 						if (is_selected)
+						{
 							ImGui::SetItemDefaultFocus();
+						}
 
 					}
 					ImGui::EndCombo();
 				}
-
 			}
+			//Select ComboBox StaticMesh
 			else if (_type == AssetType::StaticMesh)
 			{
 				adr = Utils::ToString(RESOURCES_ADDR_MESH_SKELETAL);
@@ -176,6 +198,44 @@ void GUIFile::MeshSavePoPUp()
 							meshNames.push_back(Utils::ToString(asset.second.Name));
 						}
 					}
+				}
+				else
+				{
+					meshNames.push_back("Empty");
+				}
+
+				//Set PreViewName, SaveMesh
+				const char* previewMeshName = meshNames[_currentStaticMeshComboIndex].c_str();
+				{
+					if (previewMeshName != "Empty")
+					{
+						wstring tempName = Utils::ToWString(previewMeshName);
+
+						if (MANAGER_ASSET()->GetStaticMeshByName(tempName) != nullptr &&
+							_saveMesh != MANAGER_ASSET()->GetStaticMeshByName(tempName)->GetModelRenderer()->GetModel())
+						{
+							_saveMesh = MANAGER_ASSET()->GetStaticMeshByName(tempName)->GetModelRenderer()->GetModel();
+						}
+					}
+
+				}
+
+				//Render Combobox
+				if (ImGui::BeginCombo("Select Model", previewMeshName))
+				{
+					for (int n = 0; n < meshNames.size(); n++)
+					{
+						const bool is_selected = (_currentStaticMeshComboIndex == n);
+						if (ImGui::Selectable(meshNames[n].c_str(), is_selected))
+							_currentStaticMeshComboIndex = n;
+
+						if (is_selected)
+						{
+							ImGui::SetItemDefaultFocus();
+						}
+
+					}
+					ImGui::EndCombo();
 				}
 			}
 
@@ -232,6 +292,44 @@ void GUIFile::AssetListTab()
 {
 }
 
+void GUIFile::SaveMesh(wstring filePath, wstring fileName)
+{
+	filesystem::path skTemp = filesystem::absolute(RESOURCES_ADDR_MESH_SKELETAL);
+	filesystem::path stTemp = filesystem::absolute(RESOURCES_ADDR_MESH_STATIC);
+
+	if (filePath == skTemp||
+		filePath == stTemp)
+	{
+		wstring saveFilePath = filePath;
+		saveFilePath += fileName;
+		saveFilePath += L"\\";
+
+		auto path = filesystem::path(saveFilePath);
+
+		shared_ptr<FileUtils> file = make_shared<FileUtils>();
+
+		wstring saveFileName = fileName;
+
+		if (_saveMesh != nullptr)
+		{
+			_saveMesh->SaveModel(saveFilePath, saveFileName);
+		}
+	}
+	else
+	{
+		shared_ptr<FileUtils> file = make_shared<FileUtils>();
+
+		wstring saveFilePath = filePath;
+		wstring saveFileName = fileName;
+
+		if (_saveMesh != nullptr)
+		{
+			_saveMesh->SaveModel(saveFilePath, saveFileName);
+		}
+	}
+
+}
+
 void GUIFile::Update()
 {
 	//Begin MainMenu
@@ -248,7 +346,7 @@ void GUIFile::Update()
 				{
 					//Dialog Open
 					string adr = Utils::ToString(RESOURCES_ADDR_ASSET_SKELETAL);
-					_dialog.OpenDialog("ReadModelAssets", "Read", ".FBX,.fbx,.obj",
+					_dialog.OpenDialog("ReadMeshAssets", "Read", ".fbx,.FBX,.obj",
 						adr, 1, nullptr, ImGuiFileDialogFlags_Modal);
 					//Asset Type Set
 					_type = AssetType::SkeletalMesh;
@@ -257,7 +355,35 @@ void GUIFile::Update()
 				{
 					//Dialog Open
 					string adr = Utils::ToString(RESOURCES_ADDR_ASSET_STATIC);
-					_dialog.OpenDialog("ReadModelAssets", "Read", ".FBX,.fbx,.obj",
+					_dialog.OpenDialog("ReadMeshAssets", "Read", ".fbx,.FBX,.obj",
+						adr, 1, nullptr, ImGuiFileDialogFlags_Modal);
+					//Asset Type Set
+					_type = AssetType::StaticMesh;
+				}
+				ImGui::EndMenu();
+			}
+
+			//----------------------
+			ImGui::Separator();
+			//----------------------
+
+			//Mesh Read
+			if (ImGui::BeginMenu("Read Mesh File"))
+			{
+				if (ImGui::MenuItem("Skeletal"))
+				{
+					//Dialog Open
+					string adr = Utils::ToString(RESOURCES_ADDR_MESH_SKELETAL);
+					_dialog.OpenDialog("ReadMeshFile", "Read", ".mesh",
+						adr, 1, nullptr, ImGuiFileDialogFlags_Modal);
+					//Asset Type Set
+					_type = AssetType::SkeletalMesh;
+				}
+				if (ImGui::MenuItem("Static"))
+				{
+					//Dialog Open
+					string adr = Utils::ToString(RESOURCES_ADDR_MESH_STATIC);
+					_dialog.OpenDialog("ReadMeshFile", "Read", ".mesh",
 						adr, 1, nullptr, ImGuiFileDialogFlags_Modal);
 					//Asset Type Set
 					_type = AssetType::StaticMesh;
@@ -297,7 +423,7 @@ void GUIFile::Update()
 			if (ImGui::MenuItem("Read Animation Asset File"))
 			{
 				string adr = Utils::ToString(RESOURCES_ADDR_ASSET_ANIMATION);
-				_dialog.OpenDialog("ReadAnimAsset", "Read", ".FBX,.fbx",
+				_dialog.OpenDialog("ReadAnimAsset", "Read", ".fbx,.FBX",
 					adr, 1, nullptr, ImGuiFileDialogFlags_Modal);
 			}
 
@@ -316,22 +442,7 @@ void GUIFile::Update()
 		//----------------------
 		ImGui::Separator();
 		//----------------------
-
-		//Effect Asset
-		{
-			ImGui::MenuItem("(Effect)", NULL, false, false);
-
-			if (ImGui::MenuItem("Read Effect Asset File"))
-			{
-
-			}
-
-			if (ImGui::MenuItem("Save Effect File"))
-			{
-
-			}
-		}
-
+		
 		//End MainMenu
 		ImGui::EndMenu();
 	}
@@ -348,7 +459,8 @@ void GUIFile::Render()
 
 	ImGui::SetNextWindowPos(_readsaveDialogPos);
 
-	if (_dialog.Display("ReadModelAssets", ImGuiWindowFlags_NoCollapse, _minDialogSize, _maxDialogSize))
+	//Read Mesh Asset File
+	if (_dialog.Display("ReadMeshAssets", ImGuiWindowFlags_NoCollapse, _minDialogSize, _maxDialogSize))
 	{
 		if (_dialog.IsOk())
 		{
@@ -364,12 +476,35 @@ void GUIFile::Render()
 		}
 		_dialog.Close();
 	}
+
+	//Read Mesh file
+	if (_dialog.Display("ReadMeshFile", ImGuiWindowFlags_NoCollapse, _minDialogSize, _maxDialogSize))
+	{
+		if (_dialog.IsOk())
+		{
+			_filePath = Utils::ToWString(_dialog.GetFilePathName());
+			_fileName = SplitFileName(_dialog.GetCurrentFileName());
+
+			MeshPathDesc desc = CreateMeshPathDesc(_fileName, _filePath);
+
+			if (MANAGER_ASSET()->ReadMeshFile(desc))
+			{
+				_isReadMesh = true;
+			}
+		}
+		_dialog.Close();
+	}
+
+	//Save Mesh File
 	if (_dialog.Display("SaveMesh", ImGuiWindowFlags_NoCollapse, _minDialogSize, _maxDialogSize))
 	{
 		if (_dialog.IsOk())
 		{
 			_filePath = Utils::ToWString(_dialog.GetCurrentPath());
+			_filePath += L"\\";
 			_fileName = SplitFileName(_dialog.GetCurrentFileName());
+
+			SaveMesh(_filePath, _fileName);
 		}
 		_dialog.Close();
 	}

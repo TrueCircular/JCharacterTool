@@ -83,6 +83,7 @@ private:
 	void LoadedAsset();
 	//
 	void Scene();
+	void DrawGridAndGizmo();
 	//
 	void BoneHierarchy();
 	//

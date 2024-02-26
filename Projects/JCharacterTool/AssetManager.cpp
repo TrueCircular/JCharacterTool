@@ -40,6 +40,24 @@ bool AssetManager::ReadMeshAssetFile(MeshPathDesc& desc)
 	return false;
 }
 
+bool AssetManager::ReadMeshFile(MeshPathDesc& desc)
+{
+	//desc init
+	_meshDesc.Name = wstring(desc.Name);
+	_meshDesc.ReadMeshPath = wstring(desc.ReadMeshPath);
+	_meshDesc.SaveMaterialPath = wstring(desc.SaveMaterialPath);
+	_meshDesc.SaveMeshPath = wstring(desc.SaveMeshPath);
+	_meshDesc.Type = desc.Type;
+
+	//read asset file
+	if (CreateMeshAsset(_meshDesc))
+	{
+		return true;
+	}
+
+	return false;
+}
+
 bool AssetManager::ReadAnimAssetFile(AnimPathDesc& desc)
 {
 	//desc init
@@ -79,21 +97,11 @@ bool AssetManager::ExportMaterialData(wstring& exportPath)
 	return true;
 }
 
-bool AssetManager::ExportMaterialData(wstring& name, wstring& exportPath)
-{
-	return false;
-}
-
 bool AssetManager::ExportModelData(wstring& exportPath)
 {
 	_converter->ExportModelData(exportPath);
 
 	return true;
-}
-
-bool AssetManager::ExportModelData(wstring& name, wstring& exportPath)
-{
-	return false;
 }
 
 bool AssetManager::ExportAnimationData(wstring& exportPath)
@@ -190,6 +198,40 @@ bool AssetManager::CreateAnimAsset(AnimPathDesc& desc)
 	return false;
 }
 
+const shared_ptr<GameObject>& AssetManager::GetSkeletalMeshByName(wstring name)
+{
+	shared_ptr<GameObject> reObject;
+	{
+		const auto& findIter = _skeletalMeshData.find(name);
+
+		if (findIter != _skeletalMeshData.end())
+		{
+			return reObject = findIter->second.Model;
+		}
+		else
+		{
+			return nullptr;
+		}
+	}
+}
+
+const shared_ptr<GameObject>& AssetManager::GetStaticMeshByName(wstring name)
+{
+	shared_ptr<GameObject> reObject;
+	{
+		const auto& findIter = _staticMeshData.find(name);
+
+		if (findIter != _staticMeshData.end())
+		{
+			return reObject = findIter->second.Model;
+		}
+		else
+		{
+			return nullptr;
+		}
+	}
+}
+
 void AssetManager::Init()
 {
 	_converter->Init();
@@ -208,7 +250,7 @@ void AssetManager::Update()
 		DC()->ClearRenderTargetView(rtv.Get(), clearColor);
 		DC()->ClearDepthStencilView(dsv.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
 		DC()->RSSetViewports(1, &GRAPHICS()->GetViewport(1));
-		DC()->OMSetBlendState(nullptr, 0, -1);
+		//DC()->OMSetBlendState(nullptr, 0, -1);
 	}
 
 	//Model Rendering

@@ -501,6 +501,17 @@ void GUIView::Scene()
 
 		ImGui::Begin("Scene", &_showScene, scFlags);
 		{
+			//When This Window Focused, Active CameraMoveComponent
+			if (ImGui::IsWindowFocused())
+			{
+				_cameraMove->SetActive(true);
+			}
+			else
+			{
+				_cameraMove->SetActive(false);
+			}
+
+			//Create Scene RenderTexture 
 			{
 				pTex = GRAPHICS()->GetRenderTexture(1).Get();
 				D3D11_TEXTURE2D_DESC desc;
@@ -515,6 +526,7 @@ void GUIView::Scene()
 			}
 			_sceneDrawSize = ImVec2(ImGui::GetCursorScreenPos().x + _sceneSize.x - 15.f, ImGui::GetCursorScreenPos().y + _sceneSize.y - 35.f);
 
+			//Draw Texture in Scene Window
 			ImGui::GetWindowDrawList()->AddImage(
 				(void*)pSRV.Get(),
 				ImGui::GetCursorScreenPos(),
@@ -523,6 +535,12 @@ void GUIView::Scene()
 		}
 		ImGui::End();
 	}
+}
+
+void GUIView::DrawGridAndGizmo()
+{
+	ImGuizmo::SetDrawlist(ImGui::GetWindowDrawList());
+
 }
 
 void GUIView::BoneHierarchy()
@@ -561,7 +579,7 @@ void GUIView::BoneHierarchy()
 
 					ImGui::EndTable();
 				}
-				//Hierarchy End
+				//BoneList End
 				ImGui::TreePop();
 			}
 

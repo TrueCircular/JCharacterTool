@@ -139,6 +139,7 @@ void Model::ReadMaterial(wstring fileName)
 			{
 				auto texture = MANAGER_RESOURCES()->GetOrAddTexture(textureStr, (parentPath / textureStr).wstring());
 				material->SetDiffuseMap(texture);
+				material->GetDiffuseMap()->SetName(textureStr);
 			}
 		}
 
@@ -154,6 +155,7 @@ void Model::ReadMaterial(wstring fileName)
 				{
 					auto texture = MANAGER_RESOURCES()->GetOrAddTexture(textureStr, (parentPath / textureStr).wstring());
 					material->SetSpecularMap(texture);
+					material->GetSpecularMap()->SetName(textureStr);
 				}
 			}
 		}
@@ -167,6 +169,7 @@ void Model::ReadMaterial(wstring fileName)
 			{
 				auto texture = MANAGER_RESOURCES()->GetOrAddTexture(textureStr, (parentPath / textureStr).wstring());
 				material->SetNormalMap(texture);
+				material->GetNormalMap()->SetName(textureStr);
 			}
 		}
 
@@ -175,9 +178,30 @@ void Model::ReadMaterial(wstring fileName)
 			node = node->NextSiblingElement();
 
 			Color color;
-			color.x = node->FloatAttribute("R");
-			color.y = node->FloatAttribute("G");
-			color.z = node->FloatAttribute("B");
+			if (node->FloatAttribute("R") == 0)
+			{
+				color.x = 1.f;
+			}
+			else
+			{
+				color.x = node->FloatAttribute("R");
+			}
+			if (node->FloatAttribute("G") == 0)
+			{
+				color.y = 1.f;
+			}
+			else
+			{
+				color.y = node->FloatAttribute("G");
+			}
+			if (color.z = node->FloatAttribute("B") == 0)
+			{
+				color.z = 1.f;
+			}
+			else
+			{
+				color.z = node->FloatAttribute("B");
+			}
 			color.w = node->FloatAttribute("A");
 			material->GetMaterialDesc().ambient = color;
 		}
@@ -336,15 +360,157 @@ void Model::ReadAnimation(wstring filename)
 
 void Model::SaveModel(wstring filePath, wstring fileName)
 {
-	//디렉토리 생성
-	wstring finalPath = filePath + fileName;
-	auto path = filesystem::path(finalPath);
+	//Material Data
+	{	
+		filesystem::path path;
+		wstring mtrPath;
+		if (_modelType == ModelType::Skeletal)
+		{
+			mtrPath = RESOURCES_ADDR_TEXTURE_SKELETAL;
+			mtrPath += fileName;
+			mtrPath += L"/";
+			path = filesystem::path(mtrPath);
+			filesystem::create_directory(path.parent_path());
+		}
+		else if (_modelType == ModelType::Static)
+		{
+			mtrPath = RESOURCES_ADDR_TEXTURE_STATIC;
+			mtrPath += fileName;
+			mtrPath += L"/";
+			path = filesystem::path(mtrPath);
+			filesystem::create_directory(path.parent_path());
+		}
+		//doc 생성
+		shared_ptr<tinyxml2::XMLDocument> document = make_shared<tinyxml2::XMLDocument>();
+		//버전 정의
+		tinyxml2::XMLDeclaration* decl = document->NewDeclaration();
+		document->LinkEndChild(decl);
+		//머티리얼 목록
+		tinyxml2::XMLElement* root = document->NewElement("Materials");
+		document->LinkEndChild(root);
+
+		HRESULT hr;
+		for (auto& mat : _materials)
+		{
+			//머티리얼 당
+			tinyxml2::XMLElement* node = document->NewElement("Material");
+			root->LinkEndChild(node);
+			tinyxml2::XMLElement* element = nullptr;
+
+			//Name
+			element = document->NewElement("Name");
+			element->SetText(Utils::ToString(mat->GetName()).c_str());
+			node->LinkEndChild(element);
+
+			// Save Texture File
+			//Diffuse
+			if (mat->GetDiffuseMap() != nullptr)
+			{	
+				wstring fName = mat->GetDiffuseMap()->GetName();
+				wstring dName = mtrPath;
+				dName += fName;
+
+				element = document->NewElement("DiffuseFile");
+				element->SetText(Utils::ToString(fName).c_str());
+				node->LinkEndChild(element);
+
+				hr = DirectX::SaveToDDSFile(*mat->GetDiffuseMap()->GetInfo().GetImages(), DirectX::DDS_FLAGS_NONE, dName.c_str());
+				CHECK(hr);
+			}
+			else
+			{
+				element = document->NewElement("DiffuseFile");
+				element->SetText("");
+				node->LinkEndChild(element);
+			}
+			//Specular
+			if (mat->GetSpecularMap() != nullptr)
+			{
+				wstring fName = mat->GetSpecularMap()->GetName();
+				wstring sName = mtrPath;
+				sName += fName;
+
+				element = document->NewElement("SpecularFile");
+				element->SetText(Utils::ToString(fName).c_str());
+				node->LinkEndChild(element);
+
+				hr = DirectX::SaveToDDSFile(*mat->GetSpecularMap()->GetInfo().GetImages(), DirectX::DDS_FLAGS_NONE, sName.c_str());
+				CHECK(hr);
+			}
+			else
+			{
+				element = document->NewElement("SpecularFile");
+				element->SetText("");
+				node->LinkEndChild(element);
+			}
+			//Normal
+			if (mat->GetNormalMap() != nullptr)
+			{
+				wstring fName = mat->GetNormalMap()->GetName();
+				wstring nName = mtrPath;
+				nName += fName;
+
+				element = document->NewElement("NormalFile");
+				element->SetText(Utils::ToString(fName).c_str());
+				node->LinkEndChild(element);
+
+				hr = DirectX::SaveToDDSFile(*mat->GetNormalMap()->GetInfo().GetImages(), DirectX::DDS_FLAGS_NONE, nName.c_str());
+				CHECK(hr);
+			}
+			else 
+			{
+				element = document->NewElement("NormalFile");
+				element->SetText("");
+				node->LinkEndChild(element);
+			}
+
+			//Ambient Influence
+			element = document->NewElement("Ambient");
+			element->SetAttribute("R", mat->GetMaterialDesc().ambient.x);
+			element->SetAttribute("G", mat->GetMaterialDesc().ambient.y);
+			element->SetAttribute("B", mat->GetMaterialDesc().ambient.z);
+			element->SetAttribute("A", mat->GetMaterialDesc().ambient.w);
+			node->LinkEndChild(element);
+			//Diffuse Influence
+			element = document->NewElement("Diffuse");
+			element->SetAttribute("R", mat->GetMaterialDesc().diffuse.x);
+			element->SetAttribute("G", mat->GetMaterialDesc().diffuse.y);
+			element->SetAttribute("B", mat->GetMaterialDesc().diffuse.z);
+			element->SetAttribute("A", mat->GetMaterialDesc().diffuse.w);
+			node->LinkEndChild(element);
+			//Specular Influence
+			element = document->NewElement("Specular");
+			element->SetAttribute("R", mat->GetMaterialDesc().specular.x);
+			element->SetAttribute("G", mat->GetMaterialDesc().specular.y);
+			element->SetAttribute("B", mat->GetMaterialDesc().specular.z);
+			element->SetAttribute("A", mat->GetMaterialDesc().specular.w);
+			node->LinkEndChild(element);
+			//Emissive Influence
+			element = document->NewElement("Emissive");
+			element->SetAttribute("R", mat->GetMaterialDesc().emissive.x);
+			element->SetAttribute("G", mat->GetMaterialDesc().emissive.y);
+			element->SetAttribute("B", mat->GetMaterialDesc().emissive.z);
+			element->SetAttribute("A", mat->GetMaterialDesc().emissive.w);
+			node->LinkEndChild(element);
+		}
+		wstring docPath = mtrPath;
+		docPath += fileName;
+		docPath += L".xml";
+		document->SaveFile(Utils::ToString(docPath).c_str());
+	}
+
+	//Save Model 디렉토리 생성
+	wstring SaveModelPath = filePath + fileName;
+	SaveModelPath += L".mesh";
+
+	auto path = filesystem::path(SaveModelPath);
+
 	filesystem::create_directory(path.parent_path());
 	//파일을 쓰기모드로 생성
 	shared_ptr<FileUtils> file = make_shared<FileUtils>();
-	file->Open(finalPath, FileMode::Write);
+	file->Open(SaveModelPath, FileMode::Write);
 
-	//Bone Data Input
+	//Bone Data
 	file->Write<uint32>(_bones.size());
 	for (auto& bone : _bones)
 	{
@@ -353,7 +519,8 @@ void Model::SaveModel(wstring filePath, wstring fileName)
 		file->Write<int32>(bone->parentIndex);
 		file->Write<Matrix>(bone->transform);
 	}
-	//Mesh Data Input
+
+	//Mesh Data
 	file->Write<uint32>(_meshes.size());
 	for (auto& meshData : _meshes)
 	{

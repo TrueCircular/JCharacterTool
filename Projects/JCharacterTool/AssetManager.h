@@ -71,23 +71,24 @@ private:
 public:
 	//Read Asset
 	bool ReadMeshAssetFile(MeshPathDesc& desc);
+	bool ReadMeshFile(MeshPathDesc& desc);
 	bool ReadAnimAssetFile(AnimPathDesc& desc);
 public:
 	//Export Asset
 	bool ExportMaterialData(wstring& exportPath);
-	bool ExportMaterialData(wstring& name, wstring& exportPath);
-
 	bool ExportModelData(wstring& exportPath);
-	bool ExportModelData(wstring& name, wstring& exportPath);
-
 	bool ExportAnimationData(wstring& exportPath);
 	bool ExportAnimationData(wstring& name, wstring& exportPath);
+public:
+	bool SaveMeshFile();
 public:
 	bool CreateMeshAsset(MeshPathDesc& desc);
 	bool CreateAnimAsset(AnimPathDesc& desc);
 public:
 	const MeshDataDictionary& GetLoadedSkeletalMeshDataList() const { return _skeletalMeshData; }
 	const MeshDataDictionary& GetLoadedStaticMeshDataList() const { return _staticMeshData; }
+	const shared_ptr<GameObject>& GetSkeletalMeshByName(wstring name);
+	const shared_ptr<GameObject>& GetStaticMeshByName(wstring name);
 	const shared_ptr<GameObject>& GetSelectedSkeletalAsset() const { return _selectedSkeletalAsset; }
 	const shared_ptr<GameObject>& GetSelectedStatictalAsset() const { return _selectedStaticAsset; }
 	AnimDataDictionary GetLoadedAnimDataList() const { return _animData; }

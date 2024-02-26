@@ -38,10 +38,16 @@ void Texture::Load(const wstring& path)
 	DirectX::TexMetadata md;
 	//PNG,JPG
 	hr = DirectX::LoadFromWICFile(path.c_str(), WIC_FLAGS_NONE, &md, _img);
+
 	if (FAILED(hr))
 	{
 		//TGA
 		hr = DirectX::LoadFromTGAFile(path.c_str(), TGA_FLAGS_NONE, &md, _img);
+
+		if (FAILED(hr))
+		{
+			hr = DirectX::LoadFromDDSFile(path.c_str(), DDS_FLAGS_NONE, &md, _img);
+		}
 	}
 	CHECK(hr);
 

@@ -30,6 +30,8 @@ private:
 	bool _isReadMesh = false;
 	bool _isSaveMesh = false;
 	shared_ptr<Model> _saveMesh;
+	int _currentSkeletalMeshComboIndex = 0;
+	int _currentStaticMeshComboIndex = 0;
 	//Animation
 	bool _isReadAnimationAsset = false;
 	bool _isSaveAnimation = false;
@@ -48,6 +50,8 @@ private:
 	void AnimationReadPoPUp();
 	void AnimationSavePoPUp();
 	void AssetListTab();
+private:
+	void SaveMesh(wstring filePath, wstring fileName);
 public:
 	virtual void Update() override;
 	virtual void Render() override;

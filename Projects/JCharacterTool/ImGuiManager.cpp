@@ -66,6 +66,7 @@ void ImGuiManager::Init()
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 		// Setup Dear ImGui style
 		ImGui::StyleColorsDark();
+		//ImGui::StyleColorsClassic();
 		// Setup Platform/Renderer backends
 		ImGui_ImplWin32_Init(g_gameDesc.hWnd);
 		ImGui_ImplDX11_Init(DEVICE().Get(), DC().Get());
@@ -84,7 +85,6 @@ void ImGuiManager::Update()
 		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
-		ImGuizmo::SetOrthographic(false);
 		ImGuizmo::BeginFrame();
 	}
 	//Gui Update
