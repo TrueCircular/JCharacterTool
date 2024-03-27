@@ -13,10 +13,26 @@ ModelAnimator::~ModelAnimator()
 {
 }
 
+void ModelAnimator::SetModel(shared_ptr<Model> model)
+{
+	_model = model;
+
+	const auto& materials = _model->GetMaterials();
+	for (auto& material : materials)
+	{
+		material->SetShader(_shader);
+	}
+}
+
 void ModelAnimator::CreateTexture()
 {
 	if (_model->GetAnimationCount() == 0)
 		return;
+
+	if (_animTransforms.size() > 0)
+	{
+		_animTransforms.clear();
+	}
 
 	_animTransforms.resize(_model->GetAnimationCount());
 	for (uint32 i = 0; i < _model->GetAnimationCount(); i++)
@@ -140,10 +156,10 @@ void ModelAnimator::SetAnimationByIndex(int32 index)
 
 void ModelAnimator::Awake()
 {
-	_model = GetGameObject()->GetModelRenderer()->GetModel();
-	assert(_model != nullptr);
-	_shader = GetGameObject()->GetModelRenderer()->GetShader();
-	assert(_shader != nullptr);
+	//_model = GetGameObject()->GetModelRenderer()->GetModel();
+	//assert(_model != nullptr);
+	//_shader = GetGameObject()->GetModelRenderer()->GetShader();
+	//assert(_shader != nullptr);
 }
 
 void ModelAnimator::Update()
@@ -153,7 +169,9 @@ void ModelAnimator::Update()
 		if (_model == nullptr || _shader == nullptr)
 			return;
 
-		if (_texture == nullptr)
+		_currentAnimCount = _model->GetAnimationCount();
+
+		if (_texture == nullptr || _currentAnimCount != _prevAnimCount)
 			CreateTexture();
 
 		if (_isLoop)
@@ -192,13 +210,57 @@ void ModelAnimator::Update()
 				_keyFrameDesc.ratio = (_keyFrameDesc.sumTime / _timePerFrame);
 			}
 		}
+
+		if (_animTransforms.size() > 0)
+		{
+			SetPass(1);
+		}
+		else if (_animTransforms.size() <= 0)
+		{
+			SetPass(0);
+		}
+
+		// 애니메이션 현재 프레임 정보
+		MANAGER_RENDERER()->PushKeyframeData(_keyFrameDesc);
+
+		// SRV를 통해 정보 전달
+		_shader->GetSRV("TransformMap")->SetResource(_srv.Get());
+
+		//Bone
+		BoneDesc boneDesc;
+
+		const uint32 boneCount = _model->GetBoneCount();
+		for (uint32 i = 0; i < boneCount; i++)
+		{
+			shared_ptr<ModelBone> bone = _model->GetBoneByIndex(i);
+			boneDesc.transforms[i] = bone->transform;
+		}
+		MANAGER_RENDERER()->PushBoneData(boneDesc);
+
+		auto world = GetTransform()->GetWorldMatrix();
+		MANAGER_RENDERER()->PushTransformData(TransformDesc{ world });
+
+		const auto& meshes = _model->GetMeshes();
+		for (auto& mesh : meshes)
+		{
+			if (mesh->material)
+				mesh->material->Update();
+
+			//Bone Index
+			_shader->GetScalar("BoneIndex")->SetInt(mesh->boneIndex);
+
+			uint32 stride = mesh->vertexBuffer->GetStride();
+			uint32 offset = mesh->vertexBuffer->GetOffset();
+
+			DC()->IASetVertexBuffers(0, 1, mesh->vertexBuffer->GetBuffer().GetAddressOf(),
+				&stride, &offset);
+			DC()->IASetIndexBuffer(mesh->indexBuffer->GetBuffer().Get(),
+				DXGI_FORMAT_R32_UINT, 0);
+
+			_shader->DrawIndexed(0, _pass, mesh->indexBuffer->GetCount(), 0, 0);
+		}
+
+		_prevAnimCount = _currentAnimCount;
 	}
-
-
-	// 애니메이션 현재 프레임 정보
-	MANAGER_RENDERER()->PushKeyframeData(_keyFrameDesc);
-
-	// SRV를 통해 정보 전달
-	_shader->GetSRV("TransformMap")->SetResource(_srv.Get());
 }
 

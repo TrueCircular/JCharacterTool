@@ -568,8 +568,17 @@ void GUIView::BoneHierarchy()
 
 					if (_selectedModelAsset != nullptr)
 					{
-						auto& _modelBones = _selectedModelAsset->GetModelRenderer()->GetModel()->GetBones();
-						DisplayBoneHierarchyNode(_modelBones[0], _modelBones);
+						auto check = _selectedModelAsset->GetModelRenderer();
+						if (check == nullptr)
+						{
+							auto& _modelBones = _selectedModelAsset->GetModelAnimator()->GetModel()->GetBones();
+							DisplayBoneHierarchyNode(_modelBones[0], _modelBones);
+						}
+						else
+						{
+							auto& _modelBones = _selectedModelAsset->GetModelRenderer()->GetModel()->GetBones();
+							DisplayBoneHierarchyNode(_modelBones[0], _modelBones);
+						}
 					}
 
 					if (_soketCreate)
@@ -730,7 +739,6 @@ void GUIView::Animation()
 		ImGuiWindowFlags aniFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize;
 
 		const auto& assetList = MANAGER_ASSET()->GetLoadedSkeletalMeshDataList();
-		const auto& animList = MANAGER_ASSET()->GetLoadedAnimDataList();
 
 		vector<string> modelNames;
 		if (assetList.size() > 0)
@@ -747,6 +755,8 @@ void GUIView::Animation()
 		{
 			modelNames.push_back("Empty");
 		}
+
+		const auto& animList = MANAGER_ASSET()->GetLoadedAnimDataList();
 
 		vector<string> animNames;
 		if (animList.size() > 0)
@@ -767,6 +777,9 @@ void GUIView::Animation()
 		const char* previewModelName = modelNames[_currentModelComboIndex].c_str();
 		const char* previewAnimName = animNames[_currentAnimComboIndex].c_str();
 
+		shared_ptr<ModelAnimator> selectModelAnimator = nullptr;
+		shared_ptr<ModelAnimation> selectAnimation = nullptr;
+
 		//Begin Animation Window
 		if (ImGui::Begin("Animation", &_showAnimation, aniFlags))
 		{
@@ -779,41 +792,42 @@ void GUIView::Animation()
 						_currentModelComboIndex = n;
 
 					if (is_selected)
+					{
+						selectModelAnimator = assetList.find(wstring(modelNames[n].begin(), modelNames[n].end()))->second.Model->GetModelAnimator();
 						ImGui::SetItemDefaultFocus();
-
+					}
 				}
 				ImGui::EndCombo();
 			}
 
-			if (ImGui::BeginCombo("Current Animation List In Model", previewModelName))
+			if (ImGui::BeginCombo("Current Animation List In Model", previewAnimName))
 			{
-				for (int n = 0; n < modelNames.size(); n++)
+				for (int n = 0; n < animNames.size(); n++)
 				{
-					const bool is_selected = (_currentModelComboIndex == n);
-					if (ImGui::Selectable(modelNames[n].c_str(), is_selected))
-						_currentModelComboIndex = n;
+					const bool is_selected = (_currentAnimComboIndex == n);
+					if (ImGui::Selectable(animNames[n].c_str(), is_selected))
+						_currentAnimComboIndex = n;
 
 					if (is_selected)
+					{
+						selectAnimation = animList.find(wstring(animNames[n].begin(), animNames[n].end()))->second.Anim;
 						ImGui::SetItemDefaultFocus();
+					}
 
 				}
 				ImGui::EndCombo();
 			}
 
-			//if (ImGui::BeginCombo("Select Animation", previewAnimName))
-			//{
-			//	for (int n = 0; n < animNames.size(); n++)
-			//	{
-			//		const bool is_selected = (_currentAnimComboIndex == n);
-			//		if (ImGui::Selectable(animNames[n].c_str(), is_selected))
-			//			_currentAnimComboIndex = n;
+			ImGui::SameLine();
 
-			//		if (is_selected)
-			//			ImGui::SetItemDefaultFocus();
-
-			//	}
-			//	ImGui::EndCombo();
-			//}
+			if (ImGui::Button("Add"))
+			{
+				if (selectModelAnimator != nullptr && selectAnimation != nullptr)
+				{
+					selectModelAnimator->GetModel()->AddAnimation(selectAnimation);
+				}
+			}
+			//if(ImGui::InputInt("Animation Index", ))
 
 		}
 		//End Animation Window

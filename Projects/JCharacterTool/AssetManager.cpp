@@ -134,10 +134,23 @@ bool AssetManager::CreateMeshAsset(MeshPathDesc& desc)
 	{
 		//Init
 		asset->SetName(desc.Name);
-		asset->AddComponent(make_shared<ModelRenderer>(shader));
-		asset->AddComponent(make_shared<ModelAnimator>());
-		asset->GetModelRenderer()->SetModel(model);
-		asset->GetModelRenderer()->SetPass(0);
+
+		if (desc.Type == ModelType::Skeletal)
+		{
+			asset->AddComponent(make_shared<ModelAnimator>());
+			asset->GetModelAnimator()->SetShader(shader);
+			asset->GetModelAnimator()->SetModel(model);
+			asset->GetModelAnimator()->SetLoop(true);
+			asset->GetModelAnimator()->SetPlay(true);
+			asset->GetModelAnimator()->SetPass(1);
+		}
+		else if (desc.Type == ModelType::Static)
+		{
+			asset->AddComponent(make_shared<ModelRenderer>(shader));
+			asset->GetModelRenderer()->SetModel(model);
+			asset->GetModelRenderer()->SetPass(0);
+		}
+
 		asset->Awake();
 
 		//Default Setting

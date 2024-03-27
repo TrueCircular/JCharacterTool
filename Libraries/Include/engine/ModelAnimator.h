@@ -29,11 +29,13 @@ private:
 	bool	_isLoop = false;
 	float	_timePerFrame = 0.f;
 	float	_duration = 0.f;
+	int		_prevAnimCount = 0;
+	int     _currentAnimCount = 0;
 private:
 	void CreateTexture();
 	void CreateAnimationTransform(uint32 index);
 public:
-	void SetModel(shared_ptr<Model> model) { _model = model; }
+	void SetModel(shared_ptr<Model> model);
 	shared_ptr<Model> GetModel() { return _model; }
 	void SetShader(shared_ptr<Shader> shader) { _shader = shader; }
 	void SetPass(uint8 pass) { _pass = pass; }

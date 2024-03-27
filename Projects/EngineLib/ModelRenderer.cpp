@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "ModelRenderer.h"
 
-ModelRenderer::ModelRenderer(shared_ptr<Shader> shader) 
+ModelRenderer::ModelRenderer(shared_ptr<Shader> shader)
 	: Super(ComponentType::ModelRenderer), _shader(shader)
 {
 }
@@ -30,6 +30,7 @@ void ModelRenderer::LateUpdate()
 {
 	if (_model == nullptr)
 		return;
+
 
 	//Bone
 	BoneDesc boneDesc;
