@@ -154,13 +154,26 @@ void GUIFile::MeshSavePoPUp()
 					{
 						wstring tempName = Utils::ToWString(previewMeshName);
 
-						if (MANAGER_ASSET()->GetSkeletalMeshByName(tempName) != nullptr &&
-							_saveMesh != MANAGER_ASSET()->GetSkeletalMeshByName(tempName)->GetModelRenderer()->GetModel())
+						if (MANAGER_ASSET()->GetSkeletalMeshByName(tempName) != nullptr)
 						{
-							_saveMesh = MANAGER_ASSET()->GetSkeletalMeshByName(tempName)->GetModelRenderer()->GetModel();
+							auto temp = MANAGER_ASSET()->GetSkeletalMeshByName(tempName)->GetModelRenderer();
+							if (temp != nullptr)
+							{
+								if (_saveMesh != MANAGER_ASSET()->GetSkeletalMeshByName(tempName)->GetModelRenderer()->GetModel())
+								{
+									_saveMesh = MANAGER_ASSET()->GetSkeletalMeshByName(tempName)->GetModelRenderer()->GetModel();
+
+								}
+							}
+							else
+							{
+								if (_saveMesh != MANAGER_ASSET()->GetSkeletalMeshByName(tempName)->GetModelAnimator()->GetModel())
+								{
+									_saveMesh = MANAGER_ASSET()->GetSkeletalMeshByName(tempName)->GetModelAnimator()->GetModel();
+								}
+							}
 						}
 					}
-
 				}
 
 				//Render Combobox

@@ -95,7 +95,16 @@ void GUIView::CreateBoneSoket()
 	ImGui::SetNextWindowPos(ImVec2(350.f, 268.f));
 	ImGuiWindowFlags bhFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize;
 	static bool isCreate = false;
-	auto& _modelBones = _selectedModelAsset->GetModelRenderer()->GetModel()->GetBones();
+	auto temp = _selectedModelAsset->GetModelRenderer();
+	vector<shared_ptr<ModelBone>> _modelBones;
+	if (temp != nullptr)
+	{
+		_modelBones = _selectedModelAsset->GetModelRenderer()->GetModel()->GetBones();
+	}
+	else
+	{
+		_modelBones = _selectedModelAsset->GetModelAnimator()->GetModel()->GetBones();
+	}
 
 	if (ImGui::Begin("Soket Menu", 0, bhFlags))
 	{
